@@ -1,0 +1,3698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#2E9E82">
+<title>Civics Oral Practice</title>
+<style>
+/* Bright but calm: a pale sky ground with mint, peach and lilac washes, and three
+   saturated section colours. Everything is set in the system sans. */
+:root{
+  --ground:#F2F7FD;
+  --well:#E6EEF8;
+  --card:#FFFFFF;
+  --ink:#16222E;
+  --soft:#54697D;
+  --faint:#8DA1B4;
+  --rule:#D5E1EE;
+
+  --teal:#2E9E82;
+  --teal-d:#1E7A64;
+  --teal-w:#DFF4ED;
+  --amber:#E0962B;
+  --amber-d:#A86A12;
+  --amber-w:#FDEFD8;
+  --violet:#5E68CC;
+  --violet-d:#454EA6;
+  --violet-w:#E7E9FA;
+  --rose:#D1544A;
+  --rose-w:#FCE5E2;
+
+  --accent:var(--teal);
+  --actsH:74px;
+
+  --flag-red:#B22234;
+  --flag-blue:#3C3B6E;
+  --flag-red-w:#FBE4E6;
+  --flag-blue-w:#E4E5F2;
+
+  --sans:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,
+    "Helvetica Neue","Noto Sans",Arial,sans-serif;
+  --disp:var(--sans);
+  --serif:var(--sans);
+  --cyr:var(--sans);
+  --mono:ui-monospace,"SF Mono",Menlo,"Roboto Mono","Courier New",monospace;
+}
+body.formal{
+  --ground:#EDF1F5; --well:#E0E7EE; --accent:#2B4257;
+  --teal:#2B6E5C; --rule:#CBD7E2;
+}
+
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden}
+body{
+  margin:0;color:var(--ink);font-family:var(--sans);
+  -webkit-text-size-adjust:100%;overscroll-behavior:none;
+  background:var(--ground);
+}
+/* the colour wash — fixed, so it never scrolls or repaints */
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(42vmax 42vmax at 8% 4%,  rgba(46,158,130,.16), transparent 62%),
+    radial-gradient(38vmax 38vmax at 96% 12%, rgba(224,150,43,.15), transparent 62%),
+    radial-gradient(46vmax 46vmax at 50% 104%,rgba(94,104,204,.14), transparent 62%);
+}
+body.formal::before{opacity:.25}
+
+.app{position:relative;z-index:1;height:100%;display:flex;flex-direction:column}
+.screen{display:none;flex:1;min-height:0;flex-direction:column;
+  padding:env(safe-area-inset-top) 20px env(safe-area-inset-bottom);
+  overflow-y:auto;-webkit-overflow-scrolling:touch}
+.screen.on{display:flex}
+#scr-exam{overflow:hidden;padding-bottom:calc(var(--actsH) + env(safe-area-inset-bottom))}
+
+.eyebrow{font-family:var(--disp);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--soft);font-weight:700}
+.num{font-family:var(--mono);font-size:13px;color:var(--soft);font-variant-numeric:tabular-nums}
+
+/* ── bars ────────────────────────────── */
+.bar{display:flex;align-items:center;gap:8px;padding:10px 0 9px;
+  border-bottom:1px solid var(--rule);flex:0 0 auto}
+.bar .mid{flex:1;text-align:center;min-width:0}
+.bar .mid .num{display:block;font-size:12.5px}
+.stat{display:block;font-size:11.5px;line-height:1.3;color:var(--faint);
+  margin-top:2px;min-height:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stat #staten:not(:empty)::before{content:" · "}
+.iconbtn{appearance:none;border:1px solid var(--rule);background:var(--card);color:var(--soft);
+  font-family:var(--disp);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;
+  padding:9px 12px;border-radius:9px;cursor:pointer;font-weight:700;flex:0 0 auto}
+.iconbtn:active{background:var(--well)}
+
+/* the microphone now lives in the header */
+.mic{position:relative;flex:0 0 auto;width:44px;height:44px;border-radius:50%;
+  appearance:none;cursor:pointer;background:var(--card);color:var(--soft);
+  border:1.5px solid var(--rule);display:flex;align-items:center;justify-content:center;
+  transition:color .18s,border-color .18s,background .18s}
+.mic svg{width:21px;height:21px;fill:currentColor}
+.mic.live{color:#fff;background:var(--amber);border-color:var(--amber)}
+.mic.busy{color:var(--faint)}
+.ring{position:absolute;inset:-4px;border-radius:50%;border:2px solid var(--amber);opacity:0}
+@media (prefers-reduced-motion:no-preference){
+  .mic.live .ring{animation:pulse 1.7s ease-out infinite}
+  .mic.live .ring:nth-child(2){animation-delay:.55s}
+  @keyframes pulse{0%{transform:scale(1);opacity:.7}100%{transform:scale(1.7);opacity:0}}
+}
+
+/* ── setup / shared ──────────────────── */
+.hero{text-align:center;padding:20px 0 4px;flex:0 0 auto}
+.hero h1{font-family:var(--disp);font-weight:800;font-size:27px;letter-spacing:.04em;
+  margin:0 0 8px;line-height:1.2;
+  background:linear-gradient(95deg,var(--flag-blue) 0%,var(--teal-d) 48%,var(--flag-red) 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.hero .sub{font-size:16px;color:var(--soft);margin:0;line-height:1.45}
+.torch{width:66px;height:5px;border-radius:3px;margin:12px auto;
+  background:linear-gradient(90deg,var(--flag-blue),var(--teal),var(--amber),var(--flag-red))}
+
+.field{margin:0 0 18px;flex:0 0 auto}
+.field > label,.legend{display:block;font-family:var(--disp);font-size:11.5px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--soft);font-weight:700;margin:0 0 8px}
+.hint{font-size:14px;color:var(--faint);line-height:1.45;margin:8px 0 0}
+
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg button{flex:1 1 auto;min-width:calc(50% - 3px);appearance:none;cursor:pointer;
+  background:var(--card);border:1px solid var(--rule);border-radius:10px;
+  padding:12px 8px;font-family:var(--disp);font-size:13px;color:var(--soft);
+  font-weight:600;line-height:1.3}
+.seg button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);
+  color:#fff;font-weight:700}
+
+.modes{display:flex;gap:8px;margin:0 0 6px}
+.modes button{flex:1;appearance:none;cursor:pointer;text-align:left;
+  background:var(--card);border:2px solid var(--rule);border-radius:13px;padding:13px 12px}
+.modes button .t{display:block;font-family:var(--disp);font-size:15px;font-weight:700;
+  color:var(--ink);margin-bottom:3px}
+.modes button .d{display:block;font-size:12.5px;color:var(--faint);line-height:1.35}
+.modes button[aria-pressed="true"]{border-color:var(--teal);background:var(--teal-w)}
+.modes button[aria-pressed="true"] .t{color:var(--teal-d)}
+.modes button[aria-pressed="true"] .d{color:var(--soft)}
+.modes button#m-exam[aria-pressed="true"]{border-color:#2B4257;background:#E3E9EF}
+.modes button#m-exam[aria-pressed="true"] .t{color:#2B4257}
+
+.ready{position:relative;display:flex;align-items:center;gap:13px;width:100%;appearance:none;
+  cursor:pointer;background:var(--card);border:1px solid var(--rule);border-radius:14px;
+  padding:13px 15px;margin:0 0 18px;text-align:left;overflow:hidden}
+.ready::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;
+  background:linear-gradient(180deg,var(--flag-red) 0 33%,#fff 33% 66%,var(--flag-blue) 66% 100%)}
+.ready .big{font-family:var(--mono);font-size:29px;line-height:1;color:var(--teal-d);
+  font-variant-numeric:tabular-nums;flex:0 0 auto}
+.ready .lab{flex:1;min-width:0}
+.ready .lab .t{display:block;font-family:var(--disp);font-size:11px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--soft);font-weight:700;margin-bottom:2px}
+.ready .lab .d{display:block;font-size:13px;color:var(--faint);line-height:1.35}
+.ready .arrow{font-size:20px;color:var(--faint);flex:0 0 auto}
+.bars{display:flex;height:7px;border-radius:4px;overflow:hidden;background:var(--well);margin-top:6px}
+.bars i{display:block;height:100%}
+.bars i.m{background:var(--teal)}
+.bars i.l{background:var(--amber)}
+
+select,input[type=text],input[type=password]{width:100%;appearance:none;background:var(--card);
+  border:1px solid var(--rule);border-radius:10px;padding:13px 12px;
+  font-family:var(--sans);font-size:17px;color:var(--ink)}
+select{background-image:linear-gradient(45deg,transparent 50%,var(--soft) 50%),
+  linear-gradient(135deg,var(--soft) 50%,transparent 50%);
+  background-position:calc(100% - 17px) 22px,calc(100% - 12px) 22px;
+  background-size:5px 5px,5px 5px;background-repeat:no-repeat;padding-right:34px}
+
+details.local{border:1px solid var(--rule);border-radius:12px;background:var(--card);margin:0 0 18px}
+details.local > summary{list-style:none;cursor:pointer;padding:14px 15px;
+  font-family:var(--disp);font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--soft);font-weight:700;display:flex;justify-content:space-between;align-items:center}
+details.local > summary::-webkit-details-marker{display:none}
+details.local > summary::after{content:"+";font-family:var(--mono);font-size:17px;color:var(--faint)}
+details.local[open] > summary::after{content:"–"}
+.localbody{padding:0 15px 15px;border-top:1px solid var(--rule);padding-top:14px}
+.localbody .row{margin:0 0 13px}
+.localbody .row:last-child{margin:0}
+.localbody .row label{display:block;font-size:14px;color:var(--soft);margin:0 0 6px}
+
+.primary{position:relative;display:block;width:100%;appearance:none;cursor:pointer;
+  background:var(--accent);color:#fff;border:none;border-radius:13px;padding:17px;
+  font-family:var(--disp);font-size:16px;letter-spacing:.03em;font-weight:700;overflow:hidden}
+.primary::after{content:"";position:absolute;left:0;right:0;bottom:0;height:4px;
+  background:repeating-linear-gradient(90deg,
+    rgba(255,255,255,.85) 0 13px, rgba(255,255,255,.25) 13px 26px)}
+.primary:active{opacity:.88}
+.secondary{display:block;width:100%;appearance:none;cursor:pointer;background:transparent;
+  border:1px solid var(--rule);border-radius:13px;padding:14px;margin-top:9px;
+  font-family:var(--disp);font-size:13.5px;color:var(--soft);font-weight:600}
+
+.foot{padding:18px 0 24px;text-align:center;flex:0 0 auto}
+.foot p{font-size:13px;color:var(--faint);line-height:1.55;margin:0 0 5px}
+.foot a{color:var(--teal-d)}
+.diag{font-family:var(--mono);font-size:12px}
+
+/* ── exam card ───────────────────────── */
+.card{position:relative;flex:1;min-height:0;display:flex;flex-direction:column;
+  background:var(--card);border:1px solid var(--rule);border-radius:16px;
+  margin:12px 0 0;padding:16px 16px 14px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.card::before{content:"";position:absolute;left:0;right:0;top:0;height:4px;
+  background:var(--accent);border-radius:16px 16px 0 0}
+.card.g-gov::before{background:var(--teal)}
+.card.g-hist::before{background:var(--amber)}
+.card.g-sym::before{background:var(--violet)}
+body.formal .card::before{background:#2B4257}
+
+.qhead{display:flex;justify-content:space-between;align-items:baseline;gap:10px;
+  border-bottom:1px solid var(--rule);padding-bottom:9px;margin-bottom:14px;flex:0 0 auto}
+.qhead .eyebrow{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.card.g-gov  .qhead .eyebrow{color:var(--teal-d)}
+.card.g-hist .qhead .eyebrow{color:var(--amber-d)}
+.card.g-sym  .qhead .eyebrow{color:var(--violet-d)}
+body.formal .qhead .eyebrow{color:var(--soft)}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+
+.qen{font-size:clamp(21px,5.9vw,27px);line-height:1.25;margin:0;font-weight:600;
+  letter-spacing:-.01em}
+.qru{font-size:clamp(15px,4.3vw,18px);line-height:1.4;color:var(--soft);margin:11px 0 0}
+.qen.hide,.qru.hide{display:none}
+.silent{font-family:var(--disp);font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--faint);text-align:center;margin:28px 0}
+
+.heard{margin:13px 0 0;padding:11px 12px;background:var(--well);border-radius:10px;
+  border-left:3px solid var(--rule);flex:0 0 auto}
+.heard .lbl{font-family:var(--disp);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--faint);font-weight:700;display:block;margin-bottom:4px}
+.heard .txt{font-size:17px;line-height:1.35}
+.heard .txt:empty::after{content:"—";color:var(--faint)}
+.heard.off{display:none}
+.spacer{flex:1;min-height:6px}
+
+.notice{background:var(--amber-w);border:1px solid #EFD6A8;border-radius:10px;padding:11px 12px;
+  font-size:14px;line-height:1.5;color:#7A5712;margin:0 0 12px;flex:0 0 auto}
+.notice.off{display:none}
+
+/* ── verdict: an overlay, so nothing on the page moves ── */
+.verdict{position:fixed;left:0;right:0;z-index:40;
+  bottom:calc(var(--actsH) + env(safe-area-inset-bottom));
+  background:var(--card);border-top:4px solid var(--teal);
+  border-radius:20px 20px 0 0;padding:16px 18px 18px;
+  max-height:62vh;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  box-shadow:0 -12px 40px rgba(22,34,46,.17)}
+.verdict.no{border-top-color:var(--rose)}
+.verdict.self{border-top-color:var(--faint)}
+.verdict.off{display:none}
+@media (prefers-reduced-motion:no-preference){
+  .verdict{animation:rise .26s cubic-bezier(.2,.9,.3,1) both}
+  @keyframes rise{from{transform:translateY(16px);opacity:0}to{transform:translateY(0);opacity:1}}
+}
+.grab{width:38px;height:4px;border-radius:3px;background:var(--rule);margin:0 auto 12px}
+
+.stamp{display:inline-block;font-family:var(--disp);font-size:15px;letter-spacing:.08em;
+  text-transform:uppercase;font-weight:800;padding:8px 16px;border-radius:999px;
+  margin:0 0 12px;color:#fff;background:var(--teal)}
+.stamp.no{background:var(--rose)}
+.stamp.self{background:var(--faint)}
+@media (prefers-reduced-motion:no-preference){
+  .stamp{animation:pop .32s cubic-bezier(.2,1.5,.5,1) both}
+  @keyframes pop{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
+}
+.acc{margin:0 0 8px}
+.acc .lbl{font-family:var(--disp);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--faint);font-weight:700;display:block;margin-bottom:5px}
+.acc ul{margin:0;padding:0;list-style:none}
+.acc li{font-size:17.5px;line-height:1.35;margin:0 0 7px;padding-left:14px;position:relative;
+  font-weight:500}
+.acc li::before{content:"";position:absolute;left:0;top:.62em;width:7px;height:2px;
+  border-radius:1px;background:var(--teal)}
+.acc li .ru{display:block;font-size:14.5px;color:var(--soft);line-height:1.35;
+  margin-top:2px;font-weight:400}
+.acc li .ru.hide{display:none}
+.more{font-size:13.5px;color:var(--faint);margin:2px 0 0 14px}
+
+.ctx{margin:12px 0 0;padding:12px 13px;background:var(--teal-w);border-radius:11px}
+.verdict.hist .ctx{background:var(--amber-w)}
+.verdict.sym  .ctx{background:var(--violet-w)}
+.ctx .en{font-size:16px;line-height:1.4;display:block;font-weight:500}
+.ctx .ru{font-size:14.5px;line-height:1.4;color:var(--soft);display:block;margin-top:5px}
+.ctx .en.hide,.ctx .ru.hide{display:none}
+.ctx.off{display:none}
+
+.cheer{font-size:15.5px;color:var(--teal-d);margin:10px 0 0;line-height:1.4;font-weight:600}
+.cheer.off{display:none}
+.aiwhy{font-family:var(--mono);font-size:12.5px;line-height:1.45;color:var(--soft);
+  margin:10px 0 0;padding-left:12px;border-left:2px solid var(--rule)}
+.aiwhy.off{display:none}
+.aiwhy.bad{color:var(--rose)}
+@media (prefers-reduced-motion:no-preference){
+  .aiwhy.wait{animation:breathe 1.3s ease-in-out infinite}
+  @keyframes breathe{0%,100%{opacity:.45}50%{opacity:1}}
+}
+/* the countdown to the next question */
+.autobar{height:4px;border-radius:3px;background:var(--well);margin:14px 0 0;overflow:hidden}
+.autobar.off{display:none}
+.autobar i{display:block;height:100%;width:100%;background:var(--teal);transform-origin:left center}
+@media (prefers-reduced-motion:no-preference){
+  .autobar.run i{animation:drain linear forwards}
+  @keyframes drain{from{transform:scaleX(1)}to{transform:scaleX(0)}}
+}
+
+.warn{font-size:13.5px;line-height:1.5;color:#7A5712;background:var(--amber-w);
+  border:1px solid #EFD6A8;border-radius:10px;padding:10px 11px;margin:10px 0 0}
+
+/* ── fixed action bar ────────────────── */
+.acts{position:fixed;left:0;right:0;bottom:0;z-index:45;display:flex;gap:6px;
+  padding:10px 18px calc(10px + env(safe-area-inset-bottom));
+  background:var(--ground);border-top:1px solid var(--rule)}
+.acts button{flex:1;appearance:none;cursor:pointer;background:var(--card);
+  border:1px solid var(--rule);border-radius:11px;padding:13px 4px;
+  font-family:var(--disp);font-size:12.5px;color:var(--soft);font-weight:700;line-height:1.25}
+.acts button:active{background:var(--well)}
+.acts button.go{background:var(--accent);border-color:var(--accent);color:#fff;flex:1.4}
+.acts button.hide{display:none}
+
+.typebox{display:none;gap:6px;position:fixed;left:0;right:0;z-index:46;
+  bottom:calc(var(--actsH) + env(safe-area-inset-bottom));
+  padding:9px 18px;background:var(--ground);border-top:1px solid var(--rule)}
+.typebox.on{display:flex}
+.typebox input{flex:1}
+.typebox button{flex:0 0 auto;padding:0 16px;background:var(--accent);color:#fff;
+  border:1px solid var(--accent);border-radius:10px;font-family:var(--disp);font-size:12.5px;
+  font-weight:700;cursor:pointer}
+
+/* ── summary ─────────────────────────── */
+.score{text-align:center;padding:22px 0 6px;flex:0 0 auto}
+.score .big{font-family:var(--mono);font-size:58px;line-height:1;
+  font-variant-numeric:tabular-nums;color:var(--teal-d)}
+.score .of{font-family:var(--disp);font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--soft);margin-top:10px;font-weight:700}
+.score .verd{font-size:15.5px;color:var(--soft);margin-top:10px;line-height:1.45}
+.ribbon{display:inline-block;font-family:var(--disp);font-size:13px;letter-spacing:.08em;
+  text-transform:uppercase;font-weight:800;padding:9px 20px;border-radius:999px;margin-top:12px}
+.ribbon.pass{background:var(--teal);color:#fff}
+.ribbon.fail{background:var(--rose-w);color:var(--rose);border:1.5px solid var(--rose)}
+
+.list{margin:18px 0 0;flex:0 0 auto}
+.list h3{font-family:var(--disp);font-size:12px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--soft);font-weight:700;margin:0 0 9px;padding-bottom:7px;border-bottom:1px solid var(--rule)}
+.item{display:flex;gap:11px;padding:10px 0;border-bottom:1px solid var(--rule)}
+.item .n{font-family:var(--mono);font-size:12.5px;color:var(--faint);flex:0 0 30px;padding-top:3px}
+.item .q{font-size:16px;line-height:1.3;font-weight:500}
+.item .q .ru{display:block;font-size:14px;color:var(--soft);margin-top:2px;font-weight:400}
+.empty{font-size:15px;color:var(--faint);line-height:1.5;padding:12px 0}
+
+/* ── celebration ─────────────────────── */
+#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:50}
+
+/* ── patriotic trim ──────────────────── */
+/* a ribbon of stripes pinned to the very top of every screen */
+body::after{
+  content:"";position:fixed;left:0;right:0;z-index:55;height:5px;pointer-events:none;
+  top:env(safe-area-inset-top,0px);
+  background:repeating-linear-gradient(90deg,
+    var(--flag-red) 0 15px, #fff 15px 30px);
+  border-bottom:1px solid rgba(60,59,110,.25);
+}
+body.formal::after{opacity:.35}
+
+.stars{display:flex;align-items:center;justify-content:center;gap:9px;margin:12px 0 2px}
+.stars svg{width:15px;height:15px;flex:0 0 auto}
+.stars .r{fill:var(--flag-red)}
+.stars .b{fill:var(--flag-blue)}
+.stars .line{flex:1;height:2px;border-radius:2px;max-width:70px;
+  background:linear-gradient(90deg,transparent,var(--flag-blue))}
+.stars .line.rev{background:linear-gradient(90deg,var(--flag-blue),transparent)}
+
+/* bunting swags across the top of the launch screen */
+.bunting{position:relative;height:30px;margin:0 -20px 2px;flex:0 0 auto;overflow:hidden}
+.bunting i{position:absolute;top:-19px;width:40px;height:40px;border-radius:50%;
+  box-shadow:inset 0 -3px 0 rgba(0,0,0,.08)}
+.bunting i:nth-child(3n+1){background:var(--flag-red)}
+.bunting i:nth-child(3n+2){background:#F3F6FA}
+.bunting i:nth-child(3n+3){background:var(--flag-blue)}
+
+/* a flag that waves on its own, for the launch screen */
+.wavingflag{width:92px;height:62px;overflow:visible}
+@media (prefers-reduced-motion:no-preference){
+  .wavingflag .col{animation:ripple 2.4s ease-in-out infinite}
+  @keyframes ripple{
+    0%,100%{transform:translateY(0) scaleY(1)}
+    25%{transform:translateY(-2.4px) scaleY(1.035)}
+    75%{transform:translateY(2.4px) scaleY(.965)}}
+}
+.unclesam{width:76px;height:104px;flex:0 0 auto}
+@media (prefers-reduced-motion:no-preference){
+  .unclesam{animation:tip 5.5s ease-in-out infinite;transform-origin:50% 90%}
+  @keyframes tip{0%,100%{transform:rotate(-2deg)}50%{transform:rotate(2deg)}}
+}
+
+.welcome{display:flex;align-items:flex-end;justify-content:center;gap:14px;
+  margin:4px 0 10px;flex:0 0 auto}
+
+/* star corners on the question card */
+.card .corner{position:absolute;width:11px;height:11px;opacity:.5;pointer-events:none}
+.card .corner.a{top:9px;right:11px}
+.card .corner.b{bottom:9px;left:11px}
+.card .corner svg{width:100%;height:100%;fill:var(--flag-blue)}
+body.formal .card .corner{display:none}
+
+/* ── players ─────────────────────────── */
+.plist{display:flex;flex-direction:column;gap:9px;margin:0 0 16px;flex:0 0 auto}
+.prow{position:relative;display:flex;align-items:center;gap:10px;width:100%;background:var(--card);
+  border:2px solid var(--rule);border-radius:14px;padding:12px 13px;overflow:hidden}
+.prow::after{content:"";position:absolute;right:0;top:0;bottom:0;width:4px;
+  background:linear-gradient(180deg,var(--flag-red) 0 33%,#fff 33% 66%,var(--flag-blue) 66% 100%);
+  opacity:.65}
+.prow.cur{border-color:var(--teal);background:var(--teal-w)}
+.psel{display:flex;align-items:center;gap:12px;flex:1;min-width:0;appearance:none;
+  background:none;border:none;padding:0;font:inherit;color:inherit;text-align:left;cursor:pointer}
+.pav{flex:0 0 auto;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;color:#fff;font-family:var(--disp);font-size:16px;font-weight:800}
+.pmeta{flex:1;min-width:0}
+.pmeta .nm{display:block;font-size:18px;line-height:1.2;font-weight:600;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pmeta .sb{display:block;font-size:13px;color:var(--faint);margin-top:2px}
+.pmini{display:flex;height:5px;border-radius:3px;overflow:hidden;background:var(--well);margin-top:6px}
+.pmini i{display:block;height:100%;background:var(--teal)}
+.pdel{flex:0 0 auto;appearance:none;background:none;border:none;cursor:pointer;
+  font-family:var(--mono);font-size:22px;line-height:1;color:var(--faint);padding:6px 4px}
+.pdel:active{color:var(--rose)}
+
+.addrow{display:flex;gap:7px;margin:0 0 10px}
+.addrow input{flex:1}
+.addrow button{flex:0 0 auto;padding:0 18px;background:var(--teal);color:#fff;
+  border:1px solid var(--teal);border-radius:10px;font-family:var(--disp);font-size:13px;
+  font-weight:700;cursor:pointer}
+.addrow.off{display:none}
+.ghost{display:block;width:100%;appearance:none;cursor:pointer;background:var(--card);
+  border:2px dashed var(--rule);border-radius:14px;padding:15px;color:var(--soft);
+  font-family:var(--disp);font-size:13.5px;font-weight:700}
+.ghost.off{display:none}
+
+.chip{display:flex;align-items:center;gap:10px;width:100%;appearance:none;cursor:pointer;
+  background:var(--card);border:1px solid var(--rule);border-radius:999px;
+  padding:6px 14px 6px 6px;margin:0 0 16px;text-align:left}
+.chip .pav{width:34px;height:34px;font-size:13px}
+.chip .who{flex:1;min-width:0;font-size:16.5px;font-weight:600;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chip .sw{flex:0 0 auto;font-family:var(--disp);font-size:11.5px;color:var(--faint);font-weight:700}
+
+/* ── confirm dialog ──────────────────── */
+.modal{position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;
+  padding:22px;background:rgba(22,34,46,.5)}
+.modal.off{display:none}
+.sheet{background:var(--card);border-radius:18px;padding:22px 20px;max-width:380px;width:100%;
+  box-shadow:0 18px 50px rgba(22,34,46,.3)}
+.sheet h3{font-family:var(--disp);font-size:15px;letter-spacing:.06em;text-transform:uppercase;
+  margin:0 0 12px;color:var(--rose);font-weight:800}
+.sheet p{font-size:15.5px;line-height:1.5;color:var(--ink);margin:0 0 8px}
+.sheet p.sub{font-size:14px;color:var(--soft)}
+.mbtns{display:flex;gap:8px;margin-top:18px}
+.mbtns button{flex:1;appearance:none;cursor:pointer;border-radius:11px;padding:14px 8px;
+  font-family:var(--disp);font-size:13px;font-weight:700}
+.mbtns .no{background:var(--card);border:1px solid var(--rule);color:var(--soft)}
+.mbtns .yes{background:var(--rose);border:1px solid var(--rose);color:#fff}
+
+/* ── mastery map ─────────────────────── */
+.mapwrap{padding:12px 0 0;flex:1;min-height:0;display:flex;flex-direction:column}
+.bignum{text-align:center;padding:2px 0 14px;flex:0 0 auto}
+.bignum .n{font-family:var(--mono);font-size:46px;line-height:1;color:var(--teal-d);
+  font-variant-numeric:tabular-nums}
+.bignum .c{font-family:var(--disp);font-size:12px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--soft);font-weight:700;margin-top:8px}
+.bignum .s{font-size:14px;color:var(--faint);margin-top:7px;line-height:1.45}
+
+.grid{display:grid;grid-template-columns:repeat(16,1fr);gap:4px;margin:4px 0 0;flex:0 0 auto}
+.grid b{display:block;aspect-ratio:1;border-radius:3px;background:var(--rule);
+  cursor:pointer;border:none;padding:0}
+.grid b.seen{background:var(--amber)}
+.grid b.mast{background:var(--teal)}
+.grid b.sel{outline:2.5px solid var(--ink);outline-offset:1px}
+
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin:13px 0 0;font-size:13px;color:var(--soft);
+  flex:0 0 auto}
+.legend span{display:flex;align-items:center;gap:6px}
+.legend i{width:12px;height:12px;border-radius:3px;display:block}
+.legend i.u{background:var(--rule)}
+.legend i.s{background:var(--amber)}
+.legend i.m{background:var(--teal)}
+
+.peek{margin:13px 0 0;padding:13px;background:var(--card);border:1px solid var(--rule);
+  border-radius:12px;flex:0 0 auto}
+.peek .n{font-family:var(--mono);font-size:12px;color:var(--faint);display:block;margin-bottom:5px}
+.peek .q{font-size:16px;line-height:1.3;display:block;font-weight:500}
+.peek .r{font-size:14px;color:var(--soft);display:block;margin-top:3px}
+.peek .st{font-size:13.5px;color:var(--faint);display:block;margin-top:7px}
+.mapgo{padding:16px 0 22px;flex:0 0 auto}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ══ PLAYERS ════════════════════════ -->
+<section class="screen on" id="scr-players">
+  <div class="bunting" aria-hidden="true">
+    <i style="left:-14px"></i><i style="left:26px"></i><i style="left:66px"></i>
+    <i style="left:106px"></i><i style="left:146px"></i><i style="left:186px"></i>
+    <i style="left:226px"></i><i style="left:266px"></i><i style="left:306px"></i>
+    <i style="left:346px"></i><i style="left:386px"></i>
+  </div>
+
+  <div class="hero">
+    <h1>Civics Oral Practice</h1>
+    <div class="welcome" aria-hidden="true">
+      <svg class="wavingflag" viewBox="0 0 92 62">
+        <defs><clipPath id="fclip"><rect x="0" y="0" width="92" height="52" rx="2"/></clipPath></defs>
+        <g clip-path="url(#fclip)">
+          <g class="col" style="animation-delay:0s">
+            <rect x="0" y="0" width="16" height="52" fill="#fff"/>
+            <g fill="#B22234"><rect x="0" y="0" width="16" height="4"/><rect x="0" y="8" width="16" height="4"/>
+            <rect x="0" y="16" width="16" height="4"/><rect x="0" y="24" width="16" height="4"/>
+            <rect x="0" y="32" width="16" height="4"/><rect x="0" y="40" width="16" height="4"/>
+            <rect x="0" y="48" width="16" height="4"/></g>
+            <rect x="0" y="0" width="16" height="28" fill="#3C3B6E"/>
+            <g fill="#fff"><circle cx="4" cy="6" r="1.5"/><circle cx="11" cy="6" r="1.5"/>
+            <circle cx="7.5" cy="14" r="1.5"/><circle cx="4" cy="22" r="1.5"/><circle cx="11" cy="22" r="1.5"/></g>
+          </g>
+          <g class="col" style="animation-delay:.2s">
+            <rect x="16" y="0" width="16" height="52" fill="#fff"/>
+            <g fill="#B22234"><rect x="16" y="0" width="16" height="4"/><rect x="16" y="8" width="16" height="4"/>
+            <rect x="16" y="16" width="16" height="4"/><rect x="16" y="24" width="16" height="4"/>
+            <rect x="16" y="32" width="16" height="4"/><rect x="16" y="40" width="16" height="4"/>
+            <rect x="16" y="48" width="16" height="4"/></g>
+            <rect x="16" y="0" width="16" height="28" fill="#3C3B6E"/>
+            <g fill="#fff"><circle cx="20" cy="6" r="1.5"/><circle cx="27" cy="6" r="1.5"/>
+            <circle cx="23.5" cy="14" r="1.5"/><circle cx="20" cy="22" r="1.5"/><circle cx="27" cy="22" r="1.5"/></g>
+          </g>
+          <g class="col" style="animation-delay:.4s">
+            <rect x="32" y="0" width="16" height="52" fill="#fff"/>
+            <g fill="#B22234"><rect x="32" y="0" width="16" height="4"/><rect x="32" y="8" width="16" height="4"/>
+            <rect x="32" y="16" width="16" height="4"/><rect x="32" y="24" width="16" height="4"/>
+            <rect x="32" y="32" width="16" height="4"/><rect x="32" y="40" width="16" height="4"/>
+            <rect x="32" y="48" width="16" height="4"/></g>
+          </g>
+          <g class="col" style="animation-delay:.6s">
+            <rect x="48" y="0" width="16" height="52" fill="#fff"/>
+            <g fill="#B22234"><rect x="48" y="0" width="16" height="4"/><rect x="48" y="8" width="16" height="4"/>
+            <rect x="48" y="16" width="16" height="4"/><rect x="48" y="24" width="16" height="4"/>
+            <rect x="48" y="32" width="16" height="4"/><rect x="48" y="40" width="16" height="4"/>
+            <rect x="48" y="48" width="16" height="4"/></g>
+          </g>
+          <g class="col" style="animation-delay:.8s">
+            <rect x="64" y="0" width="28" height="52" fill="#fff"/>
+            <g fill="#B22234"><rect x="64" y="0" width="28" height="4"/><rect x="64" y="8" width="28" height="4"/>
+            <rect x="64" y="16" width="28" height="4"/><rect x="64" y="24" width="28" height="4"/>
+            <rect x="64" y="32" width="28" height="4"/><rect x="64" y="40" width="28" height="4"/>
+            <rect x="64" y="48" width="28" height="4"/></g>
+          </g>
+        </g>
+        <rect x="-3" y="0" width="3" height="62" rx="1.5" fill="#8A6A3B"/>
+      </svg>
+
+      <svg class="unclesam" viewBox="0 0 76 104">
+        <ellipse cx="38" cy="96" rx="27" ry="7" fill="rgba(60,59,110,.10)"/>
+        <!-- coat -->
+        <path d="M14 96 Q15 70 27 63 L38 69 L49 63 Q61 70 62 96 Z" fill="#3C3B6E"/>
+        <path d="M31 65 L38 96 L45 65 L38 70 Z" fill="#F3F6FA"/>
+        <path d="M38 70 l5 5 -5 5 -5 -5 Z" fill="#B22234"/>
+        <!-- beard + face -->
+        <ellipse cx="38" cy="40" rx="13" ry="12.5" fill="#F2CDA8"/>
+        <!-- beard, given its own edge so it reads against the face -->
+        <path d="M24.5 43 q13.5 9 27 0 q.5 10 -3 17 q-4 8 -10.5 10 q-6.5 -2 -10.5 -10 q-3.5 -7 -3 -17 Z"
+              fill="#EDF2F6" stroke="#C3D0DB" stroke-width="1.3" stroke-linejoin="round"/>
+        <path d="M33 52 q5 3.5 10 0 q-2.5 4 -5 4 q-2.5 0 -5 -4 Z" fill="#C96A66"/>
+        <path d="M30.5 46.5 q7.5 4 15 0 q-3.5 3 -7.5 3 q-4 0 -7.5 -3 Z" fill="#DCE5EC"/>
+        <circle cx="33" cy="37" r="1.8" fill="#2B3A46"/><circle cx="43" cy="37" r="1.8" fill="#2B3A46"/>
+        <path d="M30.5 31.5 q7.5 -4 15 0" stroke="#C3D0DB" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+        <!-- hat -->
+        <ellipse cx="38" cy="27" rx="25" ry="5.5" fill="#2E2E52"/>
+        <path d="M21 27 V9 q0 -4 4 -4 h26 q4 0 4 4 v18 Z" fill="#F3F6FA"/>
+        <g fill="#B22234"><rect x="21" y="5" width="34" height="3.4" rx="1"/>
+          <rect x="21" y="11.5" width="34" height="3.4"/><rect x="21" y="18" width="34" height="3.4"/></g>
+        <rect x="21" y="21.6" width="34" height="5.4" fill="#3C3B6E"/>
+        <g fill="#fff"><circle cx="28" cy="24.3" r="1.3"/><circle cx="38" cy="24.3" r="1.3"/>
+          <circle cx="48" cy="24.3" r="1.3"/></g>
+      </svg>
+    </div>
+    <p class="sub" id="whosub">Кто занимается?</p>
+    <div class="stars" aria-hidden="true">
+      <span class="line"></span>
+      <svg viewBox="0 0 24 24"><path class="r" d="M12 1.6l2.9 6.5 7.1.7-5.3 4.7 1.5 7-6.2-3.6-6.2 3.6 1.5-7L2 8.8l7.1-.7z"/></svg>
+      <svg viewBox="0 0 24 24"><path class="b" d="M12 1.6l2.9 6.5 7.1.7-5.3 4.7 1.5 7-6.2-3.6-6.2 3.6 1.5-7L2 8.8l7.1-.7z"/></svg>
+      <svg viewBox="0 0 24 24"><path class="r" d="M12 1.6l2.9 6.5 7.1.7-5.3 4.7 1.5 7-6.2-3.6-6.2 3.6 1.5-7L2 8.8l7.1-.7z"/></svg>
+      <span class="line rev"></span>
+    </div>
+  </div>
+
+  <div class="plist" id="plist"></div>
+
+  <div class="addrow off" id="addrow">
+    <input type="text" id="newname" placeholder="Имя / Name" maxlength="24"
+           autocomplete="off" autocapitalize="words">
+    <button id="savename">Add</button>
+  </div>
+  <button class="ghost" id="addplayer">+ Add player</button>
+
+  <div class="foot">
+    <p id="pfoot">До 10 игроков. У каждого свой прогресс, который сохраняется на этом телефоне.</p>
+  </div>
+</section>
+
+<!-- ══ MASTERY MAP ════════════════════ -->
+<section class="screen" id="scr-map">
+  <div class="bar">
+    <button class="iconbtn" id="mapback">Players</button>
+    <div class="mid"><span class="eyebrow" id="maptitle">Your progress</span></div>
+    <button class="iconbtn" id="mapsettings">Settings</button>
+  </div>
+  <div class="mapwrap">
+    <div class="bignum">
+      <div class="n" id="mapbig">0 / 128</div>
+      <div class="c">Questions mastered</div>
+      <div class="s" id="mapsub"></div>
+    </div>
+    <div class="grid" id="mapgrid"></div>
+    <div class="legend">
+      <span><i class="u"></i> Не видели</span>
+      <span><i class="s"></i> Учим</span>
+      <span><i class="m"></i> Выучено</span>
+    </div>
+    <div class="peek" id="peek">
+      <span class="st">Нажмите на квадрат, чтобы увидеть вопрос.</span>
+    </div>
+    <div class="mapgo">
+      <button class="primary" id="mapstart">Start practice</button>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SETUP ══════════════════════════ -->
+<section class="screen" id="scr-setup">
+  <div class="bar">
+    <button class="iconbtn" id="setupback">Back</button>
+    <div class="mid"><span class="eyebrow">Settings</span></div>
+    <span style="width:66px"></span>
+  </div>
+
+  <button class="chip" id="whochip">
+    <span class="pav" id="chipav">—</span>
+    <span class="who" id="chipname">—</span>
+    <span class="sw">Switch ›</span>
+  </button>
+
+  <div class="field">
+    <span class="legend" style="display:block">Mode · Режим</span>
+    <div class="modes" id="modeseg">
+      <button id="m-practice" data-v="practice" aria-pressed="true">
+        <span class="t">Practice</span>
+        <span class="d">С подсказками и фактами</span>
+      </button>
+      <button id="m-exam" data-v="exam" aria-pressed="false">
+        <span class="t">Interview</span>
+        <span class="d">20 вопросов, без помощи</span>
+      </button>
+    </div>
+    <p class="hint" id="modehint">Спокойная тренировка: после верного ответа — интересный факт,
+    есть подсказки, вопросы уходят из оборота, когда вы их выучили.</p>
+  </div>
+
+  <button class="ready" id="readystrip">
+    <span class="big" id="readypct">—</span>
+    <span class="lab">
+      <span class="t" id="readylab">Readiness</span>
+      <span class="d" id="readysub">Пройдите первую сессию, чтобы увидеть оценку</span>
+      <span class="bars"><i class="m" id="barm" style="width:0"></i><i class="l" id="barl" style="width:0"></i></span>
+    </span>
+    <span class="arrow">›</span>
+  </button>
+
+  <div class="field">
+    <span class="legend">Captions · Субтитры</span>
+    <div class="seg four" id="capseg">
+      <button data-v="both" aria-pressed="true">English + Русский</button>
+      <button data-v="en" aria-pressed="false">English only</button>
+      <button data-v="ru" aria-pressed="false">Только русский</button>
+      <button data-v="none" aria-pressed="false">No captions</button>
+    </div>
+  </div>
+
+  <div class="field">
+    <span class="legend">Celebrations · Праздновать</span>
+    <div class="seg" id="fxseg">
+      <button data-v="full" aria-pressed="true" style="min-width:0">Full</button>
+      <button data-v="quiet" aria-pressed="false" style="min-width:0">No sound</button>
+      <button data-v="off" aria-pressed="false" style="min-width:0">Off</button>
+    </div>
+  </div>
+
+  <div class="field" id="orderfield">
+    <span class="legend">Question order · Порядок вопросов</span>
+    <div class="seg four" id="ordseg">
+      <button data-v="smart" aria-pressed="true">Smart</button>
+      <button data-v="random" aria-pressed="false">Random</button>
+      <button data-v="missed" aria-pressed="false">Missed most</button>
+      <button data-v="star" aria-pressed="false">20 starred</button>
+    </div>
+    <p class="hint" id="ordhint">Сначала то, что вы ещё не выучили.</p>
+  </div>
+
+  <div class="field" id="lenfield">
+    <span class="legend">Session length · Длина сессии</span>
+    <div class="seg" id="lenseg">
+      <button data-v="10" aria-pressed="false" style="min-width:0">10</button>
+      <button data-v="20" aria-pressed="true" style="min-width:0">20</button>
+      <button data-v="all" aria-pressed="false" style="min-width:0">All</button>
+    </div>
+  </div>
+
+  <div class="field">
+    <span class="legend">Speaking speed · Скорость речи</span>
+    <div class="seg two" id="ratseg">
+      <button data-v="0.78" aria-pressed="true">Slow</button>
+      <button data-v="1" aria-pressed="false">Normal</button>
+    </div>
+  </div>
+
+  <details class="local" id="localbox">
+    <summary>Your state &amp; officials</summary>
+    <div class="localbody">
+      <div class="row">
+        <label for="stsel">Штат / State — for questions 23, 29, 61, 62</label>
+        <select id="stsel"><option value="">Не выбран / Not set</option></select>
+      </div>
+      <div class="row" id="distrow" style="display:none">
+        <label for="distsel">Избирательный округ / District (Q29)</label>
+        <select id="distsel"><option value="">Не выбран / Not set</option></select>
+        <p class="hint" style="margin-top:6px">Не знаете свой округ? Введите индекс на
+        house.gov/representatives/find-your-representative.</p>
+      </div>
+      <div class="row"><label for="f-senator">Your U.S. senators (Q23)</label>
+        <input type="text" id="f-senator" placeholder="Выберите штат выше"></div>
+      <div class="row"><label for="f-rep">Your U.S. representative (Q29)</label>
+        <input type="text" id="f-rep" placeholder="Выберите округ выше"></div>
+      <div class="row"><label for="f-governor">Your governor (Q61)</label>
+        <input type="text" id="f-governor" placeholder="Выберите штат выше"></div>
+      <div class="row"><label for="f-capital">Your state capital (Q62)</label>
+        <input type="text" id="f-capital" placeholder="Заполнится автоматически"></div>
+      <div class="row"><label for="f-president">President now (Q38)</label>
+        <input type="text" id="f-president"></div>
+      <div class="row"><label for="f-vp">Vice President now (Q39)</label>
+        <input type="text" id="f-vp"></div>
+      <div class="row"><label for="f-speaker">Speaker of the House now (Q30)</label>
+        <input type="text" id="f-speaker"></div>
+      <div class="row"><label for="f-chief">Chief Justice now (Q57)</label>
+        <input type="text" id="f-chief"></div>
+      <p class="hint">Эти ответы меняются. Проверьте их на uscis.gov/citizenship/testupdates.</p>
+    </div>
+  </details>
+
+  <details class="local" id="aibox">
+    <summary>Smart grading &middot; AI-оценка</summary>
+    <div class="localbody">
+      <p class="hint" style="margin-top:0">Без ключа приложение сравнивает слова. С ключом ответ
+      проверяет Claude — он понимает смысл.</p>
+      <div class="row">
+        <label for="aikey">Anthropic API key</label>
+        <input type="password" id="aikey" placeholder="sk-ant-..." autocomplete="off"
+               autocapitalize="off" autocorrect="off" spellcheck="false">
+      </div>
+      <div class="row">
+        <label>When to ask &middot; Когда спрашивать</label>
+        <div class="seg two" id="aiseg">
+          <button data-v="miss" aria-pressed="false">Only if marked wrong</button>
+          <button data-v="all" aria-pressed="true">Every answer</button>
+        </div>
+      </div>
+      <p class="warn"><strong>Ключ хранится только на этом телефоне.</strong> Он никогда не
+      попадает в файл на GitHub.</p>
+    </div>
+  </details>
+
+  <button class="iconbtn" id="testsound" style="width:100%;padding:14px;margin:0 0 16px;
+    font-size:13px">&#9654;&nbsp; Test sound &middot; Проверить звук</button>
+  <p class="hint" id="soundhint" style="margin:-10px 0 16px;text-align:center">Телефон должен быть
+  не на беззвучном режиме.</p>
+
+  <button class="primary" id="begin">Begin</button>
+
+  <div class="foot">
+    <p class="diag" id="micstat"></p>
+    <p class="diag" id="gradestat"></p>
+    <p id="progline"></p>
+    <p><a href="#" id="resetbtn">Сбросить статистику этого игрока</a></p>
+  </div>
+</section>
+
+<!-- ══ EXAM ═══════════════════════════ -->
+<section class="screen" id="scr-exam">
+  <div class="bar">
+    <button class="iconbtn" id="quit">End</button>
+    <div class="mid">
+      <span class="num" id="counter">1 / 20</span>
+      <span class="stat"><span id="state">Ready</span><span id="staten"></span></span>
+    </div>
+    <button class="iconbtn" id="repeat">&#8635;</button>
+    <button class="mic" id="seal" aria-label="Speak your answer">
+      <span class="ring"></span><span class="ring"></span>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a1 1 0 0 1 2 0 7 7 0 0 1-6 6.93V21a1 1 0 0 1-2 0v-3.07A7 7 0 0 1 5 11a1 1 0 0 1 2 0 5 5 0 0 0 10 0z"/></svg>
+    </button>
+  </div>
+
+  <div class="card" id="qcard">
+    <span class="corner a" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 1.6l2.9 6.5 7.1.7-5.3 4.7 1.5 7-6.2-3.6-6.2 3.6 1.5-7L2 8.8l7.1-.7z"/></svg></span>
+    <span class="corner b" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 1.6l2.9 6.5 7.1.7-5.3 4.7 1.5 7-6.2-3.6-6.2 3.6 1.5-7L2 8.8l7.1-.7z"/></svg></span>
+    <div class="qhead">
+      <span class="eyebrow" id="qcat">American Government</span>
+      <span class="num" id="qnum">Q 001</span>
+    </div>
+    <div class="notice off" id="notice"></div>
+    <p class="qen" id="qen"></p>
+    <p class="qru" id="qru"></p>
+    <p class="silent" id="silent" style="display:none">Listen · Слушайте</p>
+    <div class="spacer"></div>
+    <div class="heard" id="heard">
+      <span class="lbl">You said</span>
+      <div class="txt" id="heardtxt"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SUMMARY ════════════════════════ -->
+<section class="screen" id="scr-done">
+  <div class="bar">
+    <button class="iconbtn" id="again">Again</button>
+    <div class="mid"><span class="eyebrow" id="donetitle">Session</span></div>
+    <button class="iconbtn" id="home">Progress</button>
+  </div>
+  <div class="score">
+    <div class="big" id="bigscore">0/0</div>
+    <div class="of" id="pct">0% correct</div>
+    <div id="ribbonwrap"></div>
+    <div class="verd" id="passline"></div>
+  </div>
+  <div class="list" id="missedlist"></div>
+  <div style="padding:18px 0 28px">
+    <button class="primary" id="drill">Drill the missed ones</button>
+    <button class="secondary" id="switchplayer">Switch player &middot; Сменить игрока</button>
+  </div>
+</section>
+
+</div>
+
+<!-- verdict floats above everything so the page never shifts -->
+<div class="verdict off" id="verdict">
+  <div class="grab"></div>
+  <span class="stamp" id="stamp">Correct</span>
+  <div class="acc" id="acc"></div>
+  <p class="cheer off" id="cheer"></p>
+  <div class="ctx off" id="ctxline">
+    <span class="en" id="ctxen"></span>
+    <span class="ru" id="ctxru"></span>
+  </div>
+  <p class="aiwhy off" id="aiwhy"></p>
+  <div class="autobar off" id="autobar"><i></i></div>
+</div>
+
+<div class="typebox" id="typebox">
+  <input type="text" id="typein" placeholder="Type your answer" autocomplete="off" autocorrect="off">
+  <button id="typego">Check</button>
+</div>
+
+<div class="acts" id="acts" style="display:none">
+  <button id="hintbtn">Hint</button>
+  <button id="dunno">Show answer</button>
+  <button id="markbtn" class="hide">Mark correct</button>
+  <button id="next" class="go">Skip</button>
+</div>
+
+<canvas id="fx" aria-hidden="true"></canvas>
+
+<div class="modal off" id="modal" role="dialog" aria-modal="true">
+  <div class="sheet">
+    <h3 id="modaltitle">Delete player</h3>
+    <p id="modalbody"></p>
+    <p class="sub" id="modalsub"></p>
+    <div class="mbtns">
+      <button class="no" id="modalno">Cancel</button>
+      <button class="yes" id="modalyes">Delete</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const QUESTIONS = [
+{n:1,s:0,c:"Principles of American Government",
+q:"What is the form of government of the United States?",
+qr:"Какая форма правления в Соединённых Штатах?",
+a:["Republic","Constitution-based federal republic","Representative democracy"],
+ar:["Республика","Федеративная республика, основанная на Конституции","Представительная демократия"]},
+
+{n:2,s:1,c:"Principles of American Government",
+q:"What is the supreme law of the land?",
+qr:"Каков высший закон страны?",
+a:["(U.S.) Constitution"],
+ar:["Конституция (США)"]},
+
+{n:3,s:0,c:"Principles of American Government",
+q:"Name one thing the U.S. Constitution does.",
+qr:"Назовите одну из функций Конституции США.",
+a:["Forms the government","Defines powers of government","Defines the parts of government","Protects the rights of the people"],
+ar:["Формирует правительство","Определяет полномочия правительства","Определяет части правительства","Защищает права народа"]},
+
+{n:4,s:0,c:"Principles of American Government",
+q:"The U.S. Constitution starts with the words “We the People.” What does “We the People” mean?",
+qr:"Конституция США начинается со слов «Мы, народ». Что означает «Мы, народ»?",
+a:["Self-government","Popular sovereignty","Consent of the governed","People should govern themselves","(Example of) social contract"],
+ar:["Самоуправление","Народный суверенитет","Согласие управляемых","Народ должен управлять собой сам","(Пример) общественного договора"]},
+
+{n:5,s:0,c:"Principles of American Government",
+q:"How are changes made to the U.S. Constitution?",
+qr:"Как вносятся изменения в Конституцию США?",
+a:["Amendments","The amendment process"],
+ar:["Поправки","Процесс внесения поправок"]},
+
+{n:6,s:0,c:"Principles of American Government",
+q:"What does the Bill of Rights protect?",
+qr:"Что защищает Билль о правах?",
+a:["(The basic) rights of Americans","(The basic) rights of people living in the United States"],
+ar:["(Основные) права американцев","(Основные) права людей, живущих в Соединённых Штатах"]},
+
+{n:7,s:1,c:"Principles of American Government",
+q:"How many amendments does the U.S. Constitution have?",
+qr:"Сколько поправок в Конституции США?",
+a:["Twenty-seven (27)"],
+ar:["Двадцать семь (27)"]},
+
+{n:8,s:0,c:"Principles of American Government",
+q:"Why is the Declaration of Independence important?",
+qr:"Почему важна Декларация независимости?",
+a:["It says America is free from British control.","It says all people are created equal.","It identifies inherent rights.","It identifies individual freedoms."],
+ar:["В ней сказано, что Америка свободна от британского контроля.","В ней сказано, что все люди созданы равными.","В ней определены неотъемлемые права.","В ней определены индивидуальные свободы."]},
+
+{n:9,s:0,c:"Principles of American Government",
+q:"What founding document said the American colonies were free from Britain?",
+qr:"Какой основополагающий документ провозгласил, что американские колонии свободны от Британии?",
+a:["Declaration of Independence"],
+ar:["Декларация независимости"]},
+
+{n:10,s:0,c:"Principles of American Government",need:2,
+q:"Name two important ideas from the Declaration of Independence and the U.S. Constitution.",
+qr:"Назовите две важные идеи из Декларации независимости и Конституции США.",
+a:["Equality","Liberty","Social contract","Natural rights","Limited government","Self-government"],
+ar:["Равенство","Свобода","Общественный договор","Естественные права","Ограниченное правительство","Самоуправление"]},
+
+{n:11,s:0,c:"Principles of American Government",
+q:"The words “Life, Liberty, and the pursuit of Happiness” are in what founding document?",
+qr:"В каком основополагающем документе содержатся слова «жизнь, свобода и стремление к счастью»?",
+a:["Declaration of Independence"],
+ar:["Декларация независимости"]},
+
+{n:12,s:1,c:"Principles of American Government",
+q:"What is the economic system of the United States?",
+qr:"Какова экономическая система Соединённых Штатов?",
+a:["Capitalism","Free market economy"],
+ar:["Капитализм","Экономика свободного рынка"]},
+
+{n:13,s:0,c:"Principles of American Government",
+q:"What is the rule of law?",
+qr:"Что такое верховенство закона?",
+a:["Everyone must follow the law.","Leaders must obey the law.","Government must obey the law.","No one is above the law."],
+ar:["Все должны соблюдать закон.","Руководители должны подчиняться закону.","Правительство должно подчиняться закону.","Никто не выше закона."]},
+
+{n:14,s:0,c:"Principles of American Government",
+q:"Many documents influenced the U.S. Constitution. Name one.",
+qr:"На Конституцию США повлияли многие документы. Назовите один.",
+a:["Declaration of Independence","Articles of Confederation","Federalist Papers","Anti-Federalist Papers","Virginia Declaration of Rights","Fundamental Orders of Connecticut","Mayflower Compact","Iroquois Great Law of Peace"],
+ar:["Декларация независимости","Статьи Конфедерации","«Записки федералиста»","Статьи антифедералистов","Вирджинская декларация прав","Основные законы Коннектикута","Мэйфлауэрское соглашение","Великий закон мира ирокезов"]},
+
+{n:15,s:0,c:"Principles of American Government",
+q:"There are three branches of government. Why?",
+qr:"Существует три ветви власти. Почему?",
+a:["So one part does not become too powerful","Checks and balances","Separation of powers"],
+ar:["Чтобы одна часть не стала слишком могущественной","Система сдержек и противовесов","Разделение властей"]},
+
+{n:16,s:0,c:"System of Government",
+q:"Name the three branches of government.",
+qr:"Назовите три ветви власти.",
+a:["Legislative, executive, and judicial","Congress, president, and the courts"],
+ar:["Законодательная, исполнительная и судебная","Конгресс, президент и суды"]},
+
+{n:17,s:0,c:"System of Government",
+q:"The President of the United States is in charge of which branch of government?",
+qr:"Какой ветвью власти руководит Президент США?",
+a:["Executive branch"],
+ar:["Исполнительной ветвью"]},
+
+{n:18,s:0,c:"System of Government",
+q:"What part of the federal government writes laws?",
+qr:"Какая часть федерального правительства пишет законы?",
+a:["(U.S.) Congress","(U.S. or national) legislature","Legislative branch"],
+ar:["Конгресс (США)","Законодательный орган (США)","Законодательная ветвь"]},
+
+{n:19,s:0,c:"System of Government",
+q:"What are the two parts of the U.S. Congress?",
+qr:"Из каких двух палат состоит Конгресс США?",
+a:["Senate and House (of Representatives)"],
+ar:["Сенат и Палата (представителей)"]},
+
+{n:20,s:1,c:"System of Government",
+q:"Name one power of the U.S. Congress.",
+qr:"Назовите одно полномочие Конгресса США.",
+a:["Writes laws","Declares war","Makes the federal budget"],
+ar:["Пишет законы","Объявляет войну","Составляет федеральный бюджет"]},
+
+{n:21,s:0,c:"System of Government",
+q:"How many U.S. senators are there?",
+qr:"Сколько всего сенаторов США?",
+a:["One hundred (100)"],
+ar:["Сто (100)"]},
+
+{n:22,s:0,c:"System of Government",
+q:"How long is a term for a U.S. senator?",
+qr:"Каков срок полномочий сенатора США?",
+a:["Six (6) years"],
+ar:["Шесть (6) лет"]},
+
+{n:23,s:0,c:"System of Government",vary:"senator",
+q:"Who is one of your state’s U.S. senators now?",
+qr:"Кто сейчас является одним из сенаторов США от вашего штата?",
+a:["Answers will vary."],
+ar:["Ответы зависят от штата."]},
+
+{n:24,s:0,c:"System of Government",
+q:"How many voting members are in the House of Representatives?",
+qr:"Сколько членов с правом голоса в Палате представителей?",
+a:["Four hundred thirty-five (435)"],
+ar:["Четыреста тридцать пять (435)"]},
+
+{n:25,s:0,c:"System of Government",
+q:"How long is a term for a member of the House of Representatives?",
+qr:"Каков срок полномочий члена Палаты представителей?",
+a:["Two (2) years"],
+ar:["Два (2) года"]},
+
+{n:26,s:0,c:"System of Government",
+q:"Why do U.S. representatives serve shorter terms than U.S. senators?",
+qr:"Почему представители США служат более короткий срок, чем сенаторы США?",
+a:["To more closely follow public opinion"],
+ar:["Чтобы более точно следовать общественному мнению"]},
+
+{n:27,s:0,c:"System of Government",
+q:"How many senators does each state have?",
+qr:"Сколько сенаторов у каждого штата?",
+a:["Two (2)"],
+ar:["Два (2)"]},
+
+{n:28,s:0,c:"System of Government",
+q:"Why does each state have two senators?",
+qr:"Почему у каждого штата два сенатора?",
+a:["Equal representation (for small states)","The Great Compromise (Connecticut Compromise)"],
+ar:["Равное представительство (для малых штатов)","Великий компромисс (Коннектикутский компромисс)"]},
+
+{n:29,s:0,c:"System of Government",vary:"rep",
+q:"Name your U.S. representative.",
+qr:"Назовите вашего представителя в Конгрессе США.",
+a:["Answers will vary."],
+ar:["Ответы зависят от округа."]},
+
+{n:30,s:1,c:"System of Government",cur:"speaker",
+q:"What is the name of the Speaker of the House of Representatives now?",
+qr:"Как зовут нынешнего спикера Палаты представителей?",
+a:["Check uscis.gov/citizenship/testupdates"],
+ar:["Проверьте на uscis.gov/citizenship/testupdates"]},
+
+{n:31,s:0,c:"System of Government",
+q:"Who does a U.S. senator represent?",
+qr:"Кого представляет сенатор США?",
+a:["Citizens of their state"],
+ar:["Граждан своего штата"]},
+
+{n:32,s:0,c:"System of Government",
+q:"Who elects U.S. senators?",
+qr:"Кто избирает сенаторов США?",
+a:["Citizens from their state"],
+ar:["Граждане их штата"]},
+
+{n:33,s:0,c:"System of Government",
+q:"Who does a member of the House of Representatives represent?",
+qr:"Кого представляет член Палаты представителей?",
+a:["Citizens in their (congressional) district","Citizens in their district"],
+ar:["Граждан своего (избирательного) округа","Граждан своего округа"]},
+
+{n:34,s:0,c:"System of Government",
+q:"Who elects members of the House of Representatives?",
+qr:"Кто избирает членов Палаты представителей?",
+a:["Citizens from their (congressional) district"],
+ar:["Граждане их (избирательного) округа"]},
+
+{n:35,s:0,c:"System of Government",
+q:"Some states have more representatives than other states. Why?",
+qr:"У некоторых штатов больше представителей, чем у других. Почему?",
+a:["(Because of) the state’s population","(Because) they have more people","(Because) some states have more people"],
+ar:["(Из-за) численности населения штата","(Потому что) там больше людей","(Потому что) в некоторых штатах больше людей"]},
+
+{n:36,s:1,c:"System of Government",
+q:"The President of the United States is elected for how many years?",
+qr:"На сколько лет избирается Президент США?",
+a:["Four (4) years"],
+ar:["Четыре (4) года"]},
+
+{n:37,s:0,c:"System of Government",
+q:"The President of the United States can serve only two terms. Why?",
+qr:"Президент США может занимать должность только два срока. Почему?",
+a:["(Because of) the 22nd Amendment","To keep the president from becoming too powerful"],
+ar:["(Из-за) 22-й поправки","Чтобы президент не стал слишком могущественным"]},
+
+{n:38,s:1,c:"System of Government",cur:"president",
+q:"What is the name of the President of the United States now?",
+qr:"Как зовут нынешнего Президента Соединённых Штатов?",
+a:["Check uscis.gov/citizenship/testupdates"],
+ar:["Проверьте на uscis.gov/citizenship/testupdates"]},
+
+{n:39,s:1,c:"System of Government",cur:"vp",
+q:"What is the name of the Vice President of the United States now?",
+qr:"Как зовут нынешнего Вице-президента Соединённых Штатов?",
+a:["Check uscis.gov/citizenship/testupdates"],
+ar:["Проверьте на uscis.gov/citizenship/testupdates"]},
+
+{n:40,s:0,c:"System of Government",
+q:"If the president can no longer serve, who becomes president?",
+qr:"Если президент больше не может исполнять обязанности, кто становится президентом?",
+a:["The Vice President (of the United States)"],
+ar:["Вице-президент (Соединённых Штатов)"]},
+{n:41,s:0,c:"System of Government",
+q:"Name one power of the president.",
+qr:"Назовите одно полномочие президента.",
+a:["Signs bills into law","Vetoes bills","Enforces laws","Commander in Chief (of the military)","Chief diplomat"],
+ar:["Подписывает законопроекты, превращая их в законы","Накладывает вето на законопроекты","Обеспечивает исполнение законов","Главнокомандующий (вооружёнными силами)","Главный дипломат"]},
+
+{n:42,s:0,c:"System of Government",
+q:"Who is Commander in Chief of the U.S. military?",
+qr:"Кто является главнокомандующим вооружёнными силами США?",
+a:["The President (of the United States)"],
+ar:["Президент (Соединённых Штатов)"]},
+
+{n:43,s:0,c:"System of Government",
+q:"Who signs bills to become laws?",
+qr:"Кто подписывает законопроекты, чтобы они стали законами?",
+a:["The President (of the United States)"],
+ar:["Президент (Соединённых Штатов)"]},
+
+{n:44,s:1,c:"System of Government",
+q:"Who vetoes bills?",
+qr:"Кто накладывает вето на законопроекты?",
+a:["The President (of the United States)"],
+ar:["Президент (Соединённых Штатов)"]},
+
+{n:45,s:0,c:"System of Government",
+q:"Who appoints federal judges?",
+qr:"Кто назначает федеральных судей?",
+a:["The President (of the United States)"],
+ar:["Президент (Соединённых Штатов)"]},
+
+{n:46,s:0,c:"System of Government",
+q:"The executive branch has many parts. Name one.",
+qr:"Исполнительная ветвь власти состоит из многих частей. Назовите одну.",
+a:["President (of the United States)","Cabinet","Federal departments and agencies"],
+ar:["Президент (Соединённых Штатов)","Кабинет министров","Федеральные министерства и ведомства"]},
+
+{n:47,s:0,c:"System of Government",
+q:"What does the President’s Cabinet do?",
+qr:"Чем занимается Кабинет президента?",
+a:["Advises the President (of the United States)"],
+ar:["Консультирует Президента (Соединённых Штатов)"]},
+
+{n:48,s:0,c:"System of Government",need:2,
+q:"What are two Cabinet-level positions?",
+qr:"Назовите две должности уровня Кабинета министров.",
+a:["Attorney General","Secretary of Agriculture","Secretary of Commerce","Secretary of Defense","Secretary of Education","Secretary of Energy","Secretary of Health and Human Services","Secretary of Homeland Security","Secretary of Housing and Urban Development","Secretary of the Interior","Secretary of Labor","Secretary of State","Secretary of Transportation","Secretary of the Treasury","Secretary of Veterans Affairs","Vice President (of the United States)"],
+ar:["Генеральный прокурор","Министр сельского хозяйства","Министр торговли","Министр обороны","Министр образования","Министр энергетики","Министр здравоохранения и социальных служб","Министр внутренней безопасности","Министр жилищного строительства и городского развития","Министр внутренних дел","Министр труда","Государственный секретарь","Министр транспорта","Министр финансов","Министр по делам ветеранов","Вице-президент (Соединённых Штатов)"]},
+
+{n:49,s:0,c:"System of Government",
+q:"Why is the Electoral College important?",
+qr:"Почему важна Коллегия выборщиков?",
+a:["It decides who is elected president.","It provides a compromise between the popular election of the president and congressional selection."],
+ar:["Она решает, кто избран президентом.","Она представляет собой компромисс между всенародным избранием президента и его выбором Конгрессом."]},
+
+{n:50,s:0,c:"System of Government",
+q:"What is one part of the judicial branch?",
+qr:"Назовите одну часть судебной ветви власти.",
+a:["Supreme Court","Federal Courts"],
+ar:["Верховный суд","Федеральные суды"]},
+
+{n:51,s:0,c:"System of Government",
+q:"What does the judicial branch do?",
+qr:"Чем занимается судебная ветвь власти?",
+a:["Reviews laws","Explains laws","Resolves disputes (disagreements) about the law","Decides if a law goes against the (U.S.) Constitution"],
+ar:["Пересматривает законы","Разъясняет законы","Разрешает споры (разногласия) по поводу закона","Решает, противоречит ли закон Конституции (США)"]},
+
+{n:52,s:1,c:"System of Government",
+q:"What is the highest court in the United States?",
+qr:"Какой суд является высшим в Соединённых Штатах?",
+a:["Supreme Court"],
+ar:["Верховный суд"]},
+
+{n:53,s:0,c:"System of Government",
+q:"How many seats are on the Supreme Court?",
+qr:"Сколько мест в Верховном суде?",
+a:["Nine (9)"],
+ar:["Девять (9)"]},
+
+{n:54,s:0,c:"System of Government",
+q:"How many Supreme Court justices are usually needed to decide a case?",
+qr:"Сколько судей Верховного суда обычно необходимо для решения дела?",
+a:["Five (5)"],
+ar:["Пять (5)"]},
+
+{n:55,s:0,c:"System of Government",
+q:"How long do Supreme Court justices serve?",
+qr:"Как долго служат судьи Верховного суда?",
+a:["(For) life","Lifetime appointment","(Until) retirement"],
+ar:["Пожизненно","Пожизненное назначение","До выхода на пенсию"]},
+
+{n:56,s:0,c:"System of Government",
+q:"Supreme Court justices serve for life. Why?",
+qr:"Судьи Верховного суда служат пожизненно. Почему?",
+a:["To be independent (of politics)","To limit outside (political) influence"],
+ar:["Чтобы быть независимыми (от политики)","Чтобы ограничить внешнее (политическое) влияние"]},
+
+{n:57,s:0,c:"System of Government",cur:"chief",
+q:"Who is the Chief Justice of the United States now?",
+qr:"Кто сейчас является Председателем Верховного суда США?",
+a:["Check uscis.gov/citizenship/testupdates"],
+ar:["Проверьте на uscis.gov/citizenship/testupdates"]},
+
+{n:58,s:0,c:"System of Government",
+q:"Name one power that is only for the federal government.",
+qr:"Назовите одно полномочие, принадлежащее только федеральному правительству.",
+a:["Print paper money","Mint coins","Declare war","Create an army","Make treaties","Set foreign policy"],
+ar:["Печатать бумажные деньги","Чеканить монеты","Объявлять войну","Создавать армию","Заключать договоры","Определять внешнюю политику"]},
+
+{n:59,s:0,c:"System of Government",
+q:"Name one power that is only for the states.",
+qr:"Назовите одно полномочие, принадлежащее только штатам.",
+a:["Provide schooling and education","Provide protection (police)","Provide safety (fire departments)","Give a driver’s license","Approve zoning and land use"],
+ar:["Обеспечивать школьное обучение и образование","Обеспечивать охрану порядка (полиция)","Обеспечивать безопасность (пожарная охрана)","Выдавать водительские права","Утверждать зонирование и землепользование"]},
+
+{n:60,s:0,c:"System of Government",
+q:"What is the purpose of the 10th Amendment?",
+qr:"Какова цель 10-й поправки?",
+a:["(It states that the) powers not given to the federal government belong to the states or to the people."],
+ar:["(Она гласит, что) полномочия, не переданные федеральному правительству, принадлежат штатам или народу."]},
+
+{n:61,s:1,c:"System of Government",vary:"governor",
+q:"Who is the governor of your state now?",
+qr:"Кто сейчас губернатор вашего штата?",
+a:["Answers will vary."],
+ar:["Ответы зависят от штата."]},
+
+{n:62,s:0,c:"System of Government",vary:"capital",
+q:"What is the capital of your state?",
+qr:"Какова столица вашего штата?",
+a:["Answers will vary."],
+ar:["Ответы зависят от штата."]},
+
+{n:63,s:0,c:"Rights and Responsibilities",
+q:"There are four amendments to the U.S. Constitution about who can vote. Describe one of them.",
+qr:"В Конституции США есть четыре поправки о том, кто может голосовать. Опишите одну из них.",
+a:["Citizens eighteen (18) and older (can vote).","You don’t have to pay (a poll tax) to vote.","Any citizen can vote. (Women and men can vote.)","A male citizen of any race (can vote)."],
+ar:["Граждане от восемнадцати (18) лет и старше (могут голосовать).","Не нужно платить (избирательный налог), чтобы голосовать.","Голосовать может любой гражданин. (Женщины и мужчины могут голосовать.)","Гражданин мужского пола любой расы (может голосовать)."]},
+
+{n:64,s:0,c:"Rights and Responsibilities",
+q:"Who can vote in federal elections, run for federal office, and serve on a jury in the United States?",
+qr:"Кто может голосовать на федеральных выборах, баллотироваться на федеральные должности и быть присяжным в США?",
+a:["Citizens","Citizens of the United States","U.S. citizens"],
+ar:["Граждане","Граждане Соединённых Штатов","Граждане США"]},
+
+{n:65,s:0,c:"Rights and Responsibilities",need:3,
+q:"What are three rights of everyone living in the United States?",
+qr:"Назовите три права каждого, кто живёт в Соединённых Штатах.",
+a:["Freedom of expression","Freedom of speech","Freedom of assembly","Freedom to petition the government","Freedom of religion","The right to bear arms"],
+ar:["Свобода самовыражения","Свобода слова","Свобода собраний","Свобода обращаться к правительству с петициями","Свобода вероисповедания","Право носить оружие"]},
+
+{n:66,s:1,c:"Rights and Responsibilities",
+q:"What do we show loyalty to when we say the Pledge of Allegiance?",
+qr:"Чему мы выражаем верность, произнося Клятву верности?",
+a:["The United States","The flag"],
+ar:["Соединённым Штатам","Флагу"]},
+
+{n:67,s:0,c:"Rights and Responsibilities",need:2,
+q:"Name two promises that new citizens make in the Oath of Allegiance.",
+qr:"Назовите два обещания, которые новые граждане дают в Присяге на верность.",
+a:["Give up loyalty to other countries","Defend the (U.S.) Constitution","Obey the laws of the United States","Serve in the military (if needed)","Serve (help, do important work for) the nation (if needed)","Be loyal to the United States"],
+ar:["Отказаться от верности другим странам","Защищать Конституцию (США)","Соблюдать законы Соединённых Штатов","Служить в вооружённых силах (если потребуется)","Служить нации (помогать, выполнять важную работу), если потребуется","Быть верным Соединённым Штатам"]},
+
+{n:68,s:0,c:"Rights and Responsibilities",
+q:"How can people become United States citizens?",
+qr:"Как люди могут стать гражданами Соединённых Штатов?",
+a:["Naturalize","Derive citizenship","Be born in the United States"],
+ar:["Пройти натурализацию","Получить гражданство через родителей","Родиться в Соединённых Штатах"]},
+
+{n:69,s:0,c:"Rights and Responsibilities",need:2,
+q:"What are two examples of civic participation in the United States?",
+qr:"Назовите два примера гражданского участия в Соединённых Штатах.",
+a:["Vote","Run for office","Join a political party","Help with a campaign","Join a civic group","Join a community group","Give an elected official your opinion (on an issue)","Contact elected officials","Support or oppose an issue or policy","Write to a newspaper"],
+ar:["Голосовать","Баллотироваться на выборную должность","Вступить в политическую партию","Помогать в избирательной кампании","Вступить в гражданскую организацию","Вступить в общественную организацию","Высказать выборному должностному лицу своё мнение (по вопросу)","Связаться с выборными должностными лицами","Поддерживать или выступать против вопроса или политики","Написать в газету"]},
+
+{n:70,s:0,c:"Rights and Responsibilities",
+q:"What is one way Americans can serve their country?",
+qr:"Назовите один способ, которым американцы могут служить своей стране.",
+a:["Vote","Pay taxes","Obey the law","Serve in the military","Run for office","Work for local, state, or federal government"],
+ar:["Голосовать","Платить налоги","Соблюдать закон","Служить в вооружённых силах","Баллотироваться на выборную должность","Работать в местном, штатном или федеральном правительстве"]},
+
+{n:71,s:0,c:"Rights and Responsibilities",
+q:"Why is it important to pay federal taxes?",
+qr:"Почему важно платить федеральные налоги?",
+a:["Required by law","All people pay to fund the federal government","Required by the (U.S.) Constitution (16th Amendment)","Civic duty"],
+ar:["Этого требует закон","Все платят, чтобы финансировать федеральное правительство","Этого требует Конституция (США) (16-я поправка)","Гражданский долг"]},
+
+{n:72,s:0,c:"Rights and Responsibilities",
+q:"It is important for all men age 18 through 25 to register for the Selective Service. Name one reason why.",
+qr:"Всем мужчинам в возрасте от 18 до 25 лет важно зарегистрироваться в Службе воинского учёта. Назовите одну причину.",
+a:["Required by law","Civic duty","Makes the draft fair, if needed"],
+ar:["Этого требует закон","Гражданский долг","Делает призыв справедливым, если он потребуется"]},
+
+{n:73,s:0,c:"Colonial Period and Independence",
+q:"The colonists came to America for many reasons. Name one.",
+qr:"Колонисты приезжали в Америку по многим причинам. Назовите одну.",
+a:["Freedom","Political liberty","Religious freedom","Economic opportunity","Escape persecution"],
+ar:["Свобода","Политическая свобода","Свобода вероисповедания","Экономические возможности","Бегство от преследований"]},
+
+{n:74,s:1,c:"Colonial Period and Independence",
+q:"Who lived in America before the Europeans arrived?",
+qr:"Кто жил в Америке до прихода европейцев?",
+a:["American Indians","Native Americans"],
+ar:["Американские индейцы","Коренные американцы"]},
+
+{n:75,s:0,c:"Colonial Period and Independence",
+q:"What group of people was taken and sold as slaves?",
+qr:"Какую группу людей увозили и продавали в рабство?",
+a:["Africans","People from Africa"],
+ar:["Африканцы","Люди из Африки"]},
+
+{n:76,s:0,c:"Colonial Period and Independence",
+q:"What war did the Americans fight to win independence from Britain?",
+qr:"В какой войне американцы сражались за независимость от Британии?",
+a:["American Revolution","The (American) Revolutionary War","War for (American) Independence"],
+ar:["Американская революция","Война за независимость США","Война за (американскую) независимость"]},
+
+{n:77,s:0,c:"Colonial Period and Independence",
+q:"Name one reason why the Americans declared independence from Britain.",
+qr:"Назовите одну причину, по которой американцы провозгласили независимость от Британии.",
+a:["High taxes","Taxation without representation","British soldiers stayed in Americans’ houses (boarding, quartering)","They did not have self-government","Boston Massacre","Boston Tea Party (Tea Act)","Stamp Act","Sugar Act","Townshend Acts","Intolerable (Coercive) Acts"],
+ar:["Высокие налоги","Налогообложение без представительства","Британские солдаты жили в домах американцев (постой)","У них не было самоуправления","Бостонская бойня","Бостонское чаепитие (Чайный закон)","Закон о гербовом сборе","Сахарный закон","Законы Тауншенда","Невыносимые (Принудительные) законы"]},
+
+{n:78,s:1,c:"Colonial Period and Independence",
+q:"Who wrote the Declaration of Independence?",
+qr:"Кто написал Декларацию независимости?",
+a:["(Thomas) Jefferson"],
+ar:["(Томас) Джефферсон"]},
+
+{n:79,s:0,c:"Colonial Period and Independence",
+q:"When was the Declaration of Independence adopted?",
+qr:"Когда была принята Декларация независимости?",
+a:["July 4, 1776"],
+ar:["4 июля 1776 года"]},
+
+{n:80,s:0,c:"Colonial Period and Independence",
+q:"The American Revolution had many important events. Name one.",
+qr:"В Американской революции было много важных событий. Назовите одно.",
+a:["(Battle of) Bunker Hill","Declaration of Independence","Washington Crossing the Delaware (Battle of Trenton)","(Battle of) Saratoga","Valley Forge (Encampment)","(Battle of) Yorktown (British surrender at Yorktown)"],
+ar:["(Битва при) Банкер-Хилле","Декларация независимости","Переправа Вашингтона через Делавэр (битва при Трентоне)","(Битва при) Саратоге","(Лагерь) Валли-Фордж","(Битва при) Йорктауне (капитуляция британцев при Йорктауне)"]},
+{n:81,s:0,c:"Colonial Period and Independence",need:5,
+q:"There were 13 original states. Name five.",
+qr:"Первоначально было 13 штатов. Назовите пять.",
+a:["New Hampshire","Massachusetts","Rhode Island","Connecticut","New York","New Jersey","Pennsylvania","Delaware","Maryland","Virginia","North Carolina","South Carolina","Georgia"],
+ar:["Нью-Гэмпшир","Массачусетс","Род-Айленд","Коннектикут","Нью-Йорк","Нью-Джерси","Пенсильвания","Делавэр","Мэриленд","Вирджиния","Северная Каролина","Южная Каролина","Джорджия"]},
+
+{n:82,s:0,c:"Colonial Period and Independence",
+q:"What founding document was written in 1787?",
+qr:"Какой основополагающий документ был написан в 1787 году?",
+a:["(U.S.) Constitution"],
+ar:["Конституция (США)"]},
+
+{n:83,s:0,c:"Colonial Period and Independence",
+q:"The Federalist Papers supported the passage of the U.S. Constitution. Name one of the writers.",
+qr:"«Записки федералиста» поддерживали принятие Конституции США. Назовите одного из авторов.",
+a:["(James) Madison","(Alexander) Hamilton","(John) Jay","Publius"],
+ar:["(Джеймс) Мэдисон","(Александр) Гамильтон","(Джон) Джей","Публий"]},
+
+{n:84,s:0,c:"Colonial Period and Independence",
+q:"Why were the Federalist Papers important?",
+qr:"Почему «Записки федералиста» были важны?",
+a:["They helped people understand the (U.S.) Constitution.","They supported passing the (U.S.) Constitution."],
+ar:["Они помогли людям понять Конституцию (США).","Они поддерживали принятие Конституции (США)."]},
+
+{n:85,s:0,c:"Colonial Period and Independence",
+q:"Benjamin Franklin is famous for many things. Name one.",
+qr:"Бенджамин Франклин известен многим. Назовите одно.",
+a:["Founded the first free public libraries","First Postmaster General of the United States","Helped write the Declaration of Independence","Inventor","U.S. diplomat"],
+ar:["Основал первые бесплатные публичные библиотеки","Первый Генеральный почтмейстер Соединённых Штатов","Помогал писать Декларацию независимости","Изобретатель","Дипломат США"]},
+
+{n:86,s:1,c:"Colonial Period and Independence",
+q:"George Washington is famous for many things. Name one.",
+qr:"Джордж Вашингтон известен многим. Назовите одно.",
+a:["“Father of Our Country”","First president of the United States","General of the Continental Army","President of the Constitutional Convention"],
+ar:["«Отец нашей страны»","Первый президент Соединённых Штатов","Генерал Континентальной армии","Председатель Конституционного конвента"]},
+
+{n:87,s:0,c:"Colonial Period and Independence",
+q:"Thomas Jefferson is famous for many things. Name one.",
+qr:"Томас Джефферсон известен многим. Назовите одно.",
+a:["Writer of the Declaration of Independence","Third president of the United States","Doubled the size of the United States (Louisiana Purchase)","First Secretary of State","Founded the University of Virginia","Writer of the Virginia Statute on Religious Freedom"],
+ar:["Автор Декларации независимости","Третий президент Соединённых Штатов","Удвоил территорию Соединённых Штатов (Луизианская покупка)","Первый государственный секретарь","Основал Университет Вирджинии","Автор Вирджинского статута о свободе вероисповедания"]},
+
+{n:88,s:0,c:"Colonial Period and Independence",
+q:"James Madison is famous for many things. Name one.",
+qr:"Джеймс Мэдисон известен многим. Назовите одно.",
+a:["“Father of the Constitution”","Fourth president of the United States","President during the War of 1812","One of the writers of the Federalist Papers"],
+ar:["«Отец Конституции»","Четвёртый президент Соединённых Штатов","Президент во время войны 1812 года","Один из авторов «Записок федералиста»"]},
+
+{n:89,s:0,c:"Colonial Period and Independence",
+q:"Alexander Hamilton is famous for many things. Name one.",
+qr:"Александр Гамильтон известен многим. Назовите одно.",
+a:["First Secretary of the Treasury","One of the writers of the Federalist Papers","Helped establish the First Bank of the United States","Aide to General George Washington","Member of the Continental Congress"],
+ar:["Первый министр финансов","Один из авторов «Записок федералиста»","Помог основать Первый банк Соединённых Штатов","Адъютант генерала Джорджа Вашингтона","Член Континентального конгресса"]},
+
+{n:90,s:0,c:"1800s",
+q:"What territory did the United States buy from France in 1803?",
+qr:"Какую территорию Соединённые Штаты купили у Франции в 1803 году?",
+a:["Louisiana Territory","Louisiana"],
+ar:["Территорию Луизиана","Луизиану"]},
+
+{n:91,s:0,c:"1800s",
+q:"Name one war fought by the United States in the 1800s.",
+qr:"Назовите одну войну, которую Соединённые Штаты вели в 1800-х годах.",
+a:["War of 1812","Mexican-American War","Civil War","Spanish-American War"],
+ar:["Война 1812 года","Американо-мексиканская война","Гражданская война","Испано-американская война"]},
+
+{n:92,s:0,c:"1800s",
+q:"Name the U.S. war between the North and the South.",
+qr:"Назовите войну в США между Севером и Югом.",
+a:["The Civil War"],
+ar:["Гражданская война"]},
+
+{n:93,s:0,c:"1800s",
+q:"The Civil War had many important events. Name one.",
+qr:"В Гражданской войне было много важных событий. Назовите одно.",
+a:["(Battle of) Fort Sumter","Emancipation Proclamation","(Battle of) Vicksburg","(Battle of) Gettysburg","Sherman’s March","(Surrender at) Appomattox","(Battle of) Antietam/Sharpsburg","Lincoln was assassinated."],
+ar:["(Сражение за) форт Самтер","Прокламация об освобождении рабов","(Осада) Виксберга","(Битва при) Геттисберге","Марш Шермана","(Капитуляция при) Аппоматтоксе","(Битва при) Энтитеме/Шарпсберге","Убийство Линкольна"]},
+
+{n:94,s:1,c:"1800s",
+q:"Abraham Lincoln is famous for many things. Name one.",
+qr:"Авраам Линкольн известен многим. Назовите одно.",
+a:["Freed the slaves (Emancipation Proclamation)","Saved (or preserved) the Union","Led the United States during the Civil War","16th president of the United States","Delivered the Gettysburg Address"],
+ar:["Освободил рабов (Прокламация об освобождении)","Спас (сохранил) Союз","Возглавлял Соединённые Штаты во время Гражданской войны","16-й президент Соединённых Штатов","Произнёс Геттисбергскую речь"]},
+
+{n:95,s:0,c:"1800s",
+q:"What did the Emancipation Proclamation do?",
+qr:"Что сделала Прокламация об освобождении рабов?",
+a:["Freed the slaves","Freed slaves in the Confederacy","Freed slaves in the Confederate states","Freed slaves in most Southern states"],
+ar:["Освободила рабов","Освободила рабов в Конфедерации","Освободила рабов в штатах Конфедерации","Освободила рабов в большинстве южных штатов"]},
+
+{n:96,s:0,c:"1800s",
+q:"What U.S. war ended slavery?",
+qr:"Какая война в США положила конец рабству?",
+a:["The Civil War"],
+ar:["Гражданская война"]},
+
+{n:97,s:0,c:"1800s",
+q:"What amendment gives citizenship to all persons born in the United States?",
+qr:"Какая поправка даёт гражданство всем, рождённым в Соединённых Штатах?",
+a:["14th Amendment"],
+ar:["14-я поправка"]},
+
+{n:98,s:0,c:"1800s",
+q:"When did all men get the right to vote?",
+qr:"Когда все мужчины получили право голоса?",
+a:["After the Civil War","During Reconstruction","(With the) 15th Amendment","1870"],
+ar:["После Гражданской войны","Во время Реконструкции","(С принятием) 15-й поправки","В 1870 году"]},
+
+{n:99,s:0,c:"1800s",
+q:"Name one leader of the women’s rights movement in the 1800s.",
+qr:"Назовите одного лидера движения за права женщин в 1800-х годах.",
+a:["Susan B. Anthony","Elizabeth Cady Stanton","Sojourner Truth","Harriet Tubman","Lucretia Mott","Lucy Stone"],
+ar:["Сьюзен Б. Энтони","Элизабет Кэди Стэнтон","Соджорнер Трут","Гарриет Табмен","Лукреция Мотт","Люси Стоун"]},
+
+{n:100,s:0,c:"Recent American History",
+q:"Name one war fought by the United States in the 1900s.",
+qr:"Назовите одну войну, которую Соединённые Штаты вели в 1900-х годах.",
+a:["World War I","World War II","Korean War","Vietnam War","(Persian) Gulf War"],
+ar:["Первая мировая война","Вторая мировая война","Корейская война","Вьетнамская война","Война в (Персидском) заливе"]},
+
+{n:101,s:0,c:"Recent American History",
+q:"Why did the United States enter World War I?",
+qr:"Почему Соединённые Штаты вступили в Первую мировую войну?",
+a:["Because Germany attacked U.S. (civilian) ships","To support the Allied Powers (England, France, Italy, and Russia)","To oppose the Central Powers (Germany, Austria-Hungary, the Ottoman Empire, and Bulgaria)"],
+ar:["Потому что Германия атаковала (гражданские) суда США","Чтобы поддержать союзные державы (Англию, Францию, Италию и Россию)","Чтобы противостоять Центральным державам (Германии, Австро-Венгрии, Османской империи и Болгарии)"]},
+
+{n:102,s:0,c:"Recent American History",
+q:"When did all women get the right to vote?",
+qr:"Когда все женщины получили право голоса?",
+a:["1920","After World War I","(With the) 19th Amendment"],
+ar:["В 1920 году","После Первой мировой войны","(С принятием) 19-й поправки"]},
+
+{n:103,s:0,c:"Recent American History",
+q:"What was the Great Depression?",
+qr:"Что такое Великая депрессия?",
+a:["Longest economic recession in modern history"],
+ar:["Самый долгий экономический спад в современной истории"]},
+
+{n:104,s:0,c:"Recent American History",
+q:"When did the Great Depression start?",
+qr:"Когда началась Великая депрессия?",
+a:["The Great Crash (1929)","Stock market crash of 1929"],
+ar:["Великий крах (1929)","Крах фондового рынка 1929 года"]},
+
+{n:105,s:0,c:"Recent American History",
+q:"Who was president during the Great Depression and World War II?",
+qr:"Кто был президентом во время Великой депрессии и Второй мировой войны?",
+a:["(Franklin) Roosevelt"],
+ar:["(Франклин) Рузвельт"]},
+
+{n:106,s:0,c:"Recent American History",
+q:"Why did the United States enter World War II?",
+qr:"Почему Соединённые Штаты вступили во Вторую мировую войну?",
+a:["(Bombing of) Pearl Harbor","Japanese attacked Pearl Harbor","To support the Allied Powers (England, France, and Russia)","To oppose the Axis Powers (Germany, Italy, and Japan)"],
+ar:["(Бомбардировка) Пёрл-Харбора","Японцы атаковали Пёрл-Харбор","Чтобы поддержать союзные державы (Англию, Францию и Россию)","Чтобы противостоять державам Оси (Германии, Италии и Японии)"]},
+
+{n:107,s:0,c:"Recent American History",
+q:"Dwight Eisenhower is famous for many things. Name one.",
+qr:"Дуайт Эйзенхауэр известен многим. Назовите одно.",
+a:["General during World War II","President at the end of (during) the Korean War","34th president of the United States","Signed the Federal-Aid Highway Act of 1956 (Created the Interstate System)"],
+ar:["Генерал во время Второй мировой войны","Президент в конце (во время) Корейской войны","34-й президент Соединённых Штатов","Подписал Закон о федеральной помощи в строительстве автомагистралей 1956 года (создал систему межштатных шоссе)"]},
+
+{n:108,s:0,c:"Recent American History",
+q:"Who was the United States’ main rival during the Cold War?",
+qr:"Кто был главным соперником Соединённых Штатов во время холодной войны?",
+a:["Soviet Union","USSR","Russia"],
+ar:["Советский Союз","СССР","Россия"]},
+
+{n:109,s:0,c:"Recent American History",
+q:"During the Cold War, what was one main concern of the United States?",
+qr:"Что было одной из главных тревог Соединённых Штатов во время холодной войны?",
+a:["Communism","Nuclear war"],
+ar:["Коммунизм","Ядерная война"]},
+
+{n:110,s:0,c:"Recent American History",
+q:"Why did the United States enter the Korean War?",
+qr:"Почему Соединённые Штаты вступили в Корейскую войну?",
+a:["To stop the spread of communism"],
+ar:["Чтобы остановить распространение коммунизма"]},
+
+{n:111,s:0,c:"Recent American History",
+q:"Why did the United States enter the Vietnam War?",
+qr:"Почему Соединённые Штаты вступили во Вьетнамскую войну?",
+a:["To stop the spread of communism"],
+ar:["Чтобы остановить распространение коммунизма"]},
+
+{n:112,s:0,c:"Recent American History",
+q:"What did the civil rights movement do?",
+qr:"Что сделало движение за гражданские права?",
+a:["Fought to end racial discrimination"],
+ar:["Боролось за прекращение расовой дискриминации"]},
+
+{n:113,s:1,c:"Recent American History",
+q:"Martin Luther King, Jr. is famous for many things. Name one.",
+qr:"Мартин Лютер Кинг-младший известен многим. Назовите одно.",
+a:["Fought for civil rights","Worked for equality for all Americans","Worked to ensure that people would not be judged by the color of their skin, but by the content of their character"],
+ar:["Боролся за гражданские права","Работал ради равенства всех американцев","Добивался того, чтобы о людях судили не по цвету кожи, а по их личным качествам"]},
+
+{n:114,s:0,c:"Recent American History",
+q:"Why did the United States enter the Persian Gulf War?",
+qr:"Почему Соединённые Штаты вступили в войну в Персидском заливе?",
+a:["To force the Iraqi military from Kuwait"],
+ar:["Чтобы вытеснить иракские войска из Кувейта"]},
+
+{n:115,s:1,c:"Recent American History",
+q:"What major event happened on September 11, 2001 in the United States?",
+qr:"Какое крупное событие произошло 11 сентября 2001 года в Соединённых Штатах?",
+a:["Terrorists attacked the United States","Terrorists took over two planes and crashed them into the World Trade Center in New York City","Terrorists took over a plane and crashed into the Pentagon in Arlington, Virginia","Terrorists took over a plane originally aimed at Washington, D.C., and crashed in a field in Pennsylvania"],
+ar:["Террористы атаковали Соединённые Штаты","Террористы захватили два самолёта и врезались на них во Всемирный торговый центр в Нью-Йорке","Террористы захватили самолёт и врезались в Пентагон в Арлингтоне, Вирджиния","Террористы захватили самолёт, направлявшийся в Вашингтон, который упал в поле в Пенсильвании"]},
+
+{n:116,s:0,c:"Recent American History",
+q:"Name one U.S. military conflict after the September 11, 2001 attacks.",
+qr:"Назовите один военный конфликт США после терактов 11 сентября 2001 года.",
+a:["(Global) War on Terror","War in Afghanistan","War in Iraq"],
+ar:["(Глобальная) война с террором","Война в Афганистане","Война в Ираке"]},
+
+{n:117,s:0,c:"Recent American History",
+q:"Name one American Indian tribe in the United States.",
+qr:"Назовите одно племя американских индейцев в Соединённых Штатах.",
+a:["Apache","Blackfeet","Cayuga","Cherokee","Cheyenne","Chippewa","Choctaw","Creek","Crow","Hopi","Huron","Inupiat","Lakota","Mohawk","Mohegan","Navajo","Oneida","Onondaga","Pueblo","Seminole","Seneca","Shawnee","Sioux","Teton","Tuscarora"],
+ar:["Апачи","Черноногие","Кайюга","Чероки","Шайенны","Чиппева","Чокто","Крики","Кроу","Хопи","Гуроны","Инупиаты","Лакота","Мохоки","Мохеганы","Навахо","Онейда","Онондага","Пуэбло","Семинолы","Сенека","Шауни","Сиу","Тетоны","Тускарора"]},
+
+{n:118,s:0,c:"Recent American History",
+q:"Name one example of an American innovation.",
+qr:"Назовите один пример американского изобретения.",
+a:["Light bulb","Automobile (cars, combustible engine)","Skyscrapers","Airplane","Assembly line","Landing on the moon","Integrated circuit (IC)"],
+ar:["Электрическая лампочка","Автомобиль (двигатель внутреннего сгорания)","Небоскрёбы","Самолёт","Конвейерная сборка","Высадка на Луну","Интегральная микросхема"]},
+
+{n:119,s:0,c:"Symbols",
+q:"What is the capital of the United States?",
+qr:"Какова столица Соединённых Штатов?",
+a:["Washington, D.C."],
+ar:["Вашингтон, округ Колумбия"]},
+
+{n:120,s:0,c:"Symbols",
+q:"Where is the Statue of Liberty?",
+qr:"Где находится Статуя Свободы?",
+a:["New York (Harbor)","Liberty Island","New Jersey","near New York City","on the Hudson (River)"],
+ar:["(В гавани) Нью-Йорка","На острове Либерти","Нью-Джерси","Рядом с городом Нью-Йорк","На реке Гудзон"]},
+
+{n:121,s:1,c:"Symbols",
+q:"Why does the flag have 13 stripes?",
+qr:"Почему на флаге 13 полос?",
+a:["(Because there were) 13 original colonies","(Because the stripes) represent the original colonies"],
+ar:["(Потому что было) 13 первоначальных колоний","(Потому что полосы) представляют первоначальные колонии"]},
+
+{n:122,s:0,c:"Symbols",
+q:"Why does the flag have 50 stars?",
+qr:"Почему на флаге 50 звёзд?",
+a:["(Because there is) one star for each state","(Because) each star represents a state","(Because there are) 50 states"],
+ar:["(Потому что) по одной звезде на каждый штат","(Потому что) каждая звезда представляет штат","(Потому что) есть 50 штатов"]},
+
+{n:123,s:0,c:"Symbols",
+q:"What is the name of the national anthem?",
+qr:"Как называется государственный гимн?",
+a:["The Star-Spangled Banner"],
+ar:["«Знамя, усыпанное звёздами»"]},
+
+{n:124,s:0,c:"Symbols",
+q:"The Nation’s first motto was “E Pluribus Unum.” What does that mean?",
+qr:"Первым девизом страны было «E Pluribus Unum». Что это значит?",
+a:["Out of many, one","We all become one"],
+ar:["Из многих — единое","Мы все становимся одним"]},
+
+{n:125,s:0,c:"Holidays",
+q:"What is Independence Day?",
+qr:"Что такое День независимости?",
+a:["A holiday to celebrate U.S. independence (from Britain)","The country’s birthday"],
+ar:["Праздник в честь независимости США (от Британии)","День рождения страны"]},
+
+{n:126,s:1,c:"Holidays",need:3,
+q:"Name three national U.S. holidays.",
+qr:"Назовите три национальных праздника США.",
+a:["New Year’s Day","Martin Luther King, Jr. Day","Presidents Day (Washington’s Birthday)","Memorial Day","Independence Day","Labor Day","Columbus Day","Veterans Day","Thanksgiving Day","Christmas Day"],
+ar:["Новый год","День Мартина Лютера Кинга-младшего","День президентов (день рождения Вашингтона)","День поминовения","День независимости","День труда","День Колумба","День ветеранов","День благодарения","Рождество"]},
+
+{n:127,s:0,c:"Holidays",
+q:"What is Memorial Day?",
+qr:"Что такое День поминовения?",
+a:["A holiday to honor soldiers who died in military service"],
+ar:["Праздник в честь солдат, погибших на военной службе"]},
+
+{n:128,s:0,c:"Holidays",
+q:"What is Veterans Day?",
+qr:"Что такое День ветеранов?",
+a:["A holiday to honor people in the (U.S.) military","A holiday to honor people who have served (in the U.S. military)"],
+ar:["Праздник в честь военнослужащих (США)","Праздник в честь тех, кто служил (в вооружённых силах США)"]}
+];
+
+/* ═══ One true thing per question. Shown after a correct answer in Practice. ═══ */
+const CONTEXT={
+1:{en:"A republic only lends power out. Every office in it eventually goes back to the people.",
+   ru:"Республика лишь одалживает власть. Любая должность рано или поздно возвращается народу."},
+2:{en:"The oldest written national constitution still in use anywhere in the world.",
+   ru:"Старейшая писаная конституция в мире, которая действует до сих пор."},
+3:{en:"It is short — about 4,500 words. Most state constitutions are many times longer.",
+   ru:"Она короткая — около 4 500 слов. Конституции штатов обычно в разы длиннее."},
+4:{en:"An early draft listed every state by name. “We the People” replaced the whole list.",
+   ru:"В раннем варианте перечислялись все штаты поимённо. «Мы, народ» заменило весь этот список."},
+5:{en:"More than 11,000 amendments have been proposed. Twenty-seven made it.",
+   ru:"Было предложено более 11 000 поправок. Прошли двадцать семь."},
+6:{en:"Several states refused to ratify the Constitution until these ten were promised.",
+   ru:"Несколько штатов отказывались ратифицировать Конституцию, пока не пообещали эти десять поправок."},
+7:{en:"The most recent one took 202 years — proposed in 1789, ratified in 1992.",
+   ru:"Последняя ратифицировалась 202 года: предложена в 1789-м, принята в 1992-м."},
+8:{en:"Jefferson was 33 when he drafted it, alone, in rented rooms in Philadelphia.",
+   ru:"Джефферсону было 33, когда он писал её — один, в съёмных комнатах в Филадельфии."},
+9:{en:"Signing it was treason. Every man who signed risked hanging.",
+   ru:"Подписать её значило совершить измену. Каждый подписавший рисковал виселицей."},
+10:{en:"“All men are created equal” was written by a man who owned slaves. The country has argued over that line ever since.",
+   ru:"«Все люди созданы равными» написал человек, владевший рабами. Страна спорит об этой строке до сих пор."},
+11:{en:"Locke wrote “life, liberty, and property.” Jefferson changed the last word.",
+   ru:"У Локка было «жизнь, свобода и собственность». Джефферсон изменил последнее слово."},
+12:{en:"Nothing in the Constitution names an economic system. This one grew out of practice.",
+   ru:"В Конституции не названа никакая экономическая система. Эта сложилась на практике."},
+13:{en:"In 1974 a president resigned rather than defy a unanimous Supreme Court. That is the rule of law working.",
+   ru:"В 1974 году президент ушёл в отставку, не решившись пойти против единогласного решения Верховного суда. Так работает верховенство закона."},
+14:{en:"The Iroquois Great Law of Peace bound six nations together long before the colonies tried it.",
+   ru:"Великий закон мира ирокезов объединил шесть народов задолго до того, как это попробовали колонии."},
+15:{en:"Madison's worry was simple: whoever writes the law must not also be the one who enforces it.",
+   ru:"Опасение Мэдисона было простым: тот, кто пишет закон, не должен сам его исполнять."},
+16:{en:"Each branch can block the others. None of them can finish the job alone.",
+   ru:"Каждая ветвь может остановить другие. Ни одна не справится в одиночку."},
+17:{en:"The executive branch employs more than two million civilians.",
+   ru:"В исполнительной ветви работает более двух миллионов гражданских служащих."},
+18:{en:"Thousands of bills are introduced in each Congress. Only a few hundred become law.",
+   ru:"В каждом созыве Конгресса вносят тысячи законопроектов. Законами становятся лишь несколько сотен."},
+19:{en:"Two chambers, so that the large states and the small ones each had a reason to join.",
+   ru:"Две палаты — чтобы и большим, и малым штатам был смысл войти в союз."},
+20:{en:"Congress has formally declared war eleven times. The last was in 1942.",
+   ru:"Конгресс официально объявлял войну одиннадцать раз. Последний — в 1942 году."},
+21:{en:"There were 26 in the first Congress. Two more arrive with every new state.",
+   ru:"В первом Конгрессе их было 26. С каждым новым штатом прибавляется двое."},
+22:{en:"Six years was meant to let a senator cast an unpopular vote and survive it.",
+   ru:"Шесть лет задумывались для того, чтобы сенатор мог проголосовать непопулярно и уцелеть."},
+23:{en:"Your two senators represent you equally, whether you live in a city or a county of 3,000.",
+   ru:"Ваши два сенатора представляют вас одинаково — живёте ли вы в большом городе или в округе на 3 000 человек."},
+24:{en:"The number was frozen at 435 in 1929. The population has nearly tripled since.",
+   ru:"Число закрепили на 435 в 1929 году. С тех пор население выросло почти втрое."},
+25:{en:"Two years means a representative is almost always running for the next election.",
+   ru:"Два года означают, что представитель почти всегда находится в предвыборной кампании."},
+26:{en:"The House was built to feel the public mood quickly. The Senate was built to slow it down.",
+   ru:"Палата представителей задумана, чтобы быстро чувствовать настроения народа. Сенат — чтобы их притормаживать."},
+27:{en:"Wyoming has about 580,000 people. California has about 39 million. Both get two.",
+   ru:"В Вайоминге около 580 000 жителей, в Калифорнии около 39 миллионов. У обоих по два сенатора."},
+28:{en:"The Great Compromise saved the convention. Without it the small states would have walked out.",
+   ru:"Великий компромисс спас конвент. Без него малые штаты покинули бы его."},
+29:{en:"Your representative's district holds about 760,000 people — and one voice for all of them.",
+   ru:"В округе вашего представителя живёт около 760 000 человек — и у всех них один голос в Конгрессе."},
+30:{en:"The Speaker is second in line to the presidency, after the vice president.",
+   ru:"Спикер — второй в очереди на пост президента, после вице-президента."},
+31:{en:"A senator answers to an entire state, not to a district drawn on a map.",
+   ru:"Сенатор отвечает перед целым штатом, а не перед округом, начерченным на карте."},
+32:{en:"Until 1913, state legislatures chose the senators. The 17th Amendment gave that vote to you.",
+   ru:"До 1913 года сенаторов выбирали легислатуры штатов. 17-я поправка передала этот голос вам."},
+33:{en:"Districts are drawn so that each one holds roughly the same number of people.",
+   ru:"Округа нарезают так, чтобы в каждом жило примерно одинаковое число людей."},
+34:{en:"Every seat in the House is up for election every two years — all 435 at once.",
+   ru:"Все места в Палате переизбираются каждые два года — все 435 сразу."},
+35:{en:"Seats are redivided among the states every ten years, after the census.",
+   ru:"Места перераспределяют между штатами каждые десять лет, после переписи."},
+36:{en:"Washington could have stayed for life. He left after eight years and went home to farm.",
+   ru:"Вашингтон мог бы остаться пожизненно. Он ушёл через восемь лет и вернулся к себе на ферму."},
+37:{en:"Washington set the limit by example. It held for about 150 years before it became law.",
+   ru:"Вашингтон установил этот предел личным примером. Он держался около 150 лет, прежде чем стал законом."},
+38:{en:"The oath is 35 words long — the only oath the Constitution spells out word for word.",
+   ru:"Присяга занимает 35 слов — единственная, текст которой прописан в Конституции дословно."},
+39:{en:"Nine vice presidents became president when the office suddenly came to them.",
+   ru:"Девять вице-президентов стали президентами, когда должность внезапно переходила к ним."},
+40:{en:"In 1841 no one was certain the vice president truly became president. Tyler simply acted as if he had.",
+   ru:"В 1841 году никто не был уверен, что вице-президент действительно становится президентом. Тайлер просто повёл себя так, будто да."},
+41:{en:"A veto can be overridden — but it takes two thirds of both chambers to do it.",
+   ru:"Вето можно преодолеть, но для этого нужны две трети голосов в обеих палатах."},
+42:{en:"A civilian commands the military. That was a deliberate choice, and an unusual one.",
+   ru:"Военными командует гражданское лицо. Это был сознательный и необычный выбор."},
+43:{en:"The president has ten days to sign. Staying silent while Congress sits makes it law anyway.",
+   ru:"У президента есть десять дней на подпись. Если он молчит, а Конгресс заседает, закон вступает в силу сам."},
+44:{en:"Washington used the veto twice in eight years. Franklin Roosevelt used it 635 times.",
+   ru:"Вашингтон применил вето дважды за восемь лет. Франклин Рузвельт — 635 раз."},
+45:{en:"The president nominates, but the Senate must agree. Neither one can do it alone.",
+   ru:"Президент выдвигает, но Сенат должен согласиться. В одиночку не может ни тот, ни другой."},
+46:{en:"Washington's entire cabinet was four people. Today there are fifteen departments.",
+   ru:"Весь кабинет Вашингтона состоял из четырёх человек. Сегодня это пятнадцать министерств."},
+47:{en:"The word “cabinet” appears nowhere in the Constitution. It grew out of habit.",
+   ru:"Слово «кабинет» не встречается в Конституции ни разу. Он вырос из привычки."},
+48:{en:"They stand in line for the presidency in the order their departments were created.",
+   ru:"Они стоят в очереди на президентство в том порядке, в каком создавались их министерства."},
+49:{en:"Five times the winner of the popular vote did not become president.",
+   ru:"Пять раз победитель всенародного голосования не становился президентом."},
+50:{en:"The Supreme Court had no building of its own until 1935. It met in the Capitol basement.",
+   ru:"У Верховного суда не было своего здания до 1935 года. Он заседал в подвале Капитолия."},
+51:{en:"The power to strike down a law is not in the Constitution. The Court claimed it in 1803.",
+   ru:"Права отменять законы в Конституции нет. Суд присвоил его себе в 1803 году."},
+52:{en:"It hears about 80 cases a year out of roughly 7,000 requests.",
+   ru:"Он рассматривает около 80 дел в год из примерно 7 000 обращений."},
+53:{en:"The number is not fixed by the Constitution. It has been six, seven, ten, and nine.",
+   ru:"Число не закреплено Конституцией. Оно было шесть, семь, десять и девять."},
+54:{en:"Many of the decisions that changed the country were won by a single vote.",
+   ru:"Многие решения, изменившие страну, были приняты перевесом в один голос."},
+55:{en:"William O. Douglas served 36 years. The average is about 16.",
+   ru:"Уильям О. Дуглас прослужил 36 лет. В среднем — около 16."},
+56:{en:"A judge who cannot be fired is free to rule against the people who appointed them.",
+   ru:"Судья, которого нельзя уволить, волен вынести решение против тех, кто его назначил."},
+57:{en:"The Chief Justice presides over a presidential impeachment trial in the Senate.",
+   ru:"Председатель Верховного суда ведёт процесс импичмента президента в Сенате."},
+58:{en:"Before the Constitution, states printed their own money. Trade between them barely worked.",
+   ru:"До Конституции штаты печатали собственные деньги. Торговля между ними почти не работала."},
+59:{en:"Your driver's license, your child's school, the fire truck down the street — all state decisions.",
+   ru:"Ваши водительские права, школа вашего ребёнка, пожарная машина на вашей улице — всё это решения штата."},
+60:{en:"Whatever the Constitution does not hand to Washington stays closer to home.",
+   ru:"Всё, что Конституция не передала Вашингтону, остаётся ближе к дому."},
+61:{en:"A governor can pardon, veto, and call out the state's National Guard.",
+   ru:"Губернатор может помиловать, наложить вето и поднять Национальную гвардию штата."},
+62:{en:"Many state capitals are small on purpose — chosen to sit near the middle of the state.",
+   ru:"Многие столицы штатов намеренно невелики: их выбирали поближе к центру штата."},
+63:{en:"Four separate times the country had to amend its Constitution to widen who counts.",
+   ru:"Четыре раза стране пришлось менять Конституцию, чтобы расширить круг тех, кто считается."},
+64:{en:"Voting is the one right reserved for citizens alone. Most of the others belong to everyone here.",
+   ru:"Голосование — единственное право, закреплённое только за гражданами. Большинство остальных принадлежат всем, кто здесь живёт."},
+65:{en:"These belong to everyone living here, citizen or not. The First Amendment says “the people,” not “the citizens.”",
+   ru:"Они принадлежат всем, кто здесь живёт, — гражданам и негражданам. В Первой поправке сказано «народ», а не «граждане»."},
+66:{en:"The Supreme Court ruled in 1943 that no one can be forced to say it.",
+   ru:"В 1943 году Верховный суд постановил, что никого нельзя заставить её произносить."},
+67:{en:"You will say these words out loud, with your hand raised, on the day you become a citizen.",
+   ru:"Эти слова вы произнесёте вслух, подняв руку, в день, когда станете гражданином."},
+68:{en:"About 800,000 people naturalize each year. Every one of them stood exactly where you are now.",
+   ru:"Каждый год натурализуются около 800 000 человек. Каждый из них стоял ровно там, где вы сейчас."},
+69:{en:"You do not need to be a citizen to do most of these. You can start today.",
+   ru:"Для большинства из этого не нужно быть гражданином. Начать можно уже сегодня."},
+70:{en:"Hundreds of thousands of non-citizens have served in the U.S. military.",
+   ru:"Сотни тысяч неграждан служили в вооружённых силах США."},
+71:{en:"The income tax needed an amendment of its own in 1913. The Court had struck it down before that.",
+   ru:"Подоходному налогу понадобилась отдельная поправка в 1913 году. До этого суд его отменял."},
+72:{en:"No one has been drafted since 1973, but the registration list is still kept.",
+   ru:"Призыва не было с 1973 года, но список регистрации по-прежнему ведут."},
+73:{en:"Many arrived in debt, having sold years of their own labor to pay for the passage.",
+   ru:"Многие приезжали в долгах, продав годы собственного труда за переезд."},
+74:{en:"Hundreds of nations and hundreds of languages, for thousands of years before any ship arrived.",
+   ru:"Сотни народов и сотни языков — за тысячи лет до прихода первого корабля."},
+75:{en:"About 12.5 million people were taken. The country still lives with what that did.",
+   ru:"Было вывезено около 12,5 миллиона человек. Страна до сих пор живёт с последствиями."},
+76:{en:"It lasted eight years — longer than any American war until Vietnam.",
+   ru:"Она длилась восемь лет — дольше любой американской войны вплоть до вьетнамской."},
+77:{en:"“No taxation without representation.” At first they wanted a seat at the table, not a revolution.",
+   ru:"«Нет налогам без представительства». Сначала они хотели место за столом, а не революцию."},
+78:{en:"He asked that his gravestone list this, and not the presidency.",
+   ru:"Он просил, чтобы на надгробии написали именно это, а не президентство."},
+79:{en:"Most delegates signed in August, not July. The date we keep is the day it was approved.",
+   ru:"Большинство делегатов подписали её в августе, а не в июле. Мы празднуем день её принятия."},
+80:{en:"At Valley Forge about 2,000 soldiers died of cold and sickness without a battle being fought.",
+   ru:"В Валли-Фордж около 2 000 солдат умерли от холода и болезней, не вступив ни в одно сражение."},
+81:{en:"Rhode Island refused to attend the convention, then ratified last — by two votes.",
+   ru:"Род-Айленд отказался приехать на конвент, а ратифицировал последним — с перевесом в два голоса."},
+82:{en:"They worked through a Philadelphia summer with the windows shut, so no one outside could hear.",
+   ru:"Они заседали всё филадельфийское лето с закрытыми окнами, чтобы снаружи никто не услышал."},
+83:{en:"Eighty-five essays, written fast, published under a single false name.",
+   ru:"Восемьдесят пять эссе, написанных быстро и опубликованных под одним вымышленным именем."},
+84:{en:"Judges still quote them to work out what the words were meant to do.",
+   ru:"Судьи до сих пор цитируют их, чтобы понять, что должны были означать эти слова."},
+85:{en:"He was 70 when he signed the Declaration — the oldest man in the room.",
+   ru:"Ему было 70, когда он подписал Декларацию, — самый старший в зале."},
+86:{en:"He handed the army back to Congress when he could have kept it. The world was astonished.",
+   ru:"Он вернул армию Конгрессу, хотя мог оставить её себе. Мир был поражён."},
+87:{en:"He wanted to be remembered for what he gave people, not for what he governed.",
+   ru:"Он хотел остаться в памяти за то, что дал людям, а не за то, чем управлял."},
+88:{en:"He stood about five foot four and weighed around a hundred pounds. He out-argued everyone in the room.",
+   ru:"Рост около 163 см, вес около 45 кг. Он переспорил всех в зале."},
+89:{en:"He arrived as a penniless orphan from the Caribbean and built the country's financial system.",
+   ru:"Он приехал нищим сиротой с Карибских островов и построил финансовую систему страны."},
+90:{en:"Fifteen million dollars doubled the size of the country — about four cents an acre.",
+   ru:"Пятнадцать миллионов долларов удвоили размер страны — около четырёх центов за акр."},
+91:{en:"The Civil War killed more Americans than every other American war combined.",
+   ru:"Гражданская война унесла больше американских жизней, чем все остальные войны США вместе взятые."},
+92:{en:"Brothers fought brothers. In some families they chose different sides.",
+   ru:"Брат шёл на брата. В некоторых семьях выбирали разные стороны."},
+93:{en:"At Gettysburg, Lincoln spoke for about two minutes. The speech before his had lasted two hours.",
+   ru:"В Геттисберге Линкольн говорил около двух минут. Речь до него длилась два часа."},
+94:{en:"He had roughly one year of formal schooling in his whole life.",
+   ru:"За всю жизнь он проучился в школе примерно год."},
+95:{en:"It freed no one on the day it was signed. People became free as the army advanced.",
+   ru:"В день подписания она никого не освободила. Люди становились свободными по мере продвижения армии."},
+96:{en:"The 13th Amendment finished what the war started, in December 1865.",
+   ru:"13-я поправка завершила начатое войной — в декабре 1865 года."},
+97:{en:"Born here, citizen here. That one sentence rewrote who belonged.",
+   ru:"Родился здесь — значит, гражданин. Эта одна фраза переписала то, кто считается своим."},
+98:{en:"The law changed in 1870. In practice it took another 95 years.",
+   ru:"Закон изменился в 1870 году. На деле понадобилось ещё 95 лет."},
+99:{en:"Susan B. Anthony was arrested for voting in 1872 and did not live to do it legally.",
+   ru:"Сьюзен Б. Энтони арестовали за голосование в 1872 году; законно проголосовать она так и не успела."},
+100:{en:"The Second World War pulled in 16 million Americans — more than one person in ten.",
+   ru:"Во Вторую мировую было призвано 16 миллионов американцев — больше одного человека из десяти."},
+101:{en:"Wilson had just won re-election promising to stay out. Five months later he asked for war.",
+   ru:"Вильсон только что переизбрался с обещанием не вступать в войну. Через пять месяцев он попросил её объявить."},
+102:{en:"Seventy-two years passed between the first demand at Seneca Falls and the 19th Amendment.",
+   ru:"Между первым требованием в Сенека-Фолс и 19-й поправкой прошло семьдесят два года."},
+103:{en:"One worker in four had no job, and there was no unemployment insurance to catch them.",
+   ru:"Каждый четвёртый работник остался без работы, а страховки по безработице тогда не существовало."},
+104:{en:"In a single day the market lost value it would not recover for 25 years.",
+   ru:"За один день рынок потерял столько, что восстановился лишь через 25 лет."},
+105:{en:"He was elected four times, and he could not walk.",
+   ru:"Его избирали четыре раза. И он не мог ходить."},
+106:{en:"The attack lasted about 90 minutes. The country was at war the next day.",
+   ru:"Нападение длилось около 90 минут. На следующий день страна вступила в войну."},
+107:{en:"He planned the largest seaborne invasion in history, then warned the country about its own arms industry.",
+   ru:"Он спланировал крупнейшую морскую десантную операцию в истории, а потом предостерёг страну от её же военной промышленности."},
+108:{en:"Forty-five years of rivalry, and the two never formally fought each other.",
+   ru:"Сорок пять лет соперничества — и ни одного прямого военного столкновения между ними."},
+109:{en:"Schoolchildren were taught to hide under their desks.",
+   ru:"Школьников учили прятаться под партами."},
+110:{en:"It ended in a truce, not a peace. Formally it has never ended at all.",
+   ru:"Она закончилась перемирием, а не миром. Формально она не завершена до сих пор."},
+111:{en:"The longest war of its time, and the first one Americans watched on television.",
+   ru:"Самая долгая война того времени и первая, которую американцы смотрели по телевизору."},
+112:{en:"Ordinary people — students, cooks, maids — changed the law by refusing to move.",
+   ru:"Обычные люди — студенты, повара, горничные — изменили закон, просто отказавшись уступить место."},
+113:{en:"He was 34 at the March on Washington, and 39 when he was killed.",
+   ru:"Ему было 34 во время Марша на Вашингтон и 39, когда его убили."},
+114:{en:"The ground war lasted 100 hours.",
+   ru:"Наземная операция длилась 100 часов."},
+115:{en:"People from more than 90 countries died that morning.",
+   ru:"В то утро погибли люди более чем из 90 стран."},
+116:{en:"The war in Afghanistan ran for twenty years — the longest in American history.",
+   ru:"Война в Афганистане длилась двадцать лет — самая долгая в истории США."},
+117:{en:"There are 574 federally recognized tribes, each one a nation with its own government.",
+   ru:"Признано федеральным правительством 574 племени, и каждое — нация со своим правительством."},
+118:{en:"The first powered flight covered 120 feet. Sixty-six years later a man walked on the moon.",
+   ru:"Первый полёт с мотором покрыл 36 метров. Через шестьдесят шесть лет человек ступил на Луну."},
+119:{en:"Built on swampland given by two states, so that no single state could claim the capital.",
+   ru:"Построена на болотистой земле, отданной двумя штатами, — чтобы столица не принадлежала ни одному из них."},
+120:{en:"A gift from France. The poem at her base is about refugees.",
+   ru:"Подарок Франции. Стихотворение у её подножия — о беженцах."},
+121:{en:"The stripes never change. Only the stars are ever added.",
+   ru:"Полосы никогда не меняются. Добавляются только звёзды."},
+122:{en:"A 17-year-old designed the 50-star flag for a school project. His teacher gave him a B minus.",
+   ru:"Флаг с 50 звёздами придумал 17-летний школьник для учебного проекта. Учитель поставил ему четыре с минусом."},
+123:{en:"Written by a lawyer watching a bombardment, set to the tune of an old drinking song.",
+   ru:"Написан юристом, наблюдавшим за обстрелом, на мотив старой застольной песни."},
+124:{en:"Thirteen colonies, one country. The words mean something larger now.",
+   ru:"Тринадцать колоний — одна страна. Теперь в этих словах больше смысла."},
+125:{en:"Two presidents who signed the Declaration died on the same Fourth of July, fifty years later.",
+   ru:"Два президента, подписавших Декларацию, умерли в один и тот же день 4 июля — пятьдесят лет спустя."},
+126:{en:"Federal holidays close the federal government. The states decide the rest for themselves.",
+   ru:"В федеральные праздники закрыты федеральные учреждения. Остальное штаты решают сами."},
+127:{en:"One of the first observances was held by freed slaves honoring Union dead in Charleston, 1865.",
+   ru:"Одно из первых таких поминовений устроили освобождённые рабы, почтив павших солдат Союза в Чарлстоне в 1865 году."},
+128:{en:"The eleventh hour of the eleventh day of the eleventh month — when the guns stopped in 1918.",
+   ru:"Одиннадцатый час одиннадцатого дня одиннадцатого месяца — когда в 1918 году смолкли орудия."}
+};
+
+/* ═══ reference data ═══════════════════════════════════════ */
+const STATES = {
+"Alabama":"Montgomery","Alaska":"Juneau","Arizona":"Phoenix","Arkansas":"Little Rock",
+"California":"Sacramento","Colorado":"Denver","Connecticut":"Hartford","Delaware":"Dover",
+"Florida":"Tallahassee","Georgia":"Atlanta","Hawaii":"Honolulu","Idaho":"Boise",
+"Illinois":"Springfield","Indiana":"Indianapolis","Iowa":"Des Moines","Kansas":"Topeka",
+"Kentucky":"Frankfort","Louisiana":"Baton Rouge","Maine":"Augusta","Maryland":"Annapolis",
+"Massachusetts":"Boston","Michigan":"Lansing","Minnesota":"Saint Paul","Mississippi":"Jackson",
+"Missouri":"Jefferson City","Montana":"Helena","Nebraska":"Lincoln","Nevada":"Carson City",
+"New Hampshire":"Concord","New Jersey":"Trenton","New Mexico":"Santa Fe","New York":"Albany",
+"North Carolina":"Raleigh","North Dakota":"Bismarck","Ohio":"Columbus","Oklahoma":"Oklahoma City",
+"Oregon":"Salem","Pennsylvania":"Harrisburg","Rhode Island":"Providence","South Carolina":"Columbia",
+"South Dakota":"Pierre","Tennessee":"Nashville","Texas":"Austin","Utah":"Salt Lake City",
+"Vermont":"Montpelier","Virginia":"Richmond","Washington":"Olympia","West Virginia":"Charleston",
+"Wisconsin":"Madison","Wyoming":"Cheyenne",
+"District of Columbia":"D.C. is not a state and does not have a capital",
+"Puerto Rico":"San Juan","Guam":"Hagatna","U.S. Virgin Islands":"Charlotte Amalie",
+"American Samoa":"Pago Pago","Northern Mariana Islands":"Saipan"
+};
+/* Per-state defaults. Verify before the interview at uscis.gov/citizenship/testupdates */
+const STATE_INFO={
+ "North Carolina":{
+   senators:"Ted Budd, Thom Tillis",
+   governor:"Josh Stein",
+   districts:{
+     "1":"Don Davis","2":"Deborah Ross","3":"Greg Murphy","4":"Valerie Foushee",
+     "5":"Virginia Foxx","6":"Addison McDowell","7":"David Rouzer","8":"Mark Harris",
+     "9":"Richard Hudson","10":"Pat Harrigan","11":"Chuck Edwards","12":"Alma Adams",
+     "13":"Brad Knott","14":"Tim Moore"
+   }}
+};
+
+/* Officeholders as of July 2026. These change — verify at uscis.gov/citizenship/testupdates */
+const CURRENT = {president:"Donald Trump", vp:"JD Vance", speaker:"Mike Johnson", chief:"John Roberts"};
+
+const LABELS = {
+  senator:{en:"One of your state’s U.S. senators", ru:"Один из сенаторов вашего штата"},
+  rep:{en:"Your U.S. representative", ru:"Ваш представитель в Конгрессе"},
+  governor:{en:"Your governor", ru:"Ваш губернатор"},
+  capital:{en:"Your state capital", ru:"Столица вашего штата"},
+  president:{en:"President now", ru:"Нынешний президент"},
+  vp:{en:"Vice President now", ru:"Нынешний вице-президент"},
+  speaker:{en:"Speaker of the House now", ru:"Нынешний спикер Палаты представителей"},
+  chief:{en:"Chief Justice now", ru:"Нынешний председатель Верховного суда"}
+};
+
+/* ═══ text normalisation ═══════════════════════════════════ */
+const ONES=["zero","one","two","three","four","five","six","seven","eight","nine","ten",
+"eleven","twelve","thirteen","fourteen","fifteen","sixteen","seventeen","eighteen","nineteen"];
+const TENS=["","","twenty","thirty","forty","fifty","sixty","seventy","eighty","ninety"];
+const ORD={0:"zeroth",1:"first",2:"second",3:"third",5:"fifth",8:"eighth",9:"ninth",12:"twelfth"};
+
+function card(n){
+  if(n<0) return String(n);
+  if(n<20) return ONES[n];
+  if(n<100) return (TENS[Math.floor(n/10)]+(n%10?" "+ONES[n%10]:"")).trim();
+  if(n<1000) return (ONES[Math.floor(n/100)]+" hundred"+(n%100?" "+card(n%100):"")).trim();
+  if(n<10000) return (card(Math.floor(n/1000))+" thousand"+(n%1000?" "+card(n%1000):"")).trim();
+  return String(n);
+}
+function ordinal(n){
+  if(ORD[n]) return ORD[n];
+  if(n<20) return ONES[n]+"th";
+  if(n<100){
+    const t=Math.floor(n/10), o=n%10;
+    if(!o) return TENS[t].replace(/y$/,"ieth");
+    return TENS[t]+" "+ordinal(o);
+  }
+  return card(n)+"th";
+}
+/* 1776 -> "seventeen seventy six"; 2001 keeps "two thousand one" */
+function yearWords(n){
+  if((n>=1100&&n<=1999)||(n>=2010&&n<=2099)){
+    const hi=Math.floor(n/100), lo=n%100;
+    if(lo===0) return card(hi)+" hundred";
+    if(lo<10) return card(hi)+" oh "+card(lo);
+    return card(hi)+" "+card(lo);
+  }
+  return null;
+}
+const ORD2CARD={};
+(function(){
+  for(let i=0;i<20;i++) ORD2CARD[ordinal(i)]=ONES[i];
+  for(let i=2;i<10;i++) ORD2CARD[TENS[i].replace(/y$/,"ieth")]=TENS[i];
+  ORD2CARD["hundredth"]="hundred"; ORD2CARD["thousandth"]="thousand";
+})();
+const STOP=new Set(["the","a","an","of","to","in","on","for","and","or","is","are","was","were",
+"be","been","that","this","these","those","it","its","as","at","by","with","from","so","their",
+"because","since","when","while","after","before","if","then","there","here","also","such",
+"his","her","our","your","they","we","you","do","does","did","has","have","had","will","would"]);
+
+function normalize(s,extend){
+  s=" "+String(s).toLowerCase()+" ";
+  s=s.replace(/[\u2018\u2019\u02BC]/g,"'").replace(/[\u201C\u201D\u00AB\u00BB]/g," ");
+  s=s.replace(/&/g," and ");
+  s=s.replace(/\ba (hundred|thousand|million)\b/g," one $1 ");
+  s=s.replace(/\bdon'?t\b/g," do not ").replace(/\bdoesn'?t\b/g," does not ")
+     .replace(/\bdidn'?t\b/g," did not ").replace(/\bisn'?t\b/g," is not ")
+     .replace(/\baren'?t\b/g," are not ").replace(/\bwasn'?t\b/g," was not ")
+     .replace(/\bwon'?t\b/g," will not ").replace(/\bcan'?t\b/g," can not ")
+     .replace(/\bcannot\b/g," can not ").replace(/\bno one\b/g," nobody ")
+     .replace(/\bnoone\b/g," nobody ");
+  /* roman/arabic world-war forms must all land on the same tokens */
+  s=s.replace(/\b(?:w\.?\s?w\.?\s?(?:ii|2)|world war (?:ii|2|two)|second world war)\b/g," world war two ");
+  s=s.replace(/\b(?:w\.?\s?w\.?\s?(?:i|1)|world war (?:i|1|one)|first world war)\b/g," world war one ");
+  s=s.replace(/\bu\.?\s?s\.?\s?a?\b/g," us ");
+  s=s.replace(/\bd\.?\s?c\.?\b/g," dc ");
+  s=s.replace(/\bmr\.?|\bmrs\.?|\bdr\.?/g," ");
+  /* ordinals: 22nd -> twenty second  (+ cardinal too when extending a transcript) */
+  s=s.replace(/\b(\d+)(?:st|nd|rd|th)\b/g,(m,d)=>{
+    const n=parseInt(d,10);
+    return " "+ordinal(n)+(extend?" "+card(n):"")+" ";
+  });
+  s=s.replace(/\b(\d+)\b/g,(m,d)=>{
+    const n=parseInt(d,10);
+    const y=(d.length===4)?yearWords(n):null;
+    if(y) return " "+y+(extend?" "+card(n):"")+" ";
+    return " "+card(n)+(extend?" "+ordinal(n):"")+" ";
+  });
+  /* "u s s r" -> "ussr" */
+  s=s.replace(/\b(?:[a-z]\s){1,4}[a-z]\b/g,m=>m.replace(/\s/g,""));
+  if(extend) s=s.replace(/\b([a-z]+)\b/g,(m,w)=>ORD2CARD[w]?(w+" "+ORD2CARD[w]):m);
+  s=s.replace(/[^a-z0-9\u0400-\u04FF\s'-]/g," ");
+  s=s.replace(/[-']/g," ");
+  return s.replace(/\s+/g," ").trim();
+}
+function stem(w){
+  if(w.length>4){
+    if(/ies$/.test(w)) return w.slice(0,-3)+"y";
+    if(/oes$/.test(w)) return w.slice(0,-2);
+    if(/(ses|xes|zes|ches|shes)$/.test(w)) return w.slice(0,-2);
+    if(/s$/.test(w)&&!/ss$/.test(w)) return w.slice(0,-1);
+    if(/ing$/.test(w)&&w.length>6) return w.slice(0,-3);
+    if(/ed$/.test(w)&&w.length>6) return w.slice(0,-2);
+  }
+  return w;
+}
+/* civics paraphrase classes — any member satisfies any other */
+const SYN=[
+ ["write","make","create","pass","draft","enact","author","produce","wrote","writer",
+  "form","establish","found","organize","set","build","setup","written"],
+ ["congress","legislature","legislative"],
+ ["obey","follow","abide","respect","uphold"],
+ ["protect","defend","guard","preserve","safeguard","save"],
+ ["choose","pick","select","elect","appoint","name"],
+ ["end","stop","abolish","halt","eliminate","finish","ban"],
+ ["begin","start","began","commence"],
+ ["fight","fought","battle","combat"],
+ ["kill","assassinate","murder","shot"],
+ ["soldier","troop","serviceman","servicemember"],
+ ["military","army","armed","forces"],
+ ["country","nation","america","us","usa","our","american","here","nationwide"],
+ ["free","freed","freedom","liberty"],
+ ["leader","head","chief","charge","boss","command"],
+ ["judge","justice"],
+ ["citizen","people","person","public","resident","american"],
+ ["naturalize","naturalization","naturalized"],
+ ["branch","part","piece","section","arm"],
+ ["police","protection","protect","law enforcement"],
+ ["recession","depression","downturn","slump"],
+ ["crash","collapse","crashed"],
+ ["diplomat","diplomacy","ambassador","minister"],
+ ["britain","british","england","english","brittain","britian"],
+ ["colony","colonies","colonial","colonist"],
+ ["court","judiciary","judicial"],
+ ["tax","taxes","taxation"],
+ ["speech","expression","speak"],
+ ["religion","worship","religious","faith"],
+ ["assembly","assemble","gather"],
+ ["money","currency","cash","bill"],
+ ["slave","slavery","enslave"],
+ ["equal","equality","equally"],
+ ["help","aid","assist","support"],
+ ["attack","bomb","strike","hit"],
+ ["communism","communist"],
+ ["spread","expansion","expand","grow"],
+ ["explain","interpret","clarify","review"],
+ ["resolve","settle","decide","determine"],
+ ["represent","stand","speak"],
+ ["require","need","must","mandate"],
+ ["allow","permit","let","enable"],
+ ["give","grant","provide","supply","offer"],
+ ["job","position","office","role","post"],
+ ["rule","govern","run","lead","control"]
+];
+const SYNMAP={};
+SYN.forEach((cls,i)=>cls.forEach(w=>{
+  [stem(w),root(w),w].forEach(k=>{ if(!(k in SYNMAP)) SYNMAP[k]=i; });
+}));
+
+/* comparison-only root: conservative, reversible inflection stripping */
+function root(w){
+  if(w.length<4) return w;
+  if(/ied$/.test(w)) return w.slice(0,-3)+"y";
+  if(/eed$/.test(w)) return w.slice(0,-1);          /* freed -> free */
+  if(/ed$/.test(w))  return w.slice(0,-2);          /* ended -> end   */
+  if(/ying$/.test(w)) return w.slice(0,-4)+"y";
+  if(/ing$/.test(w)&&w.length>5) return w.slice(0,-3);
+  if(/ies$/.test(w)) return w.slice(0,-3)+"y";
+  if(/(ses|xes|zes|ches|shes)$/.test(w)) return w.slice(0,-2);
+  if(/s$/.test(w)&&!/ss$/.test(w)) return w.slice(0,-1);
+  return w;
+}
+function lev(x,y){
+  if(x===y) return 0;
+  const m=x.length,n=y.length;
+  if(Math.abs(m-n)>2) return 9;
+  let prev=Array.from({length:n+1},(_,i)=>i), cur=new Array(n+1);
+  for(let i=1;i<=m;i++){
+    cur[0]=i;
+    for(let j=1;j<=n;j++)
+      cur[j]=Math.min(prev[j]+1,cur[j-1]+1,prev[j-1]+(x[i-1]===y[j-1]?0:1));
+    const t=prev; prev=cur; cur=t;
+  }
+  return prev[n];
+}
+const SDX={b:1,f:1,p:1,v:1,c:2,g:2,j:2,k:2,q:2,s:2,x:2,z:2,d:3,t:3,l:4,m:5,n:5,r:6};
+function soundex(w){
+  w=w.replace(/[^a-z]/g,""); if(!w) return "";
+  let out=w[0], last=SDX[w[0]]||0;
+  for(let i=1;i<w.length&&out.length<4;i++){
+    const c=SDX[w[i]]||0;
+    if(c&&c!==last) out+=c;
+    if(w[i]!=="h"&&w[i]!=="w") last=c;
+  }
+  return (out+"000").slice(0,4);
+}
+
+/* number words must match exactly — "nine" must not satisfy "nineteen" */
+const NUMW=new Set(ONES.concat(TENS.filter(Boolean),
+  ["hundred","thousand","oh"],Object.values(ORD),
+  ONES.slice(4).map(w=>w+"th"),["twentieth","thirtieth","fortieth","fiftieth",
+  "sixtieth","seventieth","eightieth","ninetieth"]));
+function bagHas(bag,t){
+  if(bag.has(t)) return true;
+  if(NUMW.has(t)) return false;
+  const tr=root(t);
+  const tc=SYNMAP[t]!==undefined?SYNMAP[t]:SYNMAP[tr], tl=t.length;
+  for(const b of bag){
+    if(NUMW.has(b)) continue;
+    const br=root(b);
+    if(tr===br||tr===b||t===br) return true;         /* end / ended / ends */
+    const bc=SYNMAP[b]!==undefined?SYNMAP[b]:SYNMAP[br];
+    if(tc!==undefined && bc===tc) return true;
+    if(tl<4||b.length<4) continue;
+    if(b.startsWith(t)||t.startsWith(b)) return true;
+    if(tl>=6&&b.length>=6){
+      const d=lev(t,b);
+      if(d<=1) return true;                               /* typo / ASR slip */
+      if(d<=3&&soundex(t)===soundex(b)) return true;      /* heard it wrong   */
+    }
+  }
+  return false;
+}
+function toks(s){return normalize(s).split(" ").filter(Boolean);}
+
+/* expand "A/B" alternates and split off optional parentheticals */
+function variants(ans){
+  let out=[ans];
+  if(ans.includes("/")){
+    const m=ans.match(/^(.*?)([\w]+)\/([\w]+)(.*)$/);
+    if(m) out=[m[1]+m[2]+m[4], m[1]+m[3]+m[4]];
+  }
+  return out;
+}
+function required(ans){
+  const core=ans.replace(/\(([^)]*)\)/g," ");
+  return toks(core).filter(t=>!STOP.has(t)).map(stem);
+}
+/* "president" tells you which answer this is; "of the United States" does not.
+   Weight every token by how rare it is across the whole answer corpus, so a
+   candidate is judged on the words that carry the meaning. */
+let IDF=null;
+function buildIDF(){
+  IDF={};
+  const docs=[];
+  QUESTIONS.forEach(q=>q.a.forEach(ans=>{
+    const t=required(ans);
+    if(t.length) docs.push(new Set(t));
+  }));
+  const N=Math.max(1,docs.length), df={};
+  docs.forEach(d=>d.forEach(t=>{ df[t]=(df[t]||0)+1; }));
+  Object.keys(df).forEach(t=>{ IDF[t]=Math.log(N/df[t])+0.35; });
+}
+function weightOf(t){
+  if(!IDF) buildIDF();
+  const w=IDF[t];
+  return w===undefined ? 2.6 : Math.max(0.30,w);   /* unseen word = very distinctive */
+}
+
+const PASS=0.60, MAYBE=0.38;
+function bagHasNumber(bag){
+  for(const t of bag) if(NUMW.has(t)) return true;
+  return false;
+}
+
+/* 0..1 — how much of this answer's meaning the candidate actually produced */
+function scoreOne(bag,ans){
+  let best=0;
+  for(const v of variants(ans)){
+    const req=required(v);
+    if(!req.length) continue;
+    const ws=req.map(weightOf);
+    let maxW=0; for(const w of ws) if(w>maxW) maxW=w;
+    let total=0, got=0, hits=0, top=false;
+    for(let i=0;i<req.length;i++){
+      total+=ws[i];
+      if(bagHas(bag,req[i])){ got+=ws[i]; hits++; if(ws[i]>=maxW*0.9) top=true; }
+    }
+    let r = total ? got/total : 0;
+    /* the bonus rewards naming the key word, but one stray hit must never
+       carry a whole answer — require real overlap, or a one-word answer */
+    if(top && (hits>=2 || req.length===1)) r=Math.min(1,r+0.17);
+
+    /* numbers are the whole answer when they appear in one */
+    const reqNums=req.filter(t=>NUMW.has(t));
+    if(reqNums.length && bagHasNumber(bag)){
+      const allThere=reqNums.every(t=>bag.has(t));
+      if(!allThere) r=0;              /* said a number, said the wrong one */
+    }
+    if(r>best) best=r;
+  }
+  return best;
+}
+function hitsOne(bag,ans){ return scoreOne(bag,ans)>=PASS; }
+function hitsName(bag,name){
+  const t=toks(name).filter(x=>x.length>1);
+  if(!t.length) return false;
+  /* accept on surname alone, or on any two matching parts */
+  const last=stem(t[t.length-1]);
+  if(bagHas(bag,last)) return true;
+  return t.map(stem).filter(x=>bagHas(bag,x)).length>=2;
+}
+function bagOf(transcript){
+  return new Set(normalize(transcript,true).split(" ").filter(Boolean).map(stem));
+}
+
+/* ═══ storage ══════════════════════════════════════════════ */
+const mem={};
+const store={
+  get(k){
+    try{ const v=localStorage.getItem(k); if(v!==null) return JSON.parse(v); }catch(e){}
+    return (k in mem)?mem[k]:null;
+  },
+  set(k,v){
+    mem[k]=v;
+    try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){}
+  },
+  del(k){
+    delete mem[k];
+    try{ localStorage.removeItem(k); }catch(e){}
+  }
+};
+const KEY_STATS="civics2020:stats", KEY_PREFS="civics2020:prefs", KEY_AI="civics2020:aikey";
+const KEY_PLAYERS="civics2020:players", KEY_CUR="civics2020:current",
+      KEY_LOCALS="civics2020:locals";
+const sKey=id=>"civics2020:stats:"+id;
+const pKey=id=>"civics2020:prefs:"+id;
+const MAXP=10;
+const PCOL=["#2E7D6E","#A8761F","#41528F","#8C3A57","#2F6D8F",
+            "#6B7B2E","#9A4A2A","#4A4A7A","#2E7D4A","#7A4A8C"];
+
+let players=[], curId=null, pendingStats=null, pendingDelete=null;
+
+function loadPlayers(){
+  players=store.get(KEY_PLAYERS)||[];
+  curId=store.get(KEY_CUR)||null;
+  if(curId && !players.some(p=>p.id===curId)) curId=null;
+}
+function savePlayers(){ store.set(KEY_PLAYERS,players); store.set(KEY_CUR,curId); }
+function curPlayer(){ return players.find(p=>p.id===curId)||null; }
+
+function initials(name){
+  const parts=String(name).trim().split(/\s+/).filter(Boolean);
+  if(!parts.length) return "?";
+  if(parts.length===1) return parts[0].slice(0,2).toUpperCase();
+  return (parts[0][0]+parts[1][0]).toUpperCase();
+}
+function statsFor(id){ return store.get(sKey(id))||{}; }
+function masteredIn(st){
+  let n=0;
+  for(const q of QUESTIONS){ const s=st[q.n]; if(s&&s.streak>=MASTER_AT) n++; }
+  return n;
+}
+function seenIn(st){
+  let n=0;
+  for(const q of QUESTIONS){ const s=st[q.n]; if(s&&s.asked>0) n++; }
+  return n;
+}
+
+function addPlayer(name){
+  if(players.length>=MAXP) return null;
+  const id="p"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+  const used=players.map(p=>p.color);
+  const color=PCOL.find(c=>used.indexOf(c)<0)||PCOL[players.length%PCOL.length];
+  players.push({id,name:String(name).trim().slice(0,24),color,made:Date.now()});
+  /* the first player inherits any progress made before profiles existed */
+  if(pendingStats){ store.set(sKey(id),pendingStats); pendingStats=null;
+    store.del(KEY_STATS); }
+  curId=id; savePlayers();
+  return id;
+}
+function removePlayer(id){
+  store.del(sKey(id)); store.del(pKey(id));
+  players=players.filter(p=>p.id!==id);
+  if(curId===id) curId=null;
+  savePlayers();
+}
+function selectPlayer(id){
+  curId=id; savePlayers(); loadPlayerData();
+}
+function saveStats(){ if(curId) store.set(sKey(curId),S.stats); }
+
+/* ═══ app state ════════════════════════════════════════════ */
+const S={
+  caps:"both", order:"smart", rate:0.78, len:20,
+  local:{}, stats:{},
+  queue:[], idx:0, phase:"idle", results:[],
+  finalText:"", verdictShown:false, currentCorrect:null, manual:false,
+  aikey:"", aimode:"miss", aiToken:0, ttsOK:false,
+  mode:"practice", hinted:false, gained:[], fx:"full"
+};
+const MASTER_AT=3;                      /* consecutive correct answers to retire a question */
+
+/* The three sections of the test, used for colour and for nothing else. */
+const GROUP={
+  "Principles of American Government":"gov","System of Government":"gov",
+  "Rights and Responsibilities":"gov","Colonial Period and Independence":"hist",
+  "1800s":"hist","Recent American History":"hist","Symbols":"sym","Holidays":"sym"
+};
+const groupOf=q=>GROUP[q.c]||"gov";
+
+function statOf(n){ return S.stats[n]||{asked:0,wrong:0,streak:0}; }
+function isMastered(n){ return statOf(n).streak>=MASTER_AT; }
+function isSeen(n){ return statOf(n).asked>0; }
+
+/* Honest estimate of answering question n correctly, smoothed so that a single
+   lucky answer does not read as certainty. Unseen questions sit at 0.5. */
+function pOf(n){
+  const s=statOf(n), right=s.asked-s.wrong;
+  return Math.min(0.97,(right+1.5)/(s.asked+3));
+}
+
+/* Probability of passing a real test: 20 drawn at random, 12 needed.
+   Monte Carlo is simpler here than the exact Poisson-binomial and plenty accurate. */
+function readiness(){
+  const ns=QUESTIONS.map(q=>q.n), ps={};
+  ns.forEach(n=>ps[n]=pOf(n));
+  const TRIALS=2000, pool=ns.slice();
+  let pass=0;
+  for(let t=0;t<TRIALS;t++){
+    for(let i=0;i<20;i++){                         /* partial Fisher-Yates: 20 distinct */
+      const j=i+Math.floor(Math.random()*(pool.length-i));
+      const tmp=pool[i]; pool[i]=pool[j]; pool[j]=tmp;
+    }
+    let ok=0;
+    for(let i=0;i<20;i++) if(Math.random()<ps[pool[i]]) ok++;
+    if(ok>=12) pass++;
+  }
+  const mastered=ns.filter(isMastered).length;
+  const learning=ns.filter(n=>isSeen(n)&&!isMastered(n)).length;
+  return {pct:Math.round(pass/TRIALS*100), mastered, learning,
+          unseen:ns.length-mastered-learning, any:ns.some(isSeen)};
+}
+
+/* Russian encouragement. Varied on purpose — one repeated phrase stops landing. */
+const CHEER_OK=["Отлично.","Так точно.","Верно — и вы это знали.","Чисто.","Уверенно.",
+  "Да, именно так.","Хорошо идёт.","Без запинки.","Точно в цель."];
+const CHEER_RUN=["Три подряд.","Четыре подряд — ровно идёте.","Пять подряд.",
+  "Шесть подряд. Это уже уверенное знание."];
+function cheerFor(streakInSession){
+  if(streakInSession>=3){
+    const i=Math.min(streakInSession-3,CHEER_RUN.length-1);
+    if(streakInSession===3||streakInSession===5||streakInSession>=6) return CHEER_RUN[i];
+  }
+  return CHEER_OK[Math.floor(Math.random()*CHEER_OK.length)];
+}
+const $=id=>document.getElementById(id);
+
+/* ═══ speech ═══════════════════════════════════════════════ */
+let voice=null;
+function pickVoice(){
+  const vs=window.speechSynthesis?speechSynthesis.getVoices():[];
+  voice = vs.find(v=>v.lang==="en-US"&&/Samantha|Ava|Allison|Joelle/i.test(v.name))
+       || vs.find(v=>v.lang==="en-US"&&v.localService)
+       || vs.find(v=>v.lang==="en-US") || vs.find(v=>/^en/.test(v.lang)) || null;
+}
+if(window.speechSynthesis){ pickVoice(); speechSynthesis.onvoiceschanged=pickVoice; }
+
+function hushSpeech(){
+  const s=window.speechSynthesis; if(!s) return;
+  try{ if(s.speaking||s.pending) s.cancel(); }catch(e){}
+}
+let actx=null, unlocked=false;
+function unlockAudio(){
+  try{
+    const AC=window.AudioContext||window.webkitAudioContext;
+    if(!AC) return;
+    if(!actx) actx=new AC();
+    if(actx.state==="suspended") actx.resume();
+    const b=actx.createBuffer(1,1,22050);
+    const s=actx.createBufferSource();
+    s.buffer=b; s.connect(actx.destination);
+    (s.start||s.noteOn).call(s,0);
+    unlocked=true;
+  }catch(e){}
+}
+/* Reclaim audio output after the recogniser has had the microphone. */
+function reclaimAudio(){
+  try{ if(actx&&actx.state==="suspended") actx.resume(); }catch(e){}
+  unlockAudio();
+}
+
+function speak(text,done){
+  const synth=window.speechSynthesis;
+  if(!synth){ ttsNote("В этом браузере нет синтеза речи.","no-api"); if(done)done(); return; }
+
+  /* the recogniser holds the audio session until it is fully aborted */
+  if(rec){ try{ rec.abort(); }catch(e){ try{ rec.stop(); }catch(_){} } }
+  recRunning=false;
+  reclaimAudio();
+
+  try{ if(synth.speaking||synth.pending) synth.cancel(); }catch(e){}
+
+  let fired=false, started=false, keep=0, retried=false;
+  const fin=()=>{ if(fired) return; fired=true; clearInterval(keep); if(done) done(); };
+
+  const make=()=>{
+    const u=new SpeechSynthesisUtterance(text);
+    u.lang="en-US"; u.rate=S.rate; u.pitch=1; u.volume=1;
+    /* a stale voice object from an earlier getVoices() makes iOS fail silently */
+    try{
+      const vs=synth.getVoices()||[];
+      if(voice&&vs.indexOf(voice)>=0) u.voice=voice;
+    }catch(e){}
+    u.onstart=()=>{ started=true; S.ttsOK=true; ttsNote("","ok"); };
+    u.onend=fin;
+    u.onerror=e=>{
+      const err=(e&&e.error)||"error";
+      if(err==="interrupted"||err==="canceled") return;
+      if(err==="not-allowed") ttsNote("Звук заблокирован браузером.","blocked");
+      else ttsNote("Синтез речи дал сбой ("+err+").","err");
+      fin();
+    };
+    return u;
+  };
+
+  keep=setInterval(()=>{ try{ if(synth.speaking&&!synth.paused) synth.resume(); }catch(e){} },3500);
+
+  /* SYNCHRONOUS: a setTimeout here breaks the iOS user-gesture chain */
+  try{ synth.speak(make()); }
+  catch(e){ ttsNote("Не удалось запустить речь.","err"); fin(); return; }
+
+  /* One retry: covers the case where the audio session had not yet flipped back. */
+  setTimeout(()=>{
+    if(started||fired||retried) return;
+    retried=true;
+    reclaimAudio();
+    try{ synth.cancel(); synth.resume(); }catch(e){}
+    try{ synth.speak(make()); }catch(e){}
+  },700);
+
+  setTimeout(()=>{
+    if(!started&&!fired) ttsNote(SILENT_MSG,"silent");
+  },1900);
+
+  setTimeout(fin, 2800+text.length*95);
+}
+
+const SILENT_MSG="Вопрос не прозвучал. Самая частая причина — боковой переключатель "+
+  "звонка на беззвучном режиме. Переключите его и нажмите «Repeat». "+
+  "(No sound? Flip the ring/silent switch on the side of the iPhone, then tap Repeat.)";
+
+function ttsNote(msg,kind){
+  if(kind==="ok"){ $("notice").classList.add("off"); return; }
+  if(!msg) return;
+  showNotice(esc(msg));
+}
+
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+let rec=null, recRunning=false, sawFinal=false;
+/* End an answer after a short quiet period, including browsers that only provide interim text. */
+const ANSWER_PAUSE_MS=1700;
+let silenceTimer=0, interimText="", stopRequested=false, recError=false;
+function clearSilence(){ if(silenceTimer){clearTimeout(silenceTimer);silenceTimer=0;} }
+function spokenText(){return (S.finalText+" "+interimText).trim();}
+function finishAnswer(){
+  if(S.phase!=="listening") return;
+  clearSilence();
+  const said=spokenText();
+  S.phase="processing"; // Prevent late recognition events from reopening or grading twice.
+  if(rec){try{rec.stop();}catch(e){}}
+  recRunning=false;
+  $("seal").classList.remove("live");
+  if(said){$("heardtxt").textContent=said;grade(said);}
+  else {S.phase="ready";setState("Tap to answer","Нажмите на микрофон и говорите");}
+}
+function armSilence(){
+  clearSilence();
+  if(!spokenText()||S.phase!=="listening") return;
+  silenceTimer=setTimeout(finishAnswer,ANSWER_PAUSE_MS);
+}
+function buildRec(){
+  if(!SR) return null;
+  const r=new SR();
+  r.lang="en-US";r.continuous=false;r.interimResults=true;r.maxAlternatives=3;
+  r.onstart=()=>{recRunning=true;};
+  r.onresult=e=>{
+    if(S.phase!=="listening") return;
+    let finals=[], interim=[];
+    // Results are cumulative in this recognition session; do not append them repeatedly.
+    for(let i=0;i<e.results.length;i++){
+      const res=e.results[i];
+      if(res.isFinal) finals.push(res[0].transcript.trim());
+      else interim.push(res[0].transcript.trim());
+    }
+    S.finalText=finals.join(" ").trim();interimText=interim.join(" ").trim();
+    $("heardtxt").textContent=spokenText();
+    armSilence();
+  };
+  r.onspeechend=()=>{if(S.phase==="listening") armSilence();};
+  r.onerror=ev=>{
+    recRunning=false;
+    if(S.phase!=="listening") return;
+    if(ev.error==="not-allowed"||ev.error==="service-not-allowed"){
+      recError=true;clearSilence();micBlocked();
+    }else if(ev.error==="no-speech"&&!spokenText()){
+      recError=true;clearSilence();S.phase="ready";
+      $("seal").classList.remove("live");setState("No speech heard","Нажмите и говорите");
+    }else if(spokenText()) finishAnswer();
+    else {recError=true;clearSilence();S.phase="ready";$("seal").classList.remove("live");
+      showNotice("Speech recognition stopped. Try again or type your answer.");}
+  };
+  r.onend=()=>{
+    recRunning=false;
+    if(S.phase!=="listening") return;
+    if(spokenText()) finishAnswer();
+    else if(!recError){S.phase="ready";$("seal").classList.remove("live");
+      setState("Tap to answer","Нажмите на микрофон и говорите");}
+  };
+  return r;
+}
+function micBlocked(){
+  S.phase="ready";
+  $("seal").classList.remove("live");
+  $("typebox").classList.add("on");
+  showNotice("Микрофон недоступен здесь. Откройте эту страницу в Safari и разрешите доступ к микрофону — или печатайте ответ ниже.<br><span style='opacity:.75'>Microphone unavailable. Open in Safari and allow mic access, or type your answer below.</span>");
+  setState("Type your answer","Напечатайте ответ");
+}
+function showNotice(html){ $("notice").innerHTML=html; $("notice").classList.remove("off"); }
+
+function stopListening(){
+  stopRequested=true;clearSilence();interimText="";
+  if(rec){try{rec.abort();}catch(e){try{rec.stop();}catch(_){}}}
+  recRunning=false;
+}
+function listen(){
+  if(!SR){micBlocked();return;}
+  if(!rec) rec=buildRec();
+  if(S.phase==="listening"){finishAnswer();return;}
+  clearSilence();interimText="";S.finalText="";recError=false;stopRequested=false;
+  S.phase="listening";$("seal").classList.add("live");
+  setState("Listening","Говорите — пауза завершит ответ");
+  try{rec.start();}catch(e){S.phase="ready";$("seal").classList.remove("live");
+    showNotice("Microphone could not start. Try again or type your answer.");}
+}
+function setState(en,ru){ $("state").textContent=en; $("staten").textContent=ru; }
+
+/* ═══ question resolution ══════════════════════════════════ */
+function refFor(q){
+  /* returns {answers:[{en,ru}], isName:bool, manual:bool} */
+  if(q.vary){
+    let v=(S.local[q.vary]||"").trim();
+    if(q.vary==="capital" && !v && S.local.state) v=STATES[S.local.state]||"";
+    if(!v) return {answers:[],isName:false,manual:true};
+    const parts=v.split(/[,;/]| or /i).map(x=>x.trim()).filter(Boolean);
+    return {answers:parts.map(p=>({en:p,ru:LABELS[q.vary].ru})),isName:q.vary!=="capital",manual:false};
+  }
+  if(q.cur){
+    const v=(S.local[q.cur]||"").trim();
+    if(!v) return {answers:[],isName:true,manual:true};
+    return {answers:[{en:v,ru:LABELS[q.cur].ru}],isName:true,manual:false};
+  }
+  return {answers:q.a.map((en,i)=>({en,ru:q.ar[i]||""})),isName:false,manual:false};
+}
+
+function evaluate(q,transcript){
+  const ref=refFor(q);
+  if(ref.manual||!transcript.trim()) return {ok:null,ref};
+  const bag=bagOf(transcript);
+  const need=q.need||1;
+  let n=0, near=0;
+  for(const a of ref.answers){
+    if(ref.isName){ if(hitsName(bag,a.en)) n++; continue; }
+    const s=scoreOne(bag,a.en);
+    if(s>=PASS) n++;
+    else if(s>=MAYBE) near++;
+  }
+  if(n>=need) return {ok:true,matched:n,ref};
+  /* close enough that the app should not call it wrong on its own */
+  if(n+near>=need) return {ok:null,matched:n,ref,unsure:true};
+  return {ok:false,matched:n,ref};
+}
+
+/* ═══ celebration ══════════════════════════════════════════
+   Sounds are synthesised with Web Audio — no files to download, and it reuses
+   the same AudioContext the speech code already unlocks. */
+const FX_COLORS=["#2E9E82","#E0962B","#5E68CC","#F2C14E","#D1544A","#49C2A0","#8E6FD8","#38B6D9"];
+let fxc=null, fxg=null, fxParts=[], fxRAF=0, fxW=0, fxH=0;
+const reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+function fxInit(){
+  if(fxc) return;
+  fxc=$("fx");
+  if(!fxc||typeof fxc.getContext!=="function"){ fxc=null; return; }
+  try{ fxg=fxc.getContext("2d"); }catch(e){ fxg=null; }
+  if(!fxg){ fxc=null; return; }          /* no canvas: run without celebrations */
+  fxSize();
+  window.addEventListener("resize",fxSize);
+}
+function fxSize(){
+  if(!fxc||!fxg) return;
+  const d=window.devicePixelRatio||1;
+  fxW=window.innerWidth; fxH=window.innerHeight;
+  fxc.width=Math.floor(fxW*d); fxc.height=Math.floor(fxH*d);
+  fxg.setTransform(d,0,0,d,0,0);
+}
+function confetti(n){
+  for(let i=0;i<n;i++){
+    fxParts.push({k:"c",
+      x:fxW*(0.05+0.9*Math.random()), y:fxH*0.40+Math.random()*60,
+      vx:(Math.random()-0.5)*11, vy:-7-Math.random()*11,
+      w:7+Math.random()*9, h:10+Math.random()*11,
+      rot:Math.random()*Math.PI, vr:(Math.random()-0.5)*0.35,
+      col:FX_COLORS[(Math.random()*FX_COLORS.length)|0], life:0, max:78+Math.random()*34});
+  }
+}
+function balloons(n){
+  for(let i=0;i<n;i++){
+    fxParts.push({k:"b",
+      x:fxW*(0.08+0.84*Math.random()), y:fxH+40+Math.random()*120,
+      vy:-(1.7+Math.random()*1.8), r:17+Math.random()*14,
+      sway:Math.random()*Math.PI*2, sp:0.035+Math.random()*0.03,
+      col:FX_COLORS[(Math.random()*FX_COLORS.length)|0], life:0, max:260});
+  }
+}
+function starPath(g,x,y,r){
+  g.beginPath();
+  for(let i=0;i<10;i++){
+    const rad=(i%2?r*0.46:r), ang=-Math.PI/2+i*Math.PI/5;
+    const px=x+Math.cos(ang)*rad, py=y+Math.sin(ang)*rad;
+    i?g.lineTo(px,py):g.moveTo(px,py);
+  }
+  g.closePath(); g.fill();
+}
+/* A real wave: the flag is drawn as vertical columns, each offset along a sine. */
+function drawFlag(p,fade){
+  const w=p.w, h=w*0.54, cols=12, cw=w/cols, sh=h/13;
+  fxg.save();
+  fxg.translate(p.x,p.y);
+  fxg.rotate(p.rot);
+  fxg.globalAlpha=fade;
+  fxg.fillStyle="#7A5B33";
+  fxg.fillRect(-3,-4,3,h+16);                         /* pole */
+  for(let i=0;i<cols;i++){
+    const ph=p.phase+i*0.52;
+    const dy=Math.sin(ph)*h*0.12*(i/cols+0.25);
+    const sy=1+Math.cos(ph)*0.05;
+    for(let s=0;s<13;s++){
+      fxg.fillStyle=(s%2===0)?"#B22234":"#FFFFFF";
+      fxg.fillRect(i*cw-0.4, dy+s*sh*sy, cw+0.8, sh*sy+0.8);
+    }
+    if(i<Math.round(cols*0.42)){
+      fxg.fillStyle="#3C3B6E";
+      fxg.fillRect(i*cw-0.4, dy, cw+0.8, sh*7*sy);
+    }
+  }
+  fxg.fillStyle="#FFFFFF";
+  for(let r=0;r<3;r++) for(let c=0;c<4;c++){
+    const sx=(c+0.6)*(w*0.42/4), sy2=(r+0.6)*(sh*7/3);
+    const ph=p.phase+(sx/cw)*0.52;
+    starPath(fxg,sx,sy2+Math.sin(ph)*h*0.12*((sx/cw)/cols+0.25),h*0.042);
+  }
+  fxg.restore();
+}
+function flags(n){
+  for(let i=0;i<n;i++){
+    fxParts.push({k:"f",
+      x:fxW*(0.08+0.84*Math.random()), y:fxH*(0.3+0.4*Math.random()),
+      vx:(Math.random()-0.5)*1.1, vy:-(0.7+Math.random()*0.8),
+      w:52+Math.random()*34, rot:(Math.random()-0.5)*0.32,
+      vr:(Math.random()-0.5)*0.008,
+      phase:Math.random()*6.28, sp:0.17+Math.random()*0.07,
+      life:0, max:150+Math.random()*50});
+  }
+}
+
+function fxTick(){
+  if(!fxg){ fxRAF=0; return; }
+  fxg.clearRect(0,0,fxW,fxH);
+  for(let i=fxParts.length-1;i>=0;i--){
+    const p=fxParts[i];
+    p.life++;
+    const fade=Math.max(0,1-p.life/p.max);
+    if(p.k==="c"){
+      p.vy+=0.52; p.x+=p.vx; p.y+=p.vy; p.vx*=0.993; p.rot+=p.vr;
+      fxg.save(); fxg.translate(p.x,p.y); fxg.rotate(p.rot);
+      fxg.globalAlpha=fade*0.88; fxg.fillStyle=p.col;
+      fxg.fillRect(-p.w/2,-p.h/2,p.w,p.h);
+      fxg.restore();
+    }else if(p.k==="f"){
+      p.phase+=p.sp; p.x+=p.vx; p.y+=p.vy; p.rot+=p.vr;
+      drawFlag(p,fade);
+    }else{
+      p.sway+=p.sp; p.y+=p.vy; p.x+=Math.sin(p.sway)*0.9;
+      fxg.save(); fxg.globalAlpha=fade*0.95;
+      fxg.strokeStyle="rgba(80,100,105,.45)"; fxg.lineWidth=1;
+      fxg.beginPath(); fxg.moveTo(p.x,p.y+p.r);
+      fxg.quadraticCurveTo(p.x+Math.sin(p.sway)*7,p.y+p.r+16,p.x,p.y+p.r+30); fxg.stroke();
+      fxg.fillStyle=p.col; fxg.beginPath();
+      fxg.ellipse(p.x,p.y,p.r*0.82,p.r,0,0,Math.PI*2); fxg.fill();
+      fxg.globalAlpha=fade*0.4; fxg.fillStyle="#fff";
+      fxg.beginPath(); fxg.ellipse(p.x-p.r*0.3,p.y-p.r*0.35,p.r*0.2,p.r*0.28,0,0,Math.PI*2); fxg.fill();
+      fxg.restore();
+    }
+    if(p.life>p.max||(p.k==="c"&&p.y>fxH+120)||((p.k==="b"||p.k==="f")&&p.y<-180))
+      fxParts.splice(i,1);
+  }
+  if(fxParts.length) fxRAF=requestAnimationFrame(fxTick);
+  else { fxRAF=0; fxg.clearRect(0,0,fxW,fxH); }
+}
+function fxGo(){ fxInit(); if(!fxRAF&&fxg) fxRAF=requestAnimationFrame(fxTick); }
+function fxOK(){ fxInit(); return !!fxg; }
+
+/* ── sounds ── */
+function audioReady(){
+  try{
+    const AC=window.AudioContext||window.webkitAudioContext;
+    if(!AC) return false;
+    if(!actx) actx=new AC();
+    if(actx.state==="suspended") actx.resume();
+    return actx.state!=="closed";
+  }catch(e){ return false; }
+}
+function tone(freq,at,dur,type,vol){
+  const t0=actx.currentTime+at;
+  const o=actx.createOscillator(), g=actx.createGain();
+  o.type=type||"sine"; o.frequency.setValueAtTime(freq,t0);
+  g.gain.setValueAtTime(0.0001,t0);
+  g.gain.exponentialRampToValueAtTime(vol||0.16,t0+0.02);
+  g.gain.exponentialRampToValueAtTime(0.0001,t0+dur);
+  o.connect(g); g.connect(actx.destination);
+  o.start(t0); o.stop(t0+dur+0.04);
+}
+function chime(){
+  /* a major triad, arpeggiated — reads as "yes" without being a game jingle */
+  [[659.25,0],[830.61,0.085],[987.77,0.17],[1318.5,0.255]]
+    .forEach(([f,t])=>tone(f,t,0.42,"triangle",0.13));
+}
+function whoop(){
+  const t0=actx.currentTime;
+  const o=actx.createOscillator(), g=actx.createGain();
+  o.type="sine";
+  o.frequency.setValueAtTime(400,t0);
+  o.frequency.exponentialRampToValueAtTime(820,t0+0.17);
+  o.frequency.exponentialRampToValueAtTime(610,t0+0.33);
+  g.gain.setValueAtTime(0.0001,t0);
+  g.gain.exponentialRampToValueAtTime(0.13,t0+0.06);
+  g.gain.exponentialRampToValueAtTime(0.0001,t0+0.42);
+  o.connect(g); g.connect(actx.destination);
+  o.start(t0); o.stop(t0+0.46);
+}
+function applause(dur,vol){
+  /* band-passed noise with a wobbling envelope — close enough to a small crowd */
+  const len=Math.max(1,Math.floor(actx.sampleRate*dur));
+  const buf=actx.createBuffer(1,len,actx.sampleRate);
+  const d=buf.getChannelData(0);
+  for(let i=0;i<len;i++){
+    const t=i/len;
+    const env=Math.sin(Math.PI*Math.min(1,t*1.15))*(0.55+0.45*Math.sin(t*95)*Math.sin(t*37));
+    d[i]=(Math.random()*2-1)*env;
+  }
+  const s=actx.createBufferSource(); s.buffer=buf;
+  const bp=actx.createBiquadFilter(); bp.type="bandpass";
+  bp.frequency.value=1600; bp.Q.value=0.6;
+  const g=actx.createGain(); g.gain.value=vol||0.11;
+  s.connect(bp); bp.connect(g); g.connect(actx.destination);
+  s.start();
+}
+
+/* level: "small" for a correct answer, "big" for a question learned or a pass */
+function celebrate(level){
+  if(S.fx==="off") return;
+  const big=level==="big";
+  if(!reduced && fxOK()){
+    confetti(big?190:80);
+    if(big){ balloons(16); flags(3); }
+    else if(Math.random()<0.3) flags(1);    /* a flag now and then */
+    fxGo();
+  }
+  if(S.fx==="full" && audioReady()){
+    try{
+      chime();
+      if(big){ whoop(); applause(1.5,0.12); }
+      else applause(0.5,0.07);
+    }catch(e){}
+  }
+}
+
+/* ═══ auto-advance ════════════════════════════════════════
+   After a correct answer: let the celebration finish, then hold 2s so the
+   reader can take in the answer and the fact, then move on. Any tap cancels. */
+const CELEB_MS={small:1300,big:2300,none:0};
+const HOLD_MS=2000;
+let autoT=0;
+function cancelAuto(){
+  if(autoT){ clearTimeout(autoT); autoT=0; }
+  const b=$("autobar");
+  if(b){ b.classList.add("off"); b.classList.remove("run");
+    const i=b.firstElementChild; if(i) i.style.animation="none"; }
+}
+function scheduleAuto(ms){
+  cancelAuto();
+  const b=$("autobar"); if(!b) return;
+  const i=b.firstElementChild;
+  b.classList.remove("off");
+  if(i){ i.style.animation="none"; void i.offsetWidth;
+         i.style.animation="drain "+ms+"ms linear forwards"; }
+  b.classList.add("run");
+  autoT=setTimeout(()=>{ autoT=0; advance(); },ms);
+}
+
+/* ═══ AI grading (optional, user supplies their own key) ═══ */
+const AI_MODEL="claude-opus-5-5";
+function aiReady(){ return !!(S.aikey && S.aikey.trim().length>10); }
+
+function aiPrompt(q,said,ref){
+  const list=ref.answers.map(x=>"- "+x.en).join("\n");
+  const need=q.need||1;
+  return "You are grading one answer in a USCIS citizenship civics interview. "+
+  "The candidate spoke aloud and speech-to-text transcribed them, so expect missing punctuation, "+
+  "homophones and mis-heard words; judge what they clearly meant to say, not the exact spelling.\n\n"+
+  "QUESTION: "+q.q+"\n\n"+
+  "OFFICIALLY ACCEPTED ANSWERS (any "+need+" of these is a pass):\n"+list+"\n\n"+
+  "TRANSCRIPT OF WHAT THE CANDIDATE SAID: \""+said+"\"\n\n"+
+  "Grade like a real USCIS officer: the candidate passes if they conveyed the substance of "+
+  (need>1?("at least "+need+" accepted answers"):"an accepted answer")+
+  " in their own words. Accept paraphrase, synonyms, extra chatter, partial names and "+
+  "informal phrasing. Do NOT require exact wording. But do NOT accept an answer that names "+
+  "the wrong fact, the wrong number, the wrong person or the wrong year.\n\n"+
+  "Reply with ONLY a JSON object, no other text: "+
+  '{"pass":true or false,"why":"under 12 words, addressed to the candidate"}';
+}
+
+async function aiGrade(q,said,ref){
+  const body={model:AI_MODEL,max_tokens:200,
+    messages:[{role:"user",content:aiPrompt(q,said,ref)}]};
+  const ctl=new AbortController();
+  const timer=setTimeout(()=>ctl.abort(),15000);
+  try{
+    const r=await fetch("https://api.anthropic.com/v1/messages",{
+      method:"POST", signal:ctl.signal,
+      headers:{"content-type":"application/json",
+        "x-api-key":S.aikey.trim(),
+        "anthropic-version":"2023-06-01",
+        "anthropic-dangerous-direct-browser-access":"true"},
+      body:JSON.stringify(body)});
+    clearTimeout(timer);
+    if(!r.ok){
+      let detail="";
+      try{ const j=await r.json(); detail=(j.error&&j.error.message)||""; }catch(e){}
+      if(r.status===401) return {err:"Ключ отклонён (401). Проверьте его в настройках."};
+      if(r.status===429) return {err:"Слишком много запросов (429). Подождите немного."};
+      if(r.status===400&&/credit|balance/i.test(detail))
+        return {err:"На счету Anthropic закончились средства."};
+      return {err:"Ошибка "+r.status+". "+(detail.slice(0,80))};
+    }
+    const j=await r.json();
+    const txt=(j.content||[]).filter(b=>b.type==="text").map(b=>b.text).join("");
+    const m=txt.match(/\{[\s\S]*\}/);
+    if(!m) return {err:"Непонятный ответ от модели."};
+    const v=JSON.parse(m[0]);
+    if(typeof v.pass!=="boolean") return {err:"Непонятный ответ от модели."};
+    return {pass:v.pass, why:String(v.why||"").slice(0,120)};
+  }catch(e){
+    clearTimeout(timer);
+    if(e.name==="AbortError") return {err:"Claude не ответил вовремя."};
+    return {err:"Нет сети — проверка словами."};
+  }
+}
+
+function setAiLine(cls,text){
+  const el=$("aiwhy");
+  el.className="aiwhy"+(cls?" "+cls:"");
+  el.textContent=text;
+  el.classList.toggle("off",!text);
+}
+
+/* ═══ rendering ════════════════════════════════════════════ */
+function applyCaps(){
+  const en=S.caps==="both"||S.caps==="en";
+  const ru=S.caps==="both"||S.caps==="ru";
+  $("qen").classList.toggle("hide",!en);
+  $("qru").classList.toggle("hide",!ru);
+  $("silent").style.display=(S.caps==="none")?"block":"none";
+  document.querySelectorAll(".acc .ru").forEach(e=>e.classList.toggle("hide",S.caps==="en"));
+  $("ctxen").classList.toggle("hide",S.caps==="ru");
+  $("ctxru").classList.toggle("hide",S.caps==="en");
+}
+function render(){
+  const q=S.queue[S.idx];
+  $("counter").textContent=(S.idx+1)+" / "+S.queue.length;
+  $("qnum").textContent="Q "+String(q.n).padStart(3,"0")+(q.s?" *":"");
+  $("qcat").textContent=q.c;
+  $("qen").textContent=q.q;
+  $("qru").textContent=q.qr;
+  cancelAuto();
+  const cardEl=$("qcard");
+  cardEl.className="card g-"+groupOf(q);
+  $("verdict").className="verdict off";
+  $("next").disabled=false;
+  $("ctxline").classList.add("off");
+  $("cheer").classList.add("off");
+  $("hintbtn").classList.toggle("hide",S.mode==="exam");
+  S.hinted=false;
+  $("heardtxt").textContent="";
+  $("heard").classList.remove("off");
+  $("notice").classList.add("off");
+  $("markbtn").classList.add("hide");
+  $("next").textContent="Skip";
+  $("typein").value="";
+  clearSilence(); interimText="";
+  S.finalText=""; S.currentCorrect=null; S.manual=false;
+  S.aiToken++; setAiLine("","");
+  applyCaps();
+}
+function ask(){
+  render();
+  const q=S.queue[S.idx];
+  S.phase="asking";
+  $("seal").classList.add("busy");
+  setState("Reading question","Слушайте вопрос");
+  speak(q.q,()=>{
+    $("seal").classList.remove("busy");
+    if(S.phase!=="asking") return;
+    listen();
+  });
+}
+
+/* A tap is the only moment iOS reliably allows both audio and the mic.
+   Used by Begin and by Repeat, so each is a fresh gesture. */
+function speakNow(text,after){ speak(text,after); }
+
+function grade(transcript,force){
+  const q=S.queue[S.idx];
+  const ev=evaluate(q,transcript);
+  const ref=ev.ref;
+  const unsure=!!ev.unsure;
+  let ok = (force===false) ? false : ev.ok;
+  if(ok===false && !aiReady() && transcript.trim()) ok=null;
+  S.phase="graded"; S.manual=(ok===null); S.currentCorrect=ok;
+
+  const st=$("stamp");
+  st.className="stamp "+(ok===true?"ok":ok===false?"no":"self");
+  st.textContent = ok===true?"Correct" : ok===false?"Checking" : (unsure?"Almost":"Your call");
+  st.style.animation="none"; void st.offsetWidth; st.style.animation="";
+
+  if(ref.manual && force!==false){
+    const lab=LABELS[q.vary||q.cur];
+    $("acc").innerHTML='<span class="lbl">Not set — mark it yourself</span><ul><li>'+
+      esc(lab.en)+'<span class="ru">'+esc(lab.ru)+' — впишите на экране настроек</span></li></ul>';
+  }else if(ref.manual){
+    const lab=LABELS[q.vary||q.cur];
+    $("acc").innerHTML='<span class="lbl">Not set</span><ul><li>'+
+      esc(lab.en)+'<span class="ru">'+esc(lab.ru)+'</span></li></ul>';
+  }else{
+    const show=ref.answers.slice(0,6);
+    $("acc").innerHTML='<span class="lbl">'+
+      (q.need?("Accepted — name "+q.need):"Accepted")+'</span><ul>'+
+      show.map(a=>'<li>'+esc(a.en)+(a.ru?'<span class="ru">'+esc(a.ru)+'</span>':'')+'</li>').join("")+
+      '</ul>'+(ref.answers.length>show.length?
+        '<p class="more">+ '+(ref.answers.length-show.length)+' more accepted answers</p>':'');
+  }
+  $("verdict").className="verdict "+(ok===false?"no ":ok===null?"self ":"")+groupOf(q);
+  $("verdict").scrollTop=0;
+  /* even with captions off, show what was asked once it has been answered */
+  $("qen").classList.remove("hide");
+  $("silent").style.display="none";
+  document.querySelectorAll(".acc .ru").forEach(e=>e.classList.toggle("hide",S.caps==="en"));
+
+  $("markbtn").classList.remove("hide");
+  $("markbtn").textContent = ok===true?"Mark missed":"Mark correct";
+  $("next").textContent = (S.idx+1<S.queue.length)?"Next":"Finish";
+  $("next").disabled=false;
+  if(unsure) $("cheer").classList.add("off");
+  setState(ok===true?"Correct":ok===false?"Missed":(unsure?"Almost — your call":"Mark it yourself"),
+           ok===true?"Верно":ok===false?"Неверно":(unsure?"Почти — решите сами":"Отметьте сами"));
+  $("seal").classList.remove("live","busy");
+  setAiLine("","");
+
+  if(S.mode==="practice"){
+    if(ok===true && !(aiReady() && S.aimode==="all")){
+      S.run=(S.run||0)+1;
+      const st=statOf(q.n);
+      const willMaster = !S.hinted && st.streak+1>=MASTER_AT && st.streak<MASTER_AT;
+      celebrate(willMaster||S.run>=5?"big":"small");
+      S.celeb = (S.fx==="off") ? "none" : (willMaster||S.run>=5?"big":"small");
+      const left=QUESTIONS.filter(x=>!isMastered(x.n)).length-(willMaster?1:0);
+      $("cheer").textContent = willMaster
+        ? "Вопрос выучен. Осталось "+left+" из 128."
+        : cheerFor(S.run);
+      $("cheer").classList.remove("off");
+    }else{
+      S.run=0; S.celeb="none";
+      $("cheer").classList.add("off");
+    }
+    const c=CONTEXT[q.n];
+    if(c && ok!==null){
+      $("ctxen").textContent=c.en;
+      $("ctxru").textContent=c.ru;
+      $("ctxline").classList.remove("off");
+    }
+  }
+
+  /* Ask Claude where the word-matcher is least trustworthy: when it said no.
+     "Show answer" (force===false) and unanswered questions never call out. */
+  const worth = aiReady() && force!==false && transcript.trim() && !ref.manual
+             && (S.aimode==="all" || ok===false);
+  if(worth){
+    S.currentCorrect=null;S.manual=true;$("next").disabled=true;
+    $("markbtn").classList.add("hide");
+    askClaude(q,transcript,ref,ok);
+  }
+
+  /* a correct answer moves on by itself; a wrong one waits to be read */
+  if(ok===true && !worth) scheduleAuto((CELEB_MS[S.celeb]||0)+HOLD_MS);
+  else cancelAuto();
+}
+
+async function askClaude(q,transcript,ref,wordVerdict){
+  const token=++S.aiToken;
+  setAiLine("wait","Claude проверяет ответ…");
+  const res=await aiGrade(q,transcript,ref);
+  /* a late reply must not stamp a question the user already moved past */
+  if(token!==S.aiToken || S.phase!=="graded") return;
+  $("next").disabled=false;$("markbtn").classList.remove("hide");
+  if(res.err){ setAiLine("bad",res.err+" Please review and mark this answer yourself.");
+    S.currentCorrect=null;S.manual=true;$("stamp").textContent="Your call";
+    $("stamp").className="stamp self";$("markbtn").textContent="Mark correct";
+    setState("Review answer","Отметьте сами");return; }
+
+  {
+    S.currentCorrect=res.pass;S.manual=false;
+    const st=$("stamp");
+    st.className="stamp "+(res.pass?"ok":"no");
+    st.textContent=res.pass?"Correct":"Try again";
+    st.style.animation="none"; void st.offsetWidth; st.style.animation="";
+    $("markbtn").textContent=res.pass?"Mark missed":"Mark correct";
+    setState(res.pass?"Correct":"Missed",res.pass?"Верно":"Неверно");
+  }
+  setAiLine("", "Claude: "+(res.why||(res.pass?"accepted":"not accepted")));
+  if(res.pass===true){
+    if(S.mode==="practice" && wordVerdict!==true) celebrate("small");
+    scheduleAuto((CELEB_MS[S.celeb]||CELEB_MS.small)+HOLD_MS);
+  }
+}
+/* A hint shows the shape of the answer and its Russian meaning, never the answer. */
+function maskAnswer(s){
+  return s.replace(/\([^)]*\)/g,"").trim()
+          .split(/\s+/).map(w=>{
+            const core=w.replace(/[^A-Za-z0-9]/g,"");
+            if(core.length<2) return w;
+            return core[0]+"·".repeat(Math.min(core.length-1,7));
+          }).join(" ");
+}
+function showHint(){
+  if(S.mode==="exam"||S.phase==="graded") return;
+  const q=S.queue[S.idx];
+  const ref=refFor(q);
+  if(!ref.answers.length){
+    showNotice("Для этого вопроса подсказки нет — ответ зависит от вашего штата.");
+    return;
+  }
+  S.hinted=true;
+  const a0=ref.answers[0];
+  const bits=['<strong>'+esc(maskAnswer(a0.en))+'</strong>'];
+  if(a0.ru && S.caps!=="en") bits.push('<span style="opacity:.85">'+esc(a0.ru)+'</span>');
+  if(q.need>1) bits.push('<span style="opacity:.7">Нужно назвать '+q.need+'.</span>');
+  showNotice(bits.join("<br>"));
+}
+
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+
+function flipMark(){
+  if(S.phase!=="graded") return;
+  cancelAuto();
+  S.currentCorrect = S.currentCorrect===true?false:true;
+  if(S.currentCorrect && S.mode==="practice"){ celebrate("small"); S.celeb="small"; }
+  const st=$("stamp");
+  st.className="stamp "+(S.currentCorrect?"ok":"no");
+  st.textContent=S.currentCorrect?"Correct":"Try again";
+  $("markbtn").textContent=S.currentCorrect?"Mark missed":"Mark correct";
+  setState(S.currentCorrect?"Correct":"Missed",S.currentCorrect?"Верно":"Неверно");
+}
+
+/* ═══ session ══════════════════════════════════════════════ */
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+function buildQueue(){
+  let pool;
+  if(S.mode==="exam") return shuffle(QUESTIONS.slice()).slice(0,20);
+  if(S.order==="smart"){
+    /* Unseen first, then what is least secure; mastered questions come back rarely. */
+    const tier=q=>{
+      const s=statOf(q.n);
+      if(!s.asked) return 0;
+      if(s.streak>=MASTER_AT) return 3;
+      return s.wrong>0?1:2;
+    };
+    pool=shuffle(QUESTIONS.slice()).sort((x,y)=>{
+      const t=tier(x)-tier(y); if(t) return t;
+      return statOf(x.n).streak-statOf(y.n).streak;
+    });
+  }
+  else if(S.order==="star") pool=shuffle(QUESTIONS.filter(q=>q.s));
+  else if(S.order==="order") pool=QUESTIONS.slice();
+  else if(S.order==="missed"){
+    pool=QUESTIONS.filter(q=>(S.stats[q.n]||{}).wrong>0)
+      .sort((a,b)=>{
+        const A=S.stats[a.n],B=S.stats[b.n];
+        return (B.wrong/B.asked)-(A.wrong/A.asked) || B.wrong-A.wrong;
+      });
+    if(!pool.length) return null;
+  }
+  else pool=shuffle(QUESTIONS.slice());
+  const n = S.len==="all"?pool.length:Math.min(S.len,pool.length);
+  return pool.slice(0,n);
+}
+function startSession(forced){
+  const q = forced || buildQueue();
+  if(!q){
+    alert("Пока нет пропущенных вопросов. Пройдите сессию в случайном порядке — приложение запомнит ошибки.\n\nNo missed questions yet. Run a random session first.");
+    return;
+  }
+  S.queue=q; S.idx=0; S.results=[]; S.gained=[]; S.run=0;
+  document.body.classList.toggle("formal",S.mode==="exam");
+  show("scr-exam");
+  ask();
+}
+function record(){
+  const q=S.queue[S.idx];
+  if(S.currentCorrect===null) return;
+  const st=S.stats[q.n]||{asked:0,wrong:0,streak:0};
+  if(st.streak===undefined) st.streak=0;
+  const wasMastered=st.streak>=MASTER_AT;
+  st.asked++;
+  if(S.currentCorrect){
+    /* a hinted answer keeps its credit but does not advance mastery */
+    if(!S.hinted) st.streak++;
+  }else{
+    st.wrong++; st.streak=0;
+  }
+  S.stats[q.n]=st;
+  if(!wasMastered && st.streak>=MASTER_AT) S.gained.push(q.n);
+  S.results.push({n:q.n,ok:S.currentCorrect});
+  saveStats();
+}
+function advance(){
+  cancelAuto(); clearSilence();
+  if(S.phase==="graded" && S.currentCorrect!==null) record();
+  else if(S.phase!=="graded" && S.queue[S.idx]){S.currentCorrect=false;record();}
+  S.phase="advancing";hushSpeech();
+  if(recRunning){try{rec.stop();}catch(e){}}
+  if(S.idx+1<S.queue.length){ S.idx++; ask(); }
+  else finish();
+}
+function finish(){
+  clearSilence();
+  try{speechSynthesis.cancel();}catch(e){}
+  if(rec){ try{ rec.abort(); }catch(e){} recRunning=false; }
+  const scored=S.results.length, ok=S.results.filter(r=>r.ok).length;
+  const pct=scored?Math.round(ok/scored*100):0;
+  const exam=S.mode==="exam";
+
+  $("donetitle").textContent = exam?"Record of examination":"Session";
+  $("bigscore").textContent=ok+"/"+scored;
+  $("pct").textContent=pct+"% correct";
+
+  const rw=$("ribbonwrap");
+  if(exam && scored){
+    const passed=scored>=20 && ok>=12;
+    rw.innerHTML='<span class="ribbon '+(passed?"pass":"fail")+'">'+
+      (passed?"Pass":"Not yet")+'</span>';
+    $("passline").textContent = passed
+      ? "На настоящем тесте этого достаточно: нужно 12 из 20."
+      : "На настоящем тесте нужно 12 из 20. Ещё немного практики.";
+  }else{
+    rw.innerHTML="";
+    if(!scored){ $("passline").textContent="Ни один ответ не был засчитан."; }
+    else{
+      const g=S.gained.length;
+      const left=QUESTIONS.filter(x=>!isMastered(x.n)).length;
+      $("passline").textContent = (g?("Выучено за эту сессию: "+g+". "):"")+
+        "Осталось выучить "+left+" из 128.";
+    }
+  }
+
+  const missed=S.results.filter(r=>!r.ok).map(r=>QUESTIONS.find(q=>q.n===r.n));
+  const box=$("missedlist");
+  if(missed.length){
+    box.innerHTML='<h3>To review · Повторить</h3>'+missed.map(q=>
+      '<div class="item"><span class="n">'+String(q.n).padStart(3,"0")+'</span>'+
+      '<div class="q">'+esc(q.q)+'<span class="ru">'+esc(q.qr)+'</span></div></div>').join("");
+    $("drill").style.display="block";
+    $("drill").onclick=()=>{ S.mode="practice"; document.body.classList.remove("formal");
+      startSession(shuffle(missed.slice())); };
+  }else{
+    box.innerHTML='<h3>To review · Повторить</h3><p class="empty">'+
+      (scored?"Ничего. Все ответы верны.":"Пока нечего повторять.")+'</p>';
+    $("drill").style.display="none";
+  }
+  document.body.classList.remove("formal");
+  show("scr-done");
+  if(scored && (exam ? (ok>=12&&scored>=20) : (S.gained.length>0||ok===scored)))
+    setTimeout(()=>celebrate("big"),220);
+}
+
+function show(id){
+  document.querySelectorAll(".screen").forEach(s=>s.classList.toggle("on",s.id===id));
+  const exam=(id==="scr-exam");
+  $("acts").style.display=exam?"flex":"none";
+  if(!exam){
+    cancelAuto();
+    $("verdict").className="verdict off";
+  $("next").disabled=false;
+    $("typebox").classList.remove("on");
+  }
+  const el=document.getElementById(id);
+  if(el) el.scrollTop=0;
+}
+
+/* ═══ wiring ═══════════════════════════════════════════════ */
+function segment(id,onPick){
+  $(id).addEventListener("click",e=>{
+    const b=e.target.closest("button"); if(!b) return;
+    $(id).querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));
+    onPick(b.dataset.v);
+  });
+}
+const ORDHINT={
+  smart:"Сначала то, что вы ещё не выучили; выученное возвращается реже.",
+  random:"Все 128 вопросов в случайном порядке.",
+  missed:"Только те, где вы ошибались — самые проблемные первыми.",
+  order:"По порядку, с первого вопроса.",
+  star:"20 вопросов со звёздочкой — для льготы 65/20."
+};
+
+function savePrefs(){
+  if(curId) store.set(pKey(curId),{caps:S.caps,order:S.order,rate:S.rate,len:S.len,
+    aimode:S.aimode,mode:S.mode,fx:S.fx});
+  store.set(KEY_LOCALS,S.local);
+}
+function readLocals(){
+  ["senator","rep","governor","capital","president","vp","speaker","chief"].forEach(k=>{
+    S.local[k]=$("f-"+k).value.trim();
+  });
+  S.local.state=$("stsel").value;
+  S.local.district=$("distsel").value;
+  savePrefs();
+}
+
+function init(){
+  /* state dropdown */
+  const sel=$("stsel");
+  Object.keys(STATES).forEach(k=>{
+    const o=document.createElement("option"); o.value=k; o.textContent=k; sel.appendChild(o);
+  });
+  sel.addEventListener("change",()=>{
+    const cap=STATES[sel.value];
+    if(cap && !$("f-capital").value.trim()) $("f-capital").value=cap;
+    applyStateInfo(sel.value,false);
+    readLocals();
+  });
+
+  $("distsel").addEventListener("change",()=>{
+    const info=STATE_INFO[$("stsel").value];
+    const name=info&&info.districts?info.districts[$("distsel").value]:"";
+    if(name) $("f-rep").value=name;
+    S.local.district=$("distsel").value;
+    readLocals();
+  });
+  ["senator","rep","governor","capital","president","vp","speaker","chief"].forEach(k=>{
+    $("f-"+k).addEventListener("change",readLocals);
+  });
+
+  segment("capseg",v=>{S.caps=v;applyCaps();savePrefs();});
+  segment("ordseg",v=>{S.order=v;$("ordhint").textContent=ORDHINT[v];savePrefs();});
+  segment("ratseg",v=>{S.rate=parseFloat(v);savePrefs();});
+  segment("lenseg",v=>{S.len=(v==="all"?"all":parseInt(v,10));savePrefs();});
+  segment("aiseg",v=>{S.aimode=v;savePrefs();});
+  segment("modeseg",v=>{ S.mode=v; applyMode(); savePrefs(); });
+  segment("fxseg",v=>{
+    S.fx=v; savePrefs();
+    if(v!=="off"){ if(v==="full") audioReady(); celebrate("small"); }
+  });
+
+  $("mapgrid").addEventListener("click",e=>{
+    const b=e.target.closest("button"); if(!b||!b.dataset.n) return;
+    $("mapgrid").querySelectorAll("button").forEach(x=>x.classList.remove("sel"));
+    b.classList.add("sel");
+    mapSel=+b.dataset.n;
+    peekAt(mapSel);
+  });
+  $("readystrip").addEventListener("click",()=>{ renderMap(); show("scr-map"); });
+  $("mapback").addEventListener("click",()=>{ renderPlayers(); show("scr-players"); });
+  $("mapsettings").addEventListener("click",()=>{ paintChip(); paintReady(); paintProgress();
+    show("scr-setup"); });
+  $("setupback").addEventListener("click",()=>{ renderMap(); show("scr-map"); });
+  $("mapstart").addEventListener("click",()=>{
+    if(!curId){ renderPlayers(); show("scr-players"); return; }
+    unlockAudio(); audioReady();
+    readLocals();
+    if(S.mode==="exam"){ startSession(); return; }
+    const left=QUESTIONS.filter(q=>!isMastered(q.n));
+    if(!left.length){ startSession(); return; }       /* all learned: review everything */
+    const n=S.len==="all"?left.length:Math.min(S.len,left.length);
+    startSession(shuffle(left).slice(0,n));
+  });
+  $("hintbtn").addEventListener("click",showHint);
+
+  $("plist").addEventListener("click",e=>{
+    const del=e.target.closest("[data-del]");
+    if(del){ askDelete(del.dataset.del); return; }
+    const sel=e.target.closest(".psel");
+    if(sel){ selectPlayer(sel.dataset.id); closeAddRow(); renderMap(); show("scr-map"); }
+  });
+  $("addplayer").addEventListener("click",openAddRow);
+  $("savename").addEventListener("click",()=>{
+    const nm=$("newname").value.trim();
+    if(!nm){ try{ $("newname").focus(); }catch(e){} return; }
+    const id=addPlayer(nm);
+    if(!id) return;
+    closeAddRow(); loadPlayerData(); renderPlayers(); renderMap(); show("scr-map");
+  });
+  $("newname").addEventListener("keydown",e=>{ if(e.key==="Enter") $("savename").click(); });
+
+  $("modalno").addEventListener("click",closeModal);
+  $("modal").addEventListener("click",e=>{ if(e.target===$("modal")) closeModal(); });
+  $("modalyes").addEventListener("click",()=>{
+    if(!pendingDelete) return closeModal();
+    const wasCur=(pendingDelete===curId);
+    removePlayer(pendingDelete);
+    closeModal();
+    if(wasCur){ S.stats={}; paintChip(); }
+    renderPlayers();
+    show("scr-players");
+  });
+
+  $("whochip").addEventListener("click",()=>{ renderPlayers(); show("scr-players"); });
+  $("switchplayer").addEventListener("click",()=>{ renderPlayers(); show("scr-players"); });
+  $("aikey").addEventListener("change",()=>{
+    S.aikey=$("aikey").value.trim();
+    store.set(KEY_AI,S.aikey);
+    micStatus();
+  });
+
+  $("testsound").addEventListener("click",()=>{
+    unlockAudio();
+    if(rec){ try{ rec.abort(); }catch(e){} recRunning=false; }
+    const el=$("soundhint");
+    el.textContent="Говорю…"; el.style.color="var(--live)";
+    let heard=false;
+    const synth=window.speechSynthesis;
+    if(!synth){ el.textContent="В этом браузере нет синтеза речи."; el.style.color="var(--deny)"; return; }
+    try{ if(synth.speaking||synth.pending) synth.cancel(); }catch(e){}
+    const u=new SpeechSynthesisUtterance(
+      "Sound is working. You should hear each question read aloud like this.");
+    u.lang="en-US"; u.rate=S.rate; u.volume=1;
+    if(voice) u.voice=voice;
+    u.onstart=()=>{ heard=true; S.ttsOK=true;
+      el.textContent="Звук работает. / Sound is working."; el.style.color="var(--seal)"; };
+    u.onend=()=>{ if(heard){ el.textContent="Звук работает. / Sound is working.";
+      el.style.color="var(--seal)"; } };
+    u.onerror=()=>{ el.textContent="Сбой речи. Проверьте звук телефона.";
+      el.style.color="var(--deny)"; };
+    try{ synth.speak(u); }catch(e){
+      el.textContent="Не удалось запустить речь."; el.style.color="var(--deny)"; return; }
+    setTimeout(()=>{ if(!heard){
+      el.textContent="Ничего не слышно? Снимите телефон с беззвучного режима, поднимите громкость и нажмите ещё раз.";
+      el.style.color="var(--deny)"; } },1800);
+  });
+
+  $("begin").addEventListener("click",()=>{
+    if(!curId){ renderPlayers(); show("scr-players"); return; }
+    unlockAudio(); audioReady();
+    readLocals();
+    /* unlock audio + mic inside the user gesture */
+    startSession();
+  });
+  $("seal").addEventListener("click",()=>{
+    cancelAuto();
+    if(S.phase==="asking"){ hushSpeech(); $("seal").classList.remove("busy"); listen(); }
+    else if(S.phase==="ready") listen();
+    else if(S.phase==="listening") finishAnswer();
+    else if(S.phase==="graded") advance();
+  });
+  $("repeat").addEventListener("click",()=>{
+    const q=S.queue[S.idx]; if(!q) return;
+    cancelAuto();
+    unlockAudio();
+    if(rec){ try{ rec.abort(); }catch(e){} recRunning=false; }
+
+    /* Already graded: re-read the question only. Keep the verdict on screen
+       and do not reopen the microphone — the answer is already in. */
+    if(S.phase==="graded"){
+      $("seal").classList.add("busy");
+      speak(q.q,()=>{ $("seal").classList.remove("busy");
+        setState(S.currentCorrect===true?"Correct":S.currentCorrect===false?"Missed":"Mark it yourself",
+                 S.currentCorrect===true?"Верно":S.currentCorrect===false?"Неверно":"Отметьте сами"); });
+      return;
+    }
+
+    S.phase="asking"; $("seal").classList.add("busy");
+    setState("Reading question","Слушайте вопрос");
+    speak(q.q,()=>{ $("seal").classList.remove("busy"); if(S.phase==="asking") listen(); });
+  });
+  $("dunno").addEventListener("click",()=>{
+    if(S.phase==="graded") return;
+    stopListening();
+    hushSpeech();
+    S.phase="listening";
+    grade(S.finalText||"",false);
+  });
+  $("markbtn").addEventListener("click",flipMark);
+  $("next").addEventListener("click",advance);
+  $("typego").addEventListener("click",()=>{
+    const t=$("typein").value.trim(); if(!t) return;
+    $("heardtxt").textContent=t; S.phase="listening"; grade(t);
+  });
+  $("typein").addEventListener("keydown",e=>{ if(e.key==="Enter") $("typego").click(); });
+  $("quit").addEventListener("click",()=>{ cancelAuto(); if(S.phase==="graded") record(); finish(); });
+  $("again").addEventListener("click",()=>startSession());
+  $("begin").addEventListener("click",()=>{},{once:false});
+  $("home").addEventListener("click",()=>{ renderMap(); show("scr-map"); });
+  $("resetbtn").addEventListener("click",e=>{
+    e.preventDefault();
+    if(confirm("Стереть всю статистику? / Erase all progress?")){
+      S.stats={}; saveStats(); paintProgress(); paintReady(); renderMap(); }
+  });
+
+  loadGlobals();
+  loadPlayers();
+  migrateIfNeeded();
+  if(curId) loadPlayerData(); else { paintChip(); applyMode(); }
+  renderPlayers();
+  show("scr-players");
+  micStatus();
+  fxInit();
+}
+function micStatus(){
+  const el=$("micstat"); if(!el) return;
+  const secure = window.isSecureContext || location.protocol==="https:" || location.hostname==="localhost";
+  let msg, col;
+  if(!SR){ msg="MIC — not supported by this browser. Typing only."; col="var(--deny)"; }
+  else if(!secure){ msg="MIC — blocked: this page needs an https:// address ("+location.protocol+"). Typing only."; col="var(--deny)"; }
+  else { msg="MIC — ready. Safari will ask permission when you begin."; col="var(--seal)"; }
+  el.textContent=msg; el.style.color=col;
+  const g=$("gradestat");
+  if(g){
+    if(aiReady()){ g.textContent="GRADING — Claude checks meaning, not keywords."; g.style.color="var(--seal)"; }
+    else { g.textContent="GRADING — word matching. Add a key for AI grading."; g.style.color="var(--soft)"; }
+  }
+}
+/* Populate the district list and officials for a state. `force` overwrites
+   anything already typed; otherwise only blank fields are filled. */
+function applyStateInfo(state,force){
+  const info=STATE_INFO[state];
+  const row=$("distrow"), sel=$("distsel");
+  sel.innerHTML="";
+  const blank=document.createElement("option");
+  blank.value=""; blank.textContent="Не выбран / Not set"; sel.appendChild(blank);
+
+  if(!info||!info.districts){ row.style.display="none"; return; }
+  row.style.display="block";
+  Object.keys(info.districts).sort((x,y)=>(+x)-(+y)).forEach(d=>{
+    const o=document.createElement("option");
+    o.value=d; o.textContent="District "+d+" — "+info.districts[d];
+    sel.appendChild(o);
+  });
+  if(S.local.district && info.districts[S.local.district]){
+    sel.value=S.local.district;
+    if(force||!$("f-rep").value.trim()) $("f-rep").value=info.districts[S.local.district];
+  }
+  if(info.senators && (force||!$("f-senator").value.trim())) $("f-senator").value=info.senators;
+  if(info.governor && (force||!$("f-governor").value.trim())) $("f-governor").value=info.governor;
+  const cap=STATES[state];
+  if(cap && (force||!$("f-capital").value.trim())) $("f-capital").value=cap;
+}
+
+let mapSel=null;
+function renderMap(){
+  const r=readiness();
+  $("mapbig").textContent=r.mastered+" / 128";
+  $("mapsub").textContent = r.any
+    ? "Вопрос считается выученным после "+MASTER_AT+" верных ответов подряд."
+    : "Пройдите первую сессию — карта начнёт заполняться.";
+
+  const g=$("mapgrid");
+  g.innerHTML="";
+  QUESTIONS.forEach(q=>{
+    const b=document.createElement("button");
+    b.type="button";
+    b.className = isMastered(q.n)?"mast":(isSeen(q.n)?"seen":"");
+    b.setAttribute("aria-label","Question "+q.n);
+    b.dataset.n=String(q.n);
+    g.appendChild(b);
+  });
+
+  const left=QUESTIONS.filter(q=>!isMastered(q.n)).length;
+  const btn=$("mapstart");
+  if(btn){
+    btn.textContent = S.mode==="exam" ? "Begin examination"
+      : left ? "Start practice" : "Review all 128";
+  }
+  const t=$("maptitle");
+  if(t){ const p=curPlayer(); t.textContent = p? p.name : "Your progress"; }
+
+  paintReady(r);
+}
+
+function peekAt(n){
+  const q=QUESTIONS.find(x=>x.n===n); if(!q) return;
+  const s=statOf(n);
+  let st;
+  if(!s.asked) st="Ещё не отвечали.";
+  else if(isMastered(n)) st="Выучено — "+s.streak+" верных подряд.";
+  else st="Отвечали "+s.asked+" раз, ошибок "+s.wrong+". Подряд верно: "+s.streak+" из "+MASTER_AT+".";
+  $("peek").innerHTML='<span class="n">Q '+String(n).padStart(3,"0")+'</span>'+
+    '<span class="q">'+esc(q.q)+'</span>'+
+    '<span class="r">'+esc(q.qr)+'</span>'+
+    '<span class="st">'+esc(st)+'</span>';
+}
+
+function paintReady(r){
+  r=r||readiness();
+  if(!r.any){
+    $("readypct").textContent="—";
+    $("readylab").textContent="Readiness";
+    $("readysub").textContent="Пройдите первую сессию, чтобы увидеть оценку";
+    $("barm").style.width="0"; $("barl").style.width="0";
+    return;
+  }
+  $("readypct").textContent=r.pct+"%";
+  $("readylab").textContent="Chance of passing";
+  $("readysub").textContent="Выучено "+r.mastered+" из 128 · учим "+r.learning;
+  $("barm").style.width=(r.mastered/128*100)+"%";
+  $("barl").style.width=(r.learning/128*100)+"%";
+}
+
+function applyMode(){
+  const exam=S.mode==="exam";
+  document.body.classList.toggle("formal",false);   /* only during a session */
+  $("orderfield").style.display=exam?"none":"block";
+  $("lenfield").style.display=exam?"none":"block";
+  $("aibox").style.display=exam?"none":"block";
+  $("modehint").textContent = exam
+    ? "Как на собеседовании: 20 случайных вопросов, без подсказок и фактов. Нужно 12 верных."
+    : "Спокойная тренировка: после верного ответа — интересный факт, есть подсказки, вопросы уходят из оборота, когда вы их выучили.";
+  $("begin").textContent = exam?"Begin examination":"Begin practice";
+}
+
+function paintProgress(){
+  const seen=QUESTIONS.filter(q=>isSeen(q.n)).length;
+  const mast=QUESTIONS.filter(q=>isMastered(q.n)).length;
+  $("progline").textContent = seen
+    ? "Отвечали на "+seen+" из 128 · выучено "+mast
+    : "Статистика появится после первой сессии.";
+}
+function loadGlobals(){
+  const k=store.get(KEY_AI); if(k){ S.aikey=k; $("aikey").value=k; }
+
+  let L=store.get(KEY_LOCALS);
+  if(!L){                                    /* carry officials over from before profiles */
+    const old=store.get(KEY_PREFS);
+    if(old&&old.local) L=old.local;
+  }
+  S.local=L||{};
+  if(!S.local.president) S.local.president=CURRENT.president;
+  if(!S.local.vp)        S.local.vp=CURRENT.vp;
+  if(!S.local.speaker)   S.local.speaker=CURRENT.speaker;
+  if(!S.local.chief)     S.local.chief=CURRENT.chief;
+  if(!S.local.state){ S.local.state="North Carolina"; S.local.capital="Raleigh"; }
+
+  ["senator","rep","governor","capital","president","vp","speaker","chief"].forEach(f=>{
+    if(S.local[f]) $("f-"+f).value=S.local[f];
+  });
+  if(S.local.state) $("stsel").value=S.local.state;
+  applyStateInfo(S.local.state,false);
+  ["senator","rep","governor","capital"].forEach(f=>{
+    if(S.local[f]) $("f-"+f).value=S.local[f];
+  });
+  store.set(KEY_LOCALS,S.local);
+}
+
+function loadPlayerData(){
+  S.stats=curId?statsFor(curId):{};
+  const p=(curId&&store.get(pKey(curId)))||{};
+  S.caps=p.caps||"both"; S.order=p.order||"smart"; S.rate=p.rate||0.78;
+  S.len=p.len||20; S.aimode=p.aimode||"all"; S.mode=p.mode||"practice"; S.fx=p.fx||"full";
+
+  const mark=(id,val)=>$(id).querySelectorAll("button").forEach(b=>
+    b.setAttribute("aria-pressed",String(b.dataset.v===String(val))));
+  mark("capseg",S.caps); mark("ordseg",S.order); mark("ratseg",S.rate);
+  mark("lenseg",S.len); mark("aiseg",S.aimode); mark("modeseg",S.mode); mark("fxseg",S.fx);
+  $("ordhint").textContent=ORDHINT[S.order]||"";
+  applyMode(); paintReady(); paintProgress(); paintChip(); applyCaps();
+}
+
+/* Progress made before there were profiles is held until the first player exists. */
+function migrateIfNeeded(){
+  if(players.length) return;
+  const old=store.get(KEY_STATS);
+  if(old && Object.keys(old).length) pendingStats=old;
+}
+
+function paintChip(){
+  const p=curPlayer();
+  $("chipav").textContent=p?initials(p.name):"—";
+  $("chipav").style.background=p?p.color:"var(--faint)";
+  $("chipname").textContent=p?p.name:"—";
+}
+
+function renderPlayers(){
+  const box=$("plist");
+  box.innerHTML=players.map(p=>{
+    const st=statsFor(p.id);
+    const m=masteredIn(st), seen=seenIn(st);
+    const sub = seen? ("Выучено "+m+" из 128") : "Ещё не занимался";
+    return '<div class="prow'+(p.id===curId?' cur':'')+'">'+
+      '<button class="psel" data-id="'+esc(p.id)+'">'+
+        '<span class="pav" style="background:'+esc(p.color)+'">'+esc(initials(p.name))+'</span>'+
+        '<span class="pmeta"><span class="nm">'+esc(p.name)+'</span>'+
+        '<span class="sb">'+esc(sub)+'</span>'+
+        '<span class="pmini"><i style="width:'+(m/128*100).toFixed(1)+'%"></i></span></span>'+
+      '</button>'+
+      '<button class="pdel" data-del="'+esc(p.id)+'" aria-label="Delete '+esc(p.name)+'">&times;</button>'+
+    '</div>';
+  }).join("");
+
+  const full=players.length>=MAXP;
+  $("addplayer").classList.toggle("off",full||!$("addrow").classList.contains("off"));
+  $("whosub").textContent = players.length?"Кто занимается?":"Создайте игрока, чтобы начать";
+  $("pfoot").textContent = full
+    ? "Достигнут предел в 10 игроков. Удалите кого-нибудь, чтобы добавить нового."
+    : "До 10 игроков. У каждого свой прогресс, который сохраняется на этом телефоне.";
+  if(!players.length) openAddRow();
+}
+
+function openAddRow(){
+  $("addrow").classList.remove("off");
+  $("addplayer").classList.add("off");
+  try{ $("newname").focus(); }catch(e){}
+}
+function closeAddRow(){
+  $("addrow").classList.add("off");
+  $("newname").value="";
+  $("addplayer").classList.toggle("off",players.length>=MAXP);
+}
+
+function askDelete(id){
+  const p=players.find(x=>x.id===id); if(!p) return;
+  const st=statsFor(id), m=masteredIn(st), seen=seenIn(st);
+  pendingDelete=id;
+  $("modalbody").textContent="Удалить игрока «"+p.name+"»?";
+  $("modalsub").textContent = seen
+    ? "Весь его прогресс будет стёрт: выучено "+m+" из 128, отвечал на "+seen+". Это нельзя отменить."
+    : "У этого игрока пока нет прогресса.";
+  $("modal").classList.remove("off");
+}
+function closeModal(){ pendingDelete=null; $("modal").classList.add("off"); }
+
+document.addEventListener("DOMContentLoaded",init);
+</script>
+</body>
+</html>
