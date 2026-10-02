@@ -5,145 +5,197 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#2E7D6E">
 <title>Civics Oral Practice</title>
 <style>
+/* Palette taken from the Statue of Liberty's copper patina: weathered green on
+   warm stone, with brass and ink. Sections of the test are colour-coded. */
 :root{
-  --paper:#E7EDF0;
-  --card:#FCFDFD;
-  --ink:#14212B;
-  --soft:#5D707C;
-  --faint:#93A5AF;
-  --rule:#C6D3DA;
-  --seal:#1C4E3C;
-  --deny:#96272B;
-  --live:#A96A14;
+  --ground:#EDF3F0;
+  --well:#E0EBE6;
+  --card:#FCFDFC;
+  --ink:#122429;
+  --soft:#4F676F;
+  --faint:#89A1A6;
+  --rule:#C7D9D4;
+
+  --patina:#2E7D6E;
+  --patina-d:#1E5A4E;
+  --patina-w:#DCEBE6;
+  --brass:#A8761F;
+  --brass-w:#F6EBD6;
+  --indigo:#41528F;
+  --indigo-w:#E2E6F3;
+  --deny:#A8392F;
+  --deny-w:#F7E4E1;
+
+  --accent:var(--patina);
+
   --disp:"Copperplate","Copperplate Gothic Light",Optima,"Gill Sans","Trebuchet MS",sans-serif;
   --serif:Charter,"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
   --cyr:Georgia,"PT Serif","Times New Roman",serif;
   --mono:"SF Mono",Menlo,"Courier New",monospace;
 }
+/* Interview mode strips the colour back out: it should feel like a federal office. */
+body.formal{
+  --ground:#E8EDEF; --well:#DCE3E6; --card:#FCFDFD;
+  --accent:#243A45; --patina:#28564C; --rule:#C3D0D5;
+}
+
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%}
 body{
-  margin:0;background:var(--paper);color:var(--ink);
+  margin:0;background:var(--ground);color:var(--ink);
   font-family:var(--serif);
-  -webkit-text-size-adjust:100%;
-  overscroll-behavior:none;
+  -webkit-text-size-adjust:100%;overscroll-behavior:none;
 }
-/* security-print ground */
 body::before{
-  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.5;
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.45;
   background:
-    repeating-linear-gradient(64deg,transparent 0 7px,rgba(28,78,60,.055) 7px 8px),
-    repeating-linear-gradient(-64deg,transparent 0 7px,rgba(20,33,43,.045) 7px 8px);
+    repeating-linear-gradient(64deg,transparent 0 7px,rgba(46,125,110,.07) 7px 8px),
+    repeating-linear-gradient(-64deg,transparent 0 7px,rgba(18,36,41,.045) 7px 8px);
 }
 .app{position:relative;z-index:1;min-height:100%;display:flex;flex-direction:column;
   padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
 .screen{display:none;flex:1;flex-direction:column;padding:0 20px}
 .screen.on{display:flex}
 
-.eyebrow{font-family:var(--disp);font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;
+.eyebrow{font-family:var(--disp);font-size:12px;letter-spacing:.2em;text-transform:uppercase;
   color:var(--soft);font-weight:600}
-.num{font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--soft);font-variant-numeric:tabular-nums}
+.num{font-family:var(--mono);font-size:13px;letter-spacing:.04em;color:var(--soft);
+  font-variant-numeric:tabular-nums}
 
 /* ── top bar ─────────────────────────── */
 .bar{display:flex;align-items:center;justify-content:space-between;gap:12px;
   padding:14px 0 12px;border-bottom:1px solid var(--rule)}
-.bar .mid{flex:1;text-align:center}
+.bar .mid{flex:1;text-align:center;min-width:0}
 .iconbtn{appearance:none;border:1px solid var(--rule);background:var(--card);color:var(--soft);
-  font-family:var(--disp);font-size:10px;letter-spacing:.14em;text-transform:uppercase;
-  padding:7px 11px;border-radius:2px;cursor:pointer;font-weight:600}
-.iconbtn:active{background:var(--paper)}
+  font-family:var(--disp);font-size:12px;letter-spacing:.12em;text-transform:uppercase;
+  padding:9px 13px;border-radius:3px;cursor:pointer;font-weight:600}
+.iconbtn:active{background:var(--well)}
 
 /* ── setup ───────────────────────────── */
-.hero{text-align:center;padding:26px 0 10px}
-.hero h1{font-family:var(--disp);font-weight:600;font-size:29px;letter-spacing:.13em;
-  text-transform:uppercase;margin:0 0 8px;line-height:1.25}
-.hero .sub{font-family:var(--cyr);font-size:15px;color:var(--soft);margin:0;line-height:1.5}
-.hero .rule{width:54px;height:1px;background:var(--ink);margin:16px auto;opacity:.35}
+.hero{text-align:center;padding:24px 0 6px}
+.hero h1{font-family:var(--disp);font-weight:600;font-size:30px;letter-spacing:.12em;
+  text-transform:uppercase;margin:0 0 10px;line-height:1.25;color:var(--patina-d)}
+.hero .sub{font-family:var(--cyr);font-size:16.5px;color:var(--soft);margin:0;line-height:1.5}
+.torch{width:46px;height:3px;background:linear-gradient(90deg,var(--patina),var(--brass));
+  margin:16px auto;border-radius:2px}
 
-.field{margin:0 0 18px}
-.field > label,.legend{display:block;font-family:var(--disp);font-size:10.5px;letter-spacing:.18em;
-  text-transform:uppercase;color:var(--soft);font-weight:600;margin:0 0 8px}
-.hint{font-family:var(--cyr);font-size:12.5px;color:var(--faint);line-height:1.45;margin:7px 0 0}
+.field{margin:0 0 20px}
+.field > label,.legend{display:block;font-family:var(--disp);font-size:12px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--soft);font-weight:600;margin:0 0 9px}
+.hint{font-family:var(--cyr);font-size:14.5px;color:var(--faint);line-height:1.5;margin:8px 0 0}
 
 .seg{display:flex;flex-wrap:wrap;gap:6px}
 .seg button{flex:1 1 auto;min-width:calc(50% - 3px);appearance:none;cursor:pointer;
-  background:var(--card);border:1px solid var(--rule);border-radius:2px;
-  padding:12px 8px;font-family:var(--disp);font-size:11px;letter-spacing:.1em;
+  background:var(--card);border:1px solid var(--rule);border-radius:3px;
+  padding:13px 8px;font-family:var(--disp);font-size:13px;letter-spacing:.08em;
   text-transform:uppercase;color:var(--soft);font-weight:600;line-height:1.35}
-.seg button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--card)}
-.seg.two button{min-width:calc(50% - 3px)}
-.seg.four button{min-width:calc(50% - 3px)}
+.seg button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
 
-select,input[type=text]{width:100%;appearance:none;background:var(--card);
-  border:1px solid var(--rule);border-radius:2px;padding:12px 11px;
-  font-family:var(--serif);font-size:16px;color:var(--ink)}
+/* mode picker — the one big choice */
+.modes{display:flex;gap:8px;margin:0 0 6px}
+.modes button{flex:1;appearance:none;cursor:pointer;text-align:left;
+  background:var(--card);border:1.5px solid var(--rule);border-radius:5px;padding:14px 13px}
+.modes button .t{display:block;font-family:var(--disp);font-size:14px;letter-spacing:.1em;
+  text-transform:uppercase;font-weight:600;color:var(--ink);margin-bottom:4px}
+.modes button .d{display:block;font-family:var(--cyr);font-size:13px;color:var(--faint);line-height:1.4}
+.modes button[aria-pressed="true"]{border-color:var(--patina);background:var(--patina-w)}
+.modes button[aria-pressed="true"] .t{color:var(--patina-d)}
+.modes button[aria-pressed="true"] .d{color:var(--soft)}
+.modes button#m-exam[aria-pressed="true"]{border-color:#243A45;background:#E2E8EA}
+.modes button#m-exam[aria-pressed="true"] .t{color:#243A45}
+
+/* readiness strip */
+.ready{display:flex;align-items:center;gap:14px;width:100%;appearance:none;cursor:pointer;
+  background:var(--card);border:1px solid var(--rule);border-radius:5px;
+  padding:14px 15px;margin:0 0 20px;text-align:left}
+.ready .big{font-family:var(--mono);font-size:30px;font-weight:400;line-height:1;
+  color:var(--patina-d);font-variant-numeric:tabular-nums;flex:0 0 auto}
+.ready .lab{flex:1;min-width:0}
+.ready .lab .t{display:block;font-family:var(--disp);font-size:11.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--soft);font-weight:600;margin-bottom:3px}
+.ready .lab .d{display:block;font-family:var(--cyr);font-size:13.5px;color:var(--faint);line-height:1.4}
+.ready .arrow{font-family:var(--mono);font-size:18px;color:var(--faint);flex:0 0 auto}
+.bars{display:flex;height:7px;border-radius:4px;overflow:hidden;background:var(--well);margin-top:7px}
+.bars i{display:block;height:100%}
+.bars i.m{background:var(--patina)}
+.bars i.l{background:var(--brass)}
+
+select,input[type=text],input[type=password],input[type=date]{width:100%;appearance:none;
+  background:var(--card);border:1px solid var(--rule);border-radius:3px;padding:13px 12px;
+  font-family:var(--serif);font-size:17px;color:var(--ink)}
 select{background-image:linear-gradient(45deg,transparent 50%,var(--soft) 50%),
   linear-gradient(135deg,var(--soft) 50%,transparent 50%);
-  background-position:calc(100% - 17px) 21px,calc(100% - 12px) 21px;
+  background-position:calc(100% - 17px) 22px,calc(100% - 12px) 22px;
   background-size:5px 5px,5px 5px;background-repeat:no-repeat;padding-right:34px}
 
-details.local{border:1px solid var(--rule);border-radius:2px;background:var(--card);margin:0 0 18px}
-details.local > summary{list-style:none;cursor:pointer;padding:13px 14px;
-  font-family:var(--disp);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;
+details.local{border:1px solid var(--rule);border-radius:4px;background:var(--card);margin:0 0 20px}
+details.local > summary{list-style:none;cursor:pointer;padding:15px 15px;
+  font-family:var(--disp);font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;
   color:var(--soft);font-weight:600;display:flex;justify-content:space-between;align-items:center}
 details.local > summary::-webkit-details-marker{display:none}
-details.local > summary::after{content:"+";font-family:var(--mono);font-size:15px;color:var(--faint)}
+details.local > summary::after{content:"+";font-family:var(--mono);font-size:17px;color:var(--faint)}
 details.local[open] > summary::after{content:"–"}
-.localbody{padding:0 14px 14px;border-top:1px solid var(--rule);padding-top:14px}
-.localbody .row{margin:0 0 12px}
+.localbody{padding:0 15px 15px;border-top:1px solid var(--rule);padding-top:15px}
+.localbody .row{margin:0 0 14px}
 .localbody .row:last-child{margin:0}
-.localbody .row label{display:block;font-family:var(--cyr);font-size:12.5px;color:var(--soft);margin:0 0 5px}
+.localbody .row label{display:block;font-family:var(--cyr);font-size:14.5px;color:var(--soft);margin:0 0 6px}
 
 .primary{display:block;width:100%;appearance:none;cursor:pointer;
-  background:var(--ink);color:var(--card);border:none;border-radius:2px;padding:17px;
-  font-family:var(--disp);font-size:13px;letter-spacing:.2em;text-transform:uppercase;font-weight:600}
-.primary:active{opacity:.85}
-.primary[disabled]{opacity:.4}
+  background:var(--accent);color:#fff;border:none;border-radius:4px;padding:18px;
+  font-family:var(--disp);font-size:15px;letter-spacing:.18em;text-transform:uppercase;font-weight:600}
+.primary:active{opacity:.88}
 
-.foot{padding:22px 0 26px;text-align:center}
-.foot p{font-family:var(--cyr);font-size:11.5px;color:var(--faint);line-height:1.55;margin:0 0 5px}
-.foot a{color:var(--soft)}
+.foot{padding:22px 0 28px;text-align:center}
+.foot p{font-family:var(--cyr);font-size:13.5px;color:var(--faint);line-height:1.6;margin:0 0 6px}
+.foot a{color:var(--patina)}
+.diag{font-family:var(--mono);font-size:12.5px;letter-spacing:.01em}
 
 /* ── exam ────────────────────────────── */
 .card{position:relative;flex:1;min-height:0;display:flex;flex-direction:column;
-  background:var(--card);border:1px solid var(--rule);border-radius:3px;
+  background:var(--card);border:1px solid var(--rule);border-radius:5px;
   margin:16px 0;padding:20px 18px;overflow-y:auto;-webkit-overflow-scrolling:touch}
-.card .corner{position:absolute;width:11px;height:11px;border:1px solid var(--rule)}
-.corner.tl{top:6px;left:6px;border-right:0;border-bottom:0}
-.corner.tr{top:6px;right:6px;border-left:0;border-bottom:0}
-.corner.bl{bottom:6px;left:6px;border-right:0;border-top:0}
-.corner.br{bottom:6px;right:6px;border-left:0;border-top:0}
+.card::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;
+  background:var(--accent);border-radius:5px 5px 0 0}
+.card.g-gov::before{background:var(--patina)}
+.card.g-hist::before{background:var(--brass)}
+.card.g-sym::before{background:var(--indigo)}
+body.formal .card::before{background:#243A45}
 
 .qhead{display:flex;justify-content:space-between;align-items:baseline;gap:10px;
-  border-bottom:1px solid var(--rule);padding-bottom:9px;margin-bottom:16px}
+  border-bottom:1px solid var(--rule);padding-bottom:10px;margin-bottom:16px}
 .qhead .eyebrow{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.card.g-gov .qhead .eyebrow{color:var(--patina-d)}
+.card.g-hist .qhead .eyebrow{color:var(--brass)}
+.card.g-sym .qhead .eyebrow{color:var(--indigo)}
+body.formal .qhead .eyebrow{color:var(--soft)}
 .qhead .num{flex:0 0 auto}
-button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--live);outline-offset:2px}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+
 .qen{font-family:var(--serif);font-size:27px;line-height:1.28;margin:0;font-weight:500}
-.qru{font-family:var(--cyr);font-size:17px;line-height:1.45;color:var(--soft);margin:14px 0 0}
+.qru{font-family:var(--cyr);font-size:19px;line-height:1.45;color:var(--soft);margin:14px 0 0}
 .qen.hide,.qru.hide{display:none}
-.silent{font-family:var(--disp);font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+.silent{font-family:var(--disp);font-size:12.5px;letter-spacing:.16em;text-transform:uppercase;
   color:var(--faint);text-align:center;margin:34px 0}
 
-.heard{margin:16px 0 0;padding:11px 12px;background:var(--paper);border-radius:2px;
-  border-left:2px solid var(--rule);min-height:44px}
-.heard .lbl{font-family:var(--disp);font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;
-  color:var(--faint);font-weight:600;display:block;margin-bottom:4px}
-.heard .txt{font-family:var(--serif);font-size:16.5px;line-height:1.4;color:var(--ink)}
+.heard{margin:16px 0 0;padding:12px 13px;background:var(--well);border-radius:3px;
+  border-left:3px solid var(--rule);min-height:46px}
+.heard .lbl{font-family:var(--disp);font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--faint);font-weight:600;display:block;margin-bottom:5px}
+.heard .txt{font-family:var(--serif);font-size:18px;line-height:1.4;color:var(--ink)}
 .heard .txt:empty::after{content:"—";color:var(--faint)}
 .heard.off{display:none}
 
 .spacer{flex:1;min-height:8px}
 
-/* verdict */
-.verdict{margin-top:16px;border-top:1px solid var(--rule);padding-top:14px}
+.verdict{margin-top:16px;border-top:1px solid var(--rule);padding-top:15px}
 .verdict.off{display:none}
-.stamp{display:inline-block;font-family:var(--disp);font-size:14px;letter-spacing:.24em;
-  text-transform:uppercase;font-weight:600;padding:7px 15px;border:2px double currentColor;
-  border-radius:2px;transform:rotate(-6deg);margin:0 0 13px}
-.stamp.ok{color:var(--seal)}
+.stamp{display:inline-block;font-family:var(--disp);font-size:16px;letter-spacing:.22em;
+  text-transform:uppercase;font-weight:600;padding:8px 16px;border:2px double currentColor;
+  border-radius:3px;transform:rotate(-6deg);margin:0 0 14px}
+.stamp.ok{color:var(--patina)}
 .stamp.no{color:var(--deny)}
 .stamp.self{color:var(--soft)}
 @media (prefers-reduced-motion:no-preference){
@@ -152,92 +204,260 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid 
     60%{opacity:1}to{transform:rotate(-6deg) scale(1);opacity:1}}
 }
 .acc{margin:0 0 10px}
-.acc .lbl{font-family:var(--disp);font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;
-  color:var(--faint);font-weight:600;display:block;margin-bottom:5px}
+.acc .lbl{font-family:var(--disp);font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--faint);font-weight:600;display:block;margin-bottom:6px}
 .acc ul{margin:0;padding:0;list-style:none}
-.acc li{font-family:var(--serif);font-size:17px;line-height:1.4;margin:0 0 7px;padding-left:13px;position:relative}
-.acc li::before{content:"";position:absolute;left:0;top:.62em;width:5px;height:1px;background:var(--faint)}
-.acc li .ru{display:block;font-family:var(--cyr);font-size:13.5px;color:var(--soft);line-height:1.4;margin-top:1px}
+.acc li{font-family:var(--serif);font-size:19px;line-height:1.4;margin:0 0 8px;
+  padding-left:14px;position:relative}
+.acc li::before{content:"";position:absolute;left:0;top:.62em;width:6px;height:1px;background:var(--faint)}
+.acc li .ru{display:block;font-family:var(--cyr);font-size:15.5px;color:var(--soft);
+  line-height:1.4;margin-top:2px}
 .acc li .ru.hide{display:none}
-.more{font-family:var(--cyr);font-size:12px;color:var(--faint);margin:2px 0 0 13px}
-.aiwhy{font-family:var(--mono);font-size:11px;line-height:1.5;color:var(--soft);
-  margin:10px 0 0;padding-left:13px;border-left:2px solid var(--rule)}
+.more{font-family:var(--cyr);font-size:14px;color:var(--faint);margin:3px 0 0 14px}
+
+/* the context line — the reason practice mode exists */
+.ctx{margin:14px 0 0;padding:13px 14px;background:var(--patina-w);border-radius:4px;
+  border-left:3px solid var(--patina)}
+.card.g-hist .ctx{background:var(--brass-w);border-left-color:var(--brass)}
+.card.g-sym .ctx{background:var(--indigo-w);border-left-color:var(--indigo)}
+.ctx .en{font-family:var(--serif);font-size:17px;line-height:1.45;color:var(--ink);display:block}
+.ctx .ru{font-family:var(--cyr);font-size:15px;line-height:1.45;color:var(--soft);
+  display:block;margin-top:6px}
+.ctx .en.hide,.ctx .ru.hide{display:none}
+.ctx.off{display:none}
+
+.cheer{font-family:var(--cyr);font-size:15.5px;color:var(--patina-d);margin:12px 0 0;line-height:1.45}
+.cheer.off{display:none}
+
+.aiwhy{font-family:var(--mono);font-size:13px;line-height:1.5;color:var(--soft);
+  margin:12px 0 0;padding-left:14px;border-left:2px solid var(--rule)}
 .aiwhy.off{display:none}
 .aiwhy.bad{color:var(--deny)}
 @media (prefers-reduced-motion:no-preference){
   .aiwhy.wait{animation:breathe 1.3s ease-in-out infinite}
   @keyframes breathe{0%,100%{opacity:.45}50%{opacity:1}}
 }
-.warn{font-family:var(--cyr);font-size:12px;line-height:1.5;color:#6B5518;
-  background:#FBF3E2;border:1px solid #E2CE9E;border-radius:2px;padding:9px 10px;margin:10px 0 0}
+.warn{font-family:var(--cyr);font-size:14px;line-height:1.55;color:#6B5518;
+  background:var(--brass-w);border:1px solid #E2CE9E;border-radius:3px;padding:10px 11px;margin:10px 0 0}
 
 /* mic seal */
 .stage{padding:4px 0 16px;text-align:center}
-.seal{position:relative;width:96px;height:96px;margin:0 auto;border-radius:50%;
+.seal{position:relative;width:100px;height:100px;margin:0 auto;border-radius:50%;
   appearance:none;cursor:pointer;background:var(--card);color:var(--soft);
   border:1px solid var(--rule);
-  box-shadow:0 0 0 1px var(--card) inset,0 0 0 5px var(--card),0 0 0 6px var(--rule);
+  box-shadow:0 0 0 1px var(--card) inset,0 0 0 5px var(--ground),0 0 0 6px var(--rule);
   display:flex;align-items:center;justify-content:center;transition:color .2s,border-color .2s}
-.seal svg{width:31px;height:31px;fill:currentColor}
-.seal.live{color:var(--live);border-color:var(--live);box-shadow:0 0 0 1px var(--card) inset,0 0 0 5px var(--card),0 0 0 6px var(--live)}
+.seal svg{width:33px;height:33px;fill:currentColor}
+.seal.live{color:var(--brass);border-color:var(--brass);
+  box-shadow:0 0 0 1px var(--card) inset,0 0 0 5px var(--ground),0 0 0 6px var(--brass)}
 .seal.busy{color:var(--faint)}
-.ring{position:absolute;inset:-6px;border-radius:50%;border:1px solid var(--live);opacity:0}
+.ring{position:absolute;inset:-6px;border-radius:50%;border:1px solid var(--brass);opacity:0}
 @media (prefers-reduced-motion:no-preference){
   .seal.live .ring{animation:pulse 1.8s ease-out infinite}
   .seal.live .ring:nth-child(2){animation-delay:.6s}
   @keyframes pulse{0%{transform:scale(1);opacity:.75}100%{transform:scale(1.55);opacity:0}}
 }
-.state{font-family:var(--disp);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;
-  color:var(--soft);font-weight:600;margin:13px 0 0;min-height:14px}
-.staten{font-family:var(--cyr);font-size:12px;color:var(--faint);margin:3px 0 0;min-height:15px}
+.state{font-family:var(--disp);font-size:12.5px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--soft);font-weight:600;margin:14px 0 0;min-height:16px}
+.staten{font-family:var(--cyr);font-size:14px;color:var(--faint);margin:4px 0 0;min-height:17px}
 
 .acts{display:flex;gap:6px;padding:0 0 16px}
 .acts button{flex:1;appearance:none;cursor:pointer;background:var(--card);
-  border:1px solid var(--rule);border-radius:2px;padding:13px 5px;
-  font-family:var(--disp);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  border:1px solid var(--rule);border-radius:3px;padding:14px 5px;
+  font-family:var(--disp);font-size:12px;letter-spacing:.08em;text-transform:uppercase;
   color:var(--soft);font-weight:600;line-height:1.3}
-.acts button:active{background:var(--paper)}
-.acts button.go{background:var(--ink);border-color:var(--ink);color:var(--card);flex:1.5}
+.acts button:active{background:var(--well)}
+.acts button.go{background:var(--accent);border-color:var(--accent);color:#fff;flex:1.5}
 .acts button.hide{display:none}
 
 .typebox{display:none;gap:6px;padding:0 0 16px}
 .typebox.on{display:flex}
 .typebox input{flex:1}
-.typebox button{flex:0 0 auto;padding:0 15px;background:var(--ink);color:var(--card);
-  border:1px solid var(--ink);border-radius:2px;font-family:var(--disp);font-size:10px;
-  letter-spacing:.12em;text-transform:uppercase;font-weight:600;cursor:pointer}
+.typebox button{flex:0 0 auto;padding:0 16px;background:var(--accent);color:#fff;
+  border:1px solid var(--accent);border-radius:3px;font-family:var(--disp);font-size:12px;
+  letter-spacing:.1em;text-transform:uppercase;font-weight:600;cursor:pointer}
 
-.notice{background:#FBF3E2;border:1px solid #E2CE9E;border-radius:2px;padding:11px 12px;
-  font-family:var(--cyr);font-size:12.5px;line-height:1.5;color:#6B5518;margin:0 0 14px}
+.notice{background:var(--brass-w);border:1px solid #E2CE9E;border-radius:3px;padding:12px 13px;
+  font-family:var(--cyr);font-size:14.5px;line-height:1.55;color:#6B5518;margin:0 0 14px}
 .notice.off{display:none}
 
 /* ── summary ─────────────────────────── */
-.score{text-align:center;padding:30px 0 8px}
-.score .big{font-family:var(--mono);font-size:58px;font-weight:400;letter-spacing:-.02em;
-  line-height:1;font-variant-numeric:tabular-nums}
-.score .of{font-family:var(--disp);font-size:11px;letter-spacing:.2em;text-transform:uppercase;
-  color:var(--soft);margin-top:10px;font-weight:600}
-.score .verd{font-family:var(--cyr);font-size:14px;color:var(--soft);margin-top:9px}
-.list{margin:20px 0 0}
-.list h3{font-family:var(--disp);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;
-  color:var(--soft);font-weight:600;margin:0 0 10px;padding-bottom:7px;border-bottom:1px solid var(--rule)}
-.item{display:flex;gap:11px;padding:10px 0;border-bottom:1px solid var(--rule)}
-.item .n{font-family:var(--mono);font-size:11px;color:var(--faint);flex:0 0 26px;padding-top:4px}
-.item .q{font-family:var(--serif);font-size:15.5px;line-height:1.35}
-.item .q .ru{display:block;font-family:var(--cyr);font-size:12.5px;color:var(--soft);margin-top:2px}
-.empty{font-family:var(--cyr);font-size:13.5px;color:var(--faint);line-height:1.5;padding:14px 0}
+.score{text-align:center;padding:28px 0 8px}
+.score .big{font-family:var(--mono);font-size:62px;font-weight:400;letter-spacing:-.02em;
+  line-height:1;font-variant-numeric:tabular-nums;color:var(--patina-d)}
+.score .of{font-family:var(--disp);font-size:13px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--soft);margin-top:12px;font-weight:600}
+.score .verd{font-family:var(--cyr);font-size:16px;color:var(--soft);margin-top:11px;line-height:1.5}
+.ribbon{display:inline-block;font-family:var(--disp);font-size:13px;letter-spacing:.2em;
+  text-transform:uppercase;font-weight:600;padding:8px 18px;border-radius:3px;margin-top:14px}
+.ribbon.pass{background:var(--patina);color:#fff}
+.ribbon.fail{background:var(--deny-w);color:var(--deny);border:1px solid var(--deny)}
+
+.list{margin:22px 0 0}
+.list h3{font-family:var(--disp);font-size:12.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--soft);font-weight:600;margin:0 0 11px;padding-bottom:8px;border-bottom:1px solid var(--rule)}
+.item{display:flex;gap:12px;padding:11px 0;border-bottom:1px solid var(--rule)}
+.item .n{font-family:var(--mono);font-size:13px;color:var(--faint);flex:0 0 30px;padding-top:4px}
+.item .q{font-family:var(--serif);font-size:17px;line-height:1.35}
+.item .q .ru{display:block;font-family:var(--cyr);font-size:14.5px;color:var(--soft);margin-top:3px}
+.empty{font-family:var(--cyr);font-size:15.5px;color:var(--faint);line-height:1.5;padding:14px 0}
+
+/* ── celebration ─────────────────────── */
+#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:50}
+
+/* ── players ─────────────────────────── */
+.plist{display:flex;flex-direction:column;gap:9px;margin:0 0 18px}
+.prow{display:flex;align-items:center;gap:10px;width:100%;background:var(--card);
+  border:1.5px solid var(--rule);border-radius:6px;padding:13px 14px}
+.psel{display:flex;align-items:center;gap:13px;flex:1;min-width:0;appearance:none;
+  background:none;border:none;padding:0;font:inherit;color:inherit;text-align:left;cursor:pointer}
+.prow.cur{border-color:var(--patina);background:var(--patina-w)}
+.pav{flex:0 0 auto;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;color:#fff;font-family:var(--disp);font-size:17px;font-weight:600;
+  letter-spacing:.04em}
+.pmeta{flex:1;min-width:0}
+.pmeta .nm{display:block;font-family:var(--serif);font-size:19px;line-height:1.25;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pmeta .sb{display:block;font-family:var(--cyr);font-size:13.5px;color:var(--faint);margin-top:3px}
+.pmini{display:flex;height:5px;border-radius:3px;overflow:hidden;background:var(--well);margin-top:7px}
+.pmini i{display:block;height:100%;background:var(--patina)}
+.pdel{flex:0 0 auto;appearance:none;background:none;border:none;cursor:pointer;
+  font-family:var(--mono);font-size:21px;line-height:1;color:var(--faint);padding:6px 4px}
+.pdel:active{color:var(--deny)}
+
+.addrow{display:flex;gap:7px;margin:0 0 10px}
+.addrow input{flex:1}
+.addrow button{flex:0 0 auto;padding:0 17px;background:var(--patina);color:#fff;
+  border:1px solid var(--patina);border-radius:3px;font-family:var(--disp);font-size:12.5px;
+  letter-spacing:.1em;text-transform:uppercase;font-weight:600;cursor:pointer}
+.addrow.off{display:none}
+.ghost{display:block;width:100%;appearance:none;cursor:pointer;background:var(--card);
+  border:1.5px dashed var(--rule);border-radius:6px;padding:15px;color:var(--soft);
+  font-family:var(--disp);font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:600}
+.ghost.off{display:none}
+
+/* who is playing, shown on the setup screen */
+.chip{display:flex;align-items:center;gap:11px;width:100%;appearance:none;cursor:pointer;
+  background:var(--card);border:1px solid var(--rule);border-radius:999px;
+  padding:7px 14px 7px 7px;margin:0 0 18px;text-align:left}
+.chip .pav{width:34px;height:34px;font-size:14px}
+.chip .who{flex:1;min-width:0;font-family:var(--serif);font-size:17px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chip .sw{flex:0 0 auto;font-family:var(--disp);font-size:11px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--faint);font-weight:600}
+
+/* ── confirm dialog ──────────────────── */
+.modal{position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;
+  padding:22px;background:rgba(18,36,41,.5)}
+.modal.off{display:none}
+.sheet{background:var(--card);border-radius:8px;padding:22px 20px;max-width:380px;width:100%;
+  box-shadow:0 18px 50px rgba(18,36,41,.3)}
+.sheet h3{font-family:var(--disp);font-size:15px;letter-spacing:.12em;text-transform:uppercase;
+  margin:0 0 12px;color:var(--deny);font-weight:600}
+.sheet p{font-family:var(--cyr);font-size:15.5px;line-height:1.55;color:var(--ink);margin:0 0 8px}
+.sheet p.sub{font-size:14px;color:var(--soft)}
+.mbtns{display:flex;gap:8px;margin-top:20px}
+.mbtns button{flex:1;appearance:none;cursor:pointer;border-radius:4px;padding:14px 8px;
+  font-family:var(--disp);font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:600}
+.mbtns .no{background:var(--card);border:1px solid var(--rule);color:var(--soft)}
+.mbtns .yes{background:var(--deny);border:1px solid var(--deny);color:#fff}
+
+/* ── mastery map ─────────────────────── */
+.mapwrap{padding:18px 0 0}
+.bignum{text-align:center;padding:4px 0 18px}
+.bignum .n{font-family:var(--mono);font-size:54px;line-height:1;color:var(--patina-d);
+  font-variant-numeric:tabular-nums}
+.bignum .c{font-family:var(--disp);font-size:12.5px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--soft);font-weight:600;margin-top:10px}
+.bignum .s{font-family:var(--cyr);font-size:14.5px;color:var(--faint);margin-top:9px;line-height:1.5}
+
+.grid{display:grid;grid-template-columns:repeat(16,1fr);gap:4px;margin:8px 0 0}
+.grid b{display:block;aspect-ratio:1;border-radius:2px;background:var(--rule);
+  cursor:pointer;border:none;padding:0}
+.grid b.seen{background:var(--brass)}
+.grid b.mast{background:var(--patina)}
+.grid b.sel{outline:2px solid var(--ink);outline-offset:1px}
+
+.legend{display:flex;gap:16px;flex-wrap:wrap;margin:16px 0 0;
+  font-family:var(--cyr);font-size:13.5px;color:var(--soft)}
+.legend span{display:flex;align-items:center;gap:7px}
+.legend i{width:12px;height:12px;border-radius:2px;display:block}
+.legend i.u{background:var(--rule)}
+.legend i.s{background:var(--brass)}
+.legend i.m{background:var(--patina)}
+
+.peek{margin:16px 0 0;padding:14px;background:var(--card);border:1px solid var(--rule);
+  border-radius:4px;min-height:72px}
+.peek .n{font-family:var(--mono);font-size:12.5px;color:var(--faint);display:block;margin-bottom:6px}
+.peek .q{font-family:var(--serif);font-size:17px;line-height:1.35;display:block}
+.peek .r{font-family:var(--cyr);font-size:14.5px;color:var(--soft);display:block;margin-top:4px}
+.peek .st{font-family:var(--cyr);font-size:13.5px;color:var(--faint);display:block;margin-top:8px}
 </style>
 </head>
 <body>
 <div class="app">
 
+<!-- ══ PLAYERS ════════════════════════ -->
+<section class="screen on" id="scr-players">
+  <div class="hero">
+    <h1>Civics<br>Oral Practice</h1>
+    <p class="sub" id="whosub">Кто занимается?</p>
+    <div class="torch"></div>
+  </div>
+
+  <div class="plist" id="plist"></div>
+
+  <div class="addrow off" id="addrow">
+    <input type="text" id="newname" placeholder="Имя / Name" maxlength="24"
+           autocomplete="off" autocapitalize="words">
+    <button id="savename">Add</button>
+  </div>
+  <button class="ghost" id="addplayer">+ Add player</button>
+
+  <div class="foot">
+    <p id="pfoot">До 10 игроков. У каждого свой прогресс, который сохраняется на этом телефоне.</p>
+  </div>
+</section>
+
 <!-- ══ SETUP ══════════════════════════ -->
-<section class="screen on" id="scr-setup">
+<section class="screen" id="scr-setup">
   <div class="hero">
     <h1>Civics<br>Oral Practice</h1>
     <p class="sub">Устная подготовка к тесту на гражданство США — 128 вопросов</p>
-    <div class="rule"></div>
+    <div class="torch"></div>
   </div>
+
+  <button class="chip" id="whochip">
+    <span class="pav" id="chipav">—</span>
+    <span class="who" id="chipname">—</span>
+    <span class="sw">Switch ›</span>
+  </button>
+
+  <div class="field">
+    <span class="legend" style="display:block">Mode · Режим</span>
+    <div class="modes" id="modeseg">
+      <button id="m-practice" data-v="practice" aria-pressed="true">
+        <span class="t">Practice</span>
+        <span class="d">С подсказками и фактами</span>
+      </button>
+      <button id="m-exam" data-v="exam" aria-pressed="false">
+        <span class="t">Interview</span>
+        <span class="d">20 вопросов, без помощи</span>
+      </button>
+    </div>
+    <p class="hint" id="modehint">Спокойная тренировка: после верного ответа — интересный факт,
+    есть подсказки, вопросы уходят из оборота, когда вы их выучили.</p>
+  </div>
+
+  <button class="ready" id="readystrip">
+    <span class="big" id="readypct">—</span>
+    <span class="lab">
+      <span class="t" id="readylab">Readiness</span>
+      <span class="d" id="readysub">Пройдите первую сессию, чтобы увидеть оценку</span>
+      <span class="bars"><i class="m" id="barm" style="width:0"></i><i class="l" id="barl" style="width:0"></i></span>
+    </span>
+    <span class="arrow">›</span>
+  </button>
 
   <div class="field">
     <span class="legend">Captions · Субтитры</span>
@@ -250,25 +470,34 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid 
     <p class="hint">Вопрос всегда звучит вслух по-английски. Субтитры только помогают.</p>
   </div>
 
-  <div class="field">
+  <div class="field" id="orderfield">
     <span class="legend">Question order · Порядок вопросов</span>
     <div class="seg four" id="ordseg">
-      <button data-v="random" aria-pressed="true">Random</button>
+      <button data-v="smart" aria-pressed="true">Smart</button>
+      <button data-v="random" aria-pressed="false">Random</button>
       <button data-v="missed" aria-pressed="false">Missed most</button>
-      <button data-v="order" aria-pressed="false">1 → 128</button>
       <button data-v="star" aria-pressed="false">20 starred (65/20)</button>
     </div>
-    <p class="hint" id="ordhint">Все 128 вопросов в случайном порядке.</p>
+    <p class="hint" id="ordhint">Сначала то, что вы ещё не выучили; выученное возвращается реже.</p>
   </div>
 
-  <div class="field">
+  <div class="field" id="lenfield">
     <span class="legend">Session length · Длина сессии</span>
     <div class="seg" id="lenseg">
       <button data-v="10" aria-pressed="false" style="min-width:0">10</button>
       <button data-v="20" aria-pressed="true" style="min-width:0">20</button>
       <button data-v="all" aria-pressed="false" style="min-width:0">All</button>
     </div>
-    <p class="hint">На собеседовании задают 20 вопросов.</p>
+  </div>
+
+  <div class="field">
+    <span class="legend">Celebrations · Праздновать</span>
+    <div class="seg" id="fxseg">
+      <button data-v="full" aria-pressed="true" style="min-width:0">Full</button>
+      <button data-v="quiet" aria-pressed="false" style="min-width:0">No sound</button>
+      <button data-v="off" aria-pressed="false" style="min-width:0">Off</button>
+    </div>
+    <p class="hint">Конфетти и звук за верный ответ. В режиме Interview — только в конце.</p>
   </div>
 
   <div class="field">
@@ -286,18 +515,18 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid 
         <label for="stsel">Штат / State — for questions 23, 29, 61, 62</label>
         <select id="stsel"><option value="">Не выбран / Not set</option></select>
       </div>
-      <div class="row"><label for="f-senator">Your U.S. senators (Q23)</label>
-        <input type="text" id="f-senator" placeholder="e.g. Maria Cantwell, Patty Murray"></div>
       <div class="row" id="distrow" style="display:none">
         <label for="distsel">Избирательный округ / Congressional district (Q29)</label>
         <select id="distsel"><option value="">Не выбран / Not set</option></select>
         <p class="hint" style="margin-top:6px">Не знаете свой округ? Введите почтовый индекс на
         house.gov/representatives/find-your-representative, затем выберите номер здесь.</p>
       </div>
+      <div class="row"><label for="f-senator">Your U.S. senators (Q23)</label>
+        <input type="text" id="f-senator" placeholder="Выберите штат выше"></div>
       <div class="row"><label for="f-rep">Your U.S. representative (Q29)</label>
         <input type="text" id="f-rep" placeholder="Выберите округ выше"></div>
       <div class="row"><label for="f-governor">Your governor (Q61)</label>
-        <input type="text" id="f-governor" placeholder="e.g. Bob Ferguson"></div>
+        <input type="text" id="f-governor" placeholder="Выберите штат выше"></div>
       <div class="row"><label for="f-capital">Your state capital (Q62)</label>
         <input type="text" id="f-capital" placeholder="Заполнится автоматически"></div>
       <div class="row"><label for="f-president">President now (Q38)</label>
@@ -309,7 +538,7 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid 
       <div class="row"><label for="f-chief">Chief Justice now (Q57)</label>
         <input type="text" id="f-chief"></div>
       <p class="hint">Эти ответы меняются. Проверьте их на uscis.gov/citizenship/testupdates
-      незадолго до собеседования. Оставьте поле пустым — и вопрос будет оцениваться вручную.</p>
+      незадолго до собеседования.</p>
     </div>
   </details>
 
@@ -317,7 +546,7 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid 
     <summary>Smart grading &middot; AI-оценка</summary>
     <div class="localbody">
       <p class="hint" style="margin-top:0">Без ключа приложение сравнивает слова. С ключом ответ
-      проверяет Claude — он понимает смысл, а не совпадение слов, и прощает ошибки распознавания речи.</p>
+      проверяет Claude — он понимает смысл, а не совпадение слов.</p>
       <div class="row">
         <label for="aikey">Anthropic API key</label>
         <input type="password" id="aikey" placeholder="sk-ant-..." autocomplete="off"
@@ -330,27 +559,23 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid 
           <button data-v="all" aria-pressed="false">Every answer</button>
         </div>
       </div>
-      <p class="warn"><strong>Ключ хранится только на этом телефоне</strong> (localStorage этого
-      сайта). Он никогда не попадает в файл, который вы загрузили на GitHub — не вписывайте его
-      в HTML. Получить ключ: console.anthropic.com. Стоит доли цента за ответ.</p>
-      <p class="hint">«Only if marked wrong» экономит деньги: Claude вызывается, только когда
-      словарная проверка не засчитала ответ — то есть именно там, где она ошибается.</p>
+      <p class="warn"><strong>Ключ хранится только на этом телефоне.</strong> Он никогда не
+      попадает в файл, который вы загрузили на GitHub. Получить ключ: console.anthropic.com.</p>
     </div>
   </details>
 
-  <button class="iconbtn" id="testsound" style="width:100%;padding:13px;margin:0 0 10px;
-    letter-spacing:.16em;font-size:11px">&#9654;&nbsp; Test sound &middot; Проверить звук</button>
-  <p class="hint" id="soundhint" style="margin:0 0 18px;text-align:center">Телефон должен быть
+  <button class="iconbtn" id="testsound" style="width:100%;padding:14px;margin:0 0 10px;
+    letter-spacing:.14em;font-size:12.5px">&#9654;&nbsp; Test sound &middot; Проверить звук</button>
+  <p class="hint" id="soundhint" style="margin:0 0 20px;text-align:center">Телефон должен быть
   не на беззвучном режиме — боковой переключатель и громкость.</p>
 
-  <button class="primary" id="begin">Begin examination</button>
+  <button class="primary" id="begin">Begin</button>
 
   <div class="foot">
-    <p id="micstat" style="font-family:var(--mono);font-size:11px;letter-spacing:.02em"></p>
-    <p id="gradestat" style="font-family:var(--mono);font-size:11px;letter-spacing:.02em"></p>
+    <p class="diag" id="micstat"></p>
+    <p class="diag" id="gradestat"></p>
     <p id="progline"></p>
-    <p>128 вопросов версии 2020 года — USCIS восстановил её для заявлений N-400, поданных
-    с 20 октября 2025 года. На собеседовании задают 20 вопросов; нужно ответить верно на 12.</p>
+    <p>128 вопросов версии 2020 года. На собеседовании задают 20; нужно ответить верно на 12.</p>
     <p><a href="#" id="resetbtn">Сбросить статистику / Reset progress</a></p>
   </div>
 </section>
@@ -363,10 +588,7 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid 
     <button class="iconbtn" id="repeat">Repeat</button>
   </div>
 
-  <div class="card">
-    <span class="corner tl"></span><span class="corner tr"></span>
-    <span class="corner bl"></span><span class="corner br"></span>
-
+  <div class="card" id="qcard">
     <div class="qhead">
       <span class="eyebrow" id="qcat">American Government</span>
       <span class="num" id="qnum">Q 001</span>
@@ -388,6 +610,11 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid 
     <div class="verdict off" id="verdict">
       <span class="stamp ok" id="stamp">Correct</span>
       <div class="acc" id="acc"></div>
+      <p class="cheer off" id="cheer"></p>
+      <div class="ctx off" id="ctxline">
+        <span class="en" id="ctxen"></span>
+        <span class="ru" id="ctxru"></span>
+      </div>
       <p class="aiwhy off" id="aiwhy"></p>
     </div>
   </div>
@@ -407,6 +634,7 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid 
   </div>
 
   <div class="acts">
+    <button id="hintbtn">Hint</button>
     <button id="dunno">Show answer</button>
     <button id="markbtn" class="hide">Mark correct</button>
     <button id="next" class="go">Skip</button>
@@ -416,21 +644,70 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid 
 <!-- ══ SUMMARY ════════════════════════ -->
 <section class="screen" id="scr-done">
   <div class="bar">
-    <button class="iconbtn" id="again">New session</button>
-    <div class="mid"><span class="eyebrow">Record of examination</span></div>
+    <button class="iconbtn" id="again">Again</button>
+    <div class="mid"><span class="eyebrow" id="donetitle">Session</span></div>
     <button class="iconbtn" id="home">Setup</button>
   </div>
   <div class="score">
     <div class="big" id="bigscore">0/0</div>
     <div class="of" id="pct">0% correct</div>
+    <div id="ribbonwrap"></div>
     <div class="verd" id="passline"></div>
   </div>
   <div class="list" id="missedlist"></div>
-  <div style="padding:24px 0 30px"><button class="primary" id="drill">Drill the missed ones</button></div>
+  <div style="padding:22px 0 30px">
+    <button class="primary" id="drill">Drill the missed ones</button>
+    <button class="iconbtn" id="switchplayer" style="width:100%;padding:14px;margin-top:10px;
+      letter-spacing:.14em;font-size:12.5px">Switch player &middot; Сменить игрока</button>
+  </div>
+</section>
+
+<!-- ══ MASTERY MAP ════════════════════ -->
+<section class="screen" id="scr-map">
+  <div class="bar">
+    <button class="iconbtn" id="mapback">Back</button>
+    <div class="mid"><span class="eyebrow">Your progress</span></div>
+    <span style="width:62px"></span>
+  </div>
+  <div class="mapwrap">
+    <div class="bignum">
+      <div class="n" id="mapbig">0 / 128</div>
+      <div class="c">Questions mastered</div>
+      <div class="s" id="mapsub"></div>
+    </div>
+    <div class="grid" id="mapgrid"></div>
+    <div class="legend">
+      <span><i class="u"></i> Не видели</span>
+      <span><i class="s"></i> Учим</span>
+      <span><i class="m"></i> Выучено</span>
+    </div>
+    <div class="peek" id="peek">
+      <span class="st">Нажмите на квадрат, чтобы увидеть вопрос.</span>
+    </div>
+  </div>
+  <div style="padding:22px 0 30px">
+    <button class="primary" id="mapstart">Practice what's left</button>
+  </div>
 </section>
 
 </div>
-<script>const QUESTIONS = [
+
+<canvas id="fx" aria-hidden="true"></canvas>
+
+<div class="modal off" id="modal" role="dialog" aria-modal="true">
+  <div class="sheet">
+    <h3 id="modaltitle">Delete player</h3>
+    <p id="modalbody"></p>
+    <p class="sub" id="modalsub"></p>
+    <div class="mbtns">
+      <button class="no" id="modalno">Cancel</button>
+      <button class="yes" id="modalyes">Delete</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const QUESTIONS = [
 {n:1,s:0,c:"Principles of American Government",
 q:"What is the form of government of the United States?",
 qr:"Какая форма правления в Соединённых Штатах?",
@@ -1198,6 +1475,266 @@ a:["A holiday to honor people in the (U.S.) military","A holiday to honor people
 ar:["Праздник в честь военнослужащих (США)","Праздник в честь тех, кто служил (в вооружённых силах США)"]}
 ];
 
+/* ═══ One true thing per question. Shown after a correct answer in Practice. ═══ */
+const CONTEXT={
+1:{en:"A republic only lends power out. Every office in it eventually goes back to the people.",
+   ru:"Республика лишь одалживает власть. Любая должность рано или поздно возвращается народу."},
+2:{en:"The oldest written national constitution still in use anywhere in the world.",
+   ru:"Старейшая писаная конституция в мире, которая действует до сих пор."},
+3:{en:"It is short — about 4,500 words. Most state constitutions are many times longer.",
+   ru:"Она короткая — около 4 500 слов. Конституции штатов обычно в разы длиннее."},
+4:{en:"An early draft listed every state by name. “We the People” replaced the whole list.",
+   ru:"В раннем варианте перечислялись все штаты поимённо. «Мы, народ» заменило весь этот список."},
+5:{en:"More than 11,000 amendments have been proposed. Twenty-seven made it.",
+   ru:"Было предложено более 11 000 поправок. Прошли двадцать семь."},
+6:{en:"Several states refused to ratify the Constitution until these ten were promised.",
+   ru:"Несколько штатов отказывались ратифицировать Конституцию, пока не пообещали эти десять поправок."},
+7:{en:"The most recent one took 202 years — proposed in 1789, ratified in 1992.",
+   ru:"Последняя ратифицировалась 202 года: предложена в 1789-м, принята в 1992-м."},
+8:{en:"Jefferson was 33 when he drafted it, alone, in rented rooms in Philadelphia.",
+   ru:"Джефферсону было 33, когда он писал её — один, в съёмных комнатах в Филадельфии."},
+9:{en:"Signing it was treason. Every man who signed risked hanging.",
+   ru:"Подписать её значило совершить измену. Каждый подписавший рисковал виселицей."},
+10:{en:"“All men are created equal” was written by a man who owned slaves. The country has argued over that line ever since.",
+   ru:"«Все люди созданы равными» написал человек, владевший рабами. Страна спорит об этой строке до сих пор."},
+11:{en:"Locke wrote “life, liberty, and property.” Jefferson changed the last word.",
+   ru:"У Локка было «жизнь, свобода и собственность». Джефферсон изменил последнее слово."},
+12:{en:"Nothing in the Constitution names an economic system. This one grew out of practice.",
+   ru:"В Конституции не названа никакая экономическая система. Эта сложилась на практике."},
+13:{en:"In 1974 a president resigned rather than defy a unanimous Supreme Court. That is the rule of law working.",
+   ru:"В 1974 году президент ушёл в отставку, не решившись пойти против единогласного решения Верховного суда. Так работает верховенство закона."},
+14:{en:"The Iroquois Great Law of Peace bound six nations together long before the colonies tried it.",
+   ru:"Великий закон мира ирокезов объединил шесть народов задолго до того, как это попробовали колонии."},
+15:{en:"Madison's worry was simple: whoever writes the law must not also be the one who enforces it.",
+   ru:"Опасение Мэдисона было простым: тот, кто пишет закон, не должен сам его исполнять."},
+16:{en:"Each branch can block the others. None of them can finish the job alone.",
+   ru:"Каждая ветвь может остановить другие. Ни одна не справится в одиночку."},
+17:{en:"The executive branch employs more than two million civilians.",
+   ru:"В исполнительной ветви работает более двух миллионов гражданских служащих."},
+18:{en:"Thousands of bills are introduced in each Congress. Only a few hundred become law.",
+   ru:"В каждом созыве Конгресса вносят тысячи законопроектов. Законами становятся лишь несколько сотен."},
+19:{en:"Two chambers, so that the large states and the small ones each had a reason to join.",
+   ru:"Две палаты — чтобы и большим, и малым штатам был смысл войти в союз."},
+20:{en:"Congress has formally declared war eleven times. The last was in 1942.",
+   ru:"Конгресс официально объявлял войну одиннадцать раз. Последний — в 1942 году."},
+21:{en:"There were 26 in the first Congress. Two more arrive with every new state.",
+   ru:"В первом Конгрессе их было 26. С каждым новым штатом прибавляется двое."},
+22:{en:"Six years was meant to let a senator cast an unpopular vote and survive it.",
+   ru:"Шесть лет задумывались для того, чтобы сенатор мог проголосовать непопулярно и уцелеть."},
+23:{en:"Your two senators represent you equally, whether you live in a city or a county of 3,000.",
+   ru:"Ваши два сенатора представляют вас одинаково — живёте ли вы в большом городе или в округе на 3 000 человек."},
+24:{en:"The number was frozen at 435 in 1929. The population has nearly tripled since.",
+   ru:"Число закрепили на 435 в 1929 году. С тех пор население выросло почти втрое."},
+25:{en:"Two years means a representative is almost always running for the next election.",
+   ru:"Два года означают, что представитель почти всегда находится в предвыборной кампании."},
+26:{en:"The House was built to feel the public mood quickly. The Senate was built to slow it down.",
+   ru:"Палата представителей задумана, чтобы быстро чувствовать настроения народа. Сенат — чтобы их притормаживать."},
+27:{en:"Wyoming has about 580,000 people. California has about 39 million. Both get two.",
+   ru:"В Вайоминге около 580 000 жителей, в Калифорнии около 39 миллионов. У обоих по два сенатора."},
+28:{en:"The Great Compromise saved the convention. Without it the small states would have walked out.",
+   ru:"Великий компромисс спас конвент. Без него малые штаты покинули бы его."},
+29:{en:"Your representative's district holds about 760,000 people — and one voice for all of them.",
+   ru:"В округе вашего представителя живёт около 760 000 человек — и у всех них один голос в Конгрессе."},
+30:{en:"The Speaker is second in line to the presidency, after the vice president.",
+   ru:"Спикер — второй в очереди на пост президента, после вице-президента."},
+31:{en:"A senator answers to an entire state, not to a district drawn on a map.",
+   ru:"Сенатор отвечает перед целым штатом, а не перед округом, начерченным на карте."},
+32:{en:"Until 1913, state legislatures chose the senators. The 17th Amendment gave that vote to you.",
+   ru:"До 1913 года сенаторов выбирали легислатуры штатов. 17-я поправка передала этот голос вам."},
+33:{en:"Districts are drawn so that each one holds roughly the same number of people.",
+   ru:"Округа нарезают так, чтобы в каждом жило примерно одинаковое число людей."},
+34:{en:"Every seat in the House is up for election every two years — all 435 at once.",
+   ru:"Все места в Палате переизбираются каждые два года — все 435 сразу."},
+35:{en:"Seats are redivided among the states every ten years, after the census.",
+   ru:"Места перераспределяют между штатами каждые десять лет, после переписи."},
+36:{en:"Washington could have stayed for life. He left after eight years and went home to farm.",
+   ru:"Вашингтон мог бы остаться пожизненно. Он ушёл через восемь лет и вернулся к себе на ферму."},
+37:{en:"Washington set the limit by example. It held for about 150 years before it became law.",
+   ru:"Вашингтон установил этот предел личным примером. Он держался около 150 лет, прежде чем стал законом."},
+38:{en:"The oath is 35 words long — the only oath the Constitution spells out word for word.",
+   ru:"Присяга занимает 35 слов — единственная, текст которой прописан в Конституции дословно."},
+39:{en:"Nine vice presidents became president when the office suddenly came to them.",
+   ru:"Девять вице-президентов стали президентами, когда должность внезапно переходила к ним."},
+40:{en:"In 1841 no one was certain the vice president truly became president. Tyler simply acted as if he had.",
+   ru:"В 1841 году никто не был уверен, что вице-президент действительно становится президентом. Тайлер просто повёл себя так, будто да."},
+41:{en:"A veto can be overridden — but it takes two thirds of both chambers to do it.",
+   ru:"Вето можно преодолеть, но для этого нужны две трети голосов в обеих палатах."},
+42:{en:"A civilian commands the military. That was a deliberate choice, and an unusual one.",
+   ru:"Военными командует гражданское лицо. Это был сознательный и необычный выбор."},
+43:{en:"The president has ten days to sign. Staying silent while Congress sits makes it law anyway.",
+   ru:"У президента есть десять дней на подпись. Если он молчит, а Конгресс заседает, закон вступает в силу сам."},
+44:{en:"Washington used the veto twice in eight years. Franklin Roosevelt used it 635 times.",
+   ru:"Вашингтон применил вето дважды за восемь лет. Франклин Рузвельт — 635 раз."},
+45:{en:"The president nominates, but the Senate must agree. Neither one can do it alone.",
+   ru:"Президент выдвигает, но Сенат должен согласиться. В одиночку не может ни тот, ни другой."},
+46:{en:"Washington's entire cabinet was four people. Today there are fifteen departments.",
+   ru:"Весь кабинет Вашингтона состоял из четырёх человек. Сегодня это пятнадцать министерств."},
+47:{en:"The word “cabinet” appears nowhere in the Constitution. It grew out of habit.",
+   ru:"Слово «кабинет» не встречается в Конституции ни разу. Он вырос из привычки."},
+48:{en:"They stand in line for the presidency in the order their departments were created.",
+   ru:"Они стоят в очереди на президентство в том порядке, в каком создавались их министерства."},
+49:{en:"Five times the winner of the popular vote did not become president.",
+   ru:"Пять раз победитель всенародного голосования не становился президентом."},
+50:{en:"The Supreme Court had no building of its own until 1935. It met in the Capitol basement.",
+   ru:"У Верховного суда не было своего здания до 1935 года. Он заседал в подвале Капитолия."},
+51:{en:"The power to strike down a law is not in the Constitution. The Court claimed it in 1803.",
+   ru:"Права отменять законы в Конституции нет. Суд присвоил его себе в 1803 году."},
+52:{en:"It hears about 80 cases a year out of roughly 7,000 requests.",
+   ru:"Он рассматривает около 80 дел в год из примерно 7 000 обращений."},
+53:{en:"The number is not fixed by the Constitution. It has been six, seven, ten, and nine.",
+   ru:"Число не закреплено Конституцией. Оно было шесть, семь, десять и девять."},
+54:{en:"Many of the decisions that changed the country were won by a single vote.",
+   ru:"Многие решения, изменившие страну, были приняты перевесом в один голос."},
+55:{en:"William O. Douglas served 36 years. The average is about 16.",
+   ru:"Уильям О. Дуглас прослужил 36 лет. В среднем — около 16."},
+56:{en:"A judge who cannot be fired is free to rule against the people who appointed them.",
+   ru:"Судья, которого нельзя уволить, волен вынести решение против тех, кто его назначил."},
+57:{en:"The Chief Justice presides over a presidential impeachment trial in the Senate.",
+   ru:"Председатель Верховного суда ведёт процесс импичмента президента в Сенате."},
+58:{en:"Before the Constitution, states printed their own money. Trade between them barely worked.",
+   ru:"До Конституции штаты печатали собственные деньги. Торговля между ними почти не работала."},
+59:{en:"Your driver's license, your child's school, the fire truck down the street — all state decisions.",
+   ru:"Ваши водительские права, школа вашего ребёнка, пожарная машина на вашей улице — всё это решения штата."},
+60:{en:"Whatever the Constitution does not hand to Washington stays closer to home.",
+   ru:"Всё, что Конституция не передала Вашингтону, остаётся ближе к дому."},
+61:{en:"A governor can pardon, veto, and call out the state's National Guard.",
+   ru:"Губернатор может помиловать, наложить вето и поднять Национальную гвардию штата."},
+62:{en:"Many state capitals are small on purpose — chosen to sit near the middle of the state.",
+   ru:"Многие столицы штатов намеренно невелики: их выбирали поближе к центру штата."},
+63:{en:"Four separate times the country had to amend its Constitution to widen who counts.",
+   ru:"Четыре раза стране пришлось менять Конституцию, чтобы расширить круг тех, кто считается."},
+64:{en:"Voting is the one right reserved for citizens alone. Most of the others belong to everyone here.",
+   ru:"Голосование — единственное право, закреплённое только за гражданами. Большинство остальных принадлежат всем, кто здесь живёт."},
+65:{en:"These belong to everyone living here, citizen or not. The First Amendment says “the people,” not “the citizens.”",
+   ru:"Они принадлежат всем, кто здесь живёт, — гражданам и негражданам. В Первой поправке сказано «народ», а не «граждане»."},
+66:{en:"The Supreme Court ruled in 1943 that no one can be forced to say it.",
+   ru:"В 1943 году Верховный суд постановил, что никого нельзя заставить её произносить."},
+67:{en:"You will say these words out loud, with your hand raised, on the day you become a citizen.",
+   ru:"Эти слова вы произнесёте вслух, подняв руку, в день, когда станете гражданином."},
+68:{en:"About 800,000 people naturalize each year. Every one of them stood exactly where you are now.",
+   ru:"Каждый год натурализуются около 800 000 человек. Каждый из них стоял ровно там, где вы сейчас."},
+69:{en:"You do not need to be a citizen to do most of these. You can start today.",
+   ru:"Для большинства из этого не нужно быть гражданином. Начать можно уже сегодня."},
+70:{en:"Hundreds of thousands of non-citizens have served in the U.S. military.",
+   ru:"Сотни тысяч неграждан служили в вооружённых силах США."},
+71:{en:"The income tax needed an amendment of its own in 1913. The Court had struck it down before that.",
+   ru:"Подоходному налогу понадобилась отдельная поправка в 1913 году. До этого суд его отменял."},
+72:{en:"No one has been drafted since 1973, but the registration list is still kept.",
+   ru:"Призыва не было с 1973 года, но список регистрации по-прежнему ведут."},
+73:{en:"Many arrived in debt, having sold years of their own labor to pay for the passage.",
+   ru:"Многие приезжали в долгах, продав годы собственного труда за переезд."},
+74:{en:"Hundreds of nations and hundreds of languages, for thousands of years before any ship arrived.",
+   ru:"Сотни народов и сотни языков — за тысячи лет до прихода первого корабля."},
+75:{en:"About 12.5 million people were taken. The country still lives with what that did.",
+   ru:"Было вывезено около 12,5 миллиона человек. Страна до сих пор живёт с последствиями."},
+76:{en:"It lasted eight years — longer than any American war until Vietnam.",
+   ru:"Она длилась восемь лет — дольше любой американской войны вплоть до вьетнамской."},
+77:{en:"“No taxation without representation.” At first they wanted a seat at the table, not a revolution.",
+   ru:"«Нет налогам без представительства». Сначала они хотели место за столом, а не революцию."},
+78:{en:"He asked that his gravestone list this, and not the presidency.",
+   ru:"Он просил, чтобы на надгробии написали именно это, а не президентство."},
+79:{en:"Most delegates signed in August, not July. The date we keep is the day it was approved.",
+   ru:"Большинство делегатов подписали её в августе, а не в июле. Мы празднуем день её принятия."},
+80:{en:"At Valley Forge about 2,000 soldiers died of cold and sickness without a battle being fought.",
+   ru:"В Валли-Фордж около 2 000 солдат умерли от холода и болезней, не вступив ни в одно сражение."},
+81:{en:"Rhode Island refused to attend the convention, then ratified last — by two votes.",
+   ru:"Род-Айленд отказался приехать на конвент, а ратифицировал последним — с перевесом в два голоса."},
+82:{en:"They worked through a Philadelphia summer with the windows shut, so no one outside could hear.",
+   ru:"Они заседали всё филадельфийское лето с закрытыми окнами, чтобы снаружи никто не услышал."},
+83:{en:"Eighty-five essays, written fast, published under a single false name.",
+   ru:"Восемьдесят пять эссе, написанных быстро и опубликованных под одним вымышленным именем."},
+84:{en:"Judges still quote them to work out what the words were meant to do.",
+   ru:"Судьи до сих пор цитируют их, чтобы понять, что должны были означать эти слова."},
+85:{en:"He was 70 when he signed the Declaration — the oldest man in the room.",
+   ru:"Ему было 70, когда он подписал Декларацию, — самый старший в зале."},
+86:{en:"He handed the army back to Congress when he could have kept it. The world was astonished.",
+   ru:"Он вернул армию Конгрессу, хотя мог оставить её себе. Мир был поражён."},
+87:{en:"He wanted to be remembered for what he gave people, not for what he governed.",
+   ru:"Он хотел остаться в памяти за то, что дал людям, а не за то, чем управлял."},
+88:{en:"He stood about five foot four and weighed around a hundred pounds. He out-argued everyone in the room.",
+   ru:"Рост около 163 см, вес около 45 кг. Он переспорил всех в зале."},
+89:{en:"He arrived as a penniless orphan from the Caribbean and built the country's financial system.",
+   ru:"Он приехал нищим сиротой с Карибских островов и построил финансовую систему страны."},
+90:{en:"Fifteen million dollars doubled the size of the country — about four cents an acre.",
+   ru:"Пятнадцать миллионов долларов удвоили размер страны — около четырёх центов за акр."},
+91:{en:"The Civil War killed more Americans than every other American war combined.",
+   ru:"Гражданская война унесла больше американских жизней, чем все остальные войны США вместе взятые."},
+92:{en:"Brothers fought brothers. In some families they chose different sides.",
+   ru:"Брат шёл на брата. В некоторых семьях выбирали разные стороны."},
+93:{en:"At Gettysburg, Lincoln spoke for about two minutes. The speech before his had lasted two hours.",
+   ru:"В Геттисберге Линкольн говорил около двух минут. Речь до него длилась два часа."},
+94:{en:"He had roughly one year of formal schooling in his whole life.",
+   ru:"За всю жизнь он проучился в школе примерно год."},
+95:{en:"It freed no one on the day it was signed. People became free as the army advanced.",
+   ru:"В день подписания она никого не освободила. Люди становились свободными по мере продвижения армии."},
+96:{en:"The 13th Amendment finished what the war started, in December 1865.",
+   ru:"13-я поправка завершила начатое войной — в декабре 1865 года."},
+97:{en:"Born here, citizen here. That one sentence rewrote who belonged.",
+   ru:"Родился здесь — значит, гражданин. Эта одна фраза переписала то, кто считается своим."},
+98:{en:"The law changed in 1870. In practice it took another 95 years.",
+   ru:"Закон изменился в 1870 году. На деле понадобилось ещё 95 лет."},
+99:{en:"Susan B. Anthony was arrested for voting in 1872 and did not live to do it legally.",
+   ru:"Сьюзен Б. Энтони арестовали за голосование в 1872 году; законно проголосовать она так и не успела."},
+100:{en:"The Second World War pulled in 16 million Americans — more than one person in ten.",
+   ru:"Во Вторую мировую было призвано 16 миллионов американцев — больше одного человека из десяти."},
+101:{en:"Wilson had just won re-election promising to stay out. Five months later he asked for war.",
+   ru:"Вильсон только что переизбрался с обещанием не вступать в войну. Через пять месяцев он попросил её объявить."},
+102:{en:"Seventy-two years passed between the first demand at Seneca Falls and the 19th Amendment.",
+   ru:"Между первым требованием в Сенека-Фолс и 19-й поправкой прошло семьдесят два года."},
+103:{en:"One worker in four had no job, and there was no unemployment insurance to catch them.",
+   ru:"Каждый четвёртый работник остался без работы, а страховки по безработице тогда не существовало."},
+104:{en:"In a single day the market lost value it would not recover for 25 years.",
+   ru:"За один день рынок потерял столько, что восстановился лишь через 25 лет."},
+105:{en:"He was elected four times, and he could not walk.",
+   ru:"Его избирали четыре раза. И он не мог ходить."},
+106:{en:"The attack lasted about 90 minutes. The country was at war the next day.",
+   ru:"Нападение длилось около 90 минут. На следующий день страна вступила в войну."},
+107:{en:"He planned the largest seaborne invasion in history, then warned the country about its own arms industry.",
+   ru:"Он спланировал крупнейшую морскую десантную операцию в истории, а потом предостерёг страну от её же военной промышленности."},
+108:{en:"Forty-five years of rivalry, and the two never formally fought each other.",
+   ru:"Сорок пять лет соперничества — и ни одного прямого военного столкновения между ними."},
+109:{en:"Schoolchildren were taught to hide under their desks.",
+   ru:"Школьников учили прятаться под партами."},
+110:{en:"It ended in a truce, not a peace. Formally it has never ended at all.",
+   ru:"Она закончилась перемирием, а не миром. Формально она не завершена до сих пор."},
+111:{en:"The longest war of its time, and the first one Americans watched on television.",
+   ru:"Самая долгая война того времени и первая, которую американцы смотрели по телевизору."},
+112:{en:"Ordinary people — students, cooks, maids — changed the law by refusing to move.",
+   ru:"Обычные люди — студенты, повара, горничные — изменили закон, просто отказавшись уступить место."},
+113:{en:"He was 34 at the March on Washington, and 39 when he was killed.",
+   ru:"Ему было 34 во время Марша на Вашингтон и 39, когда его убили."},
+114:{en:"The ground war lasted 100 hours.",
+   ru:"Наземная операция длилась 100 часов."},
+115:{en:"People from more than 90 countries died that morning.",
+   ru:"В то утро погибли люди более чем из 90 стран."},
+116:{en:"The war in Afghanistan ran for twenty years — the longest in American history.",
+   ru:"Война в Афганистане длилась двадцать лет — самая долгая в истории США."},
+117:{en:"There are 574 federally recognized tribes, each one a nation with its own government.",
+   ru:"Признано федеральным правительством 574 племени, и каждое — нация со своим правительством."},
+118:{en:"The first powered flight covered 120 feet. Sixty-six years later a man walked on the moon.",
+   ru:"Первый полёт с мотором покрыл 36 метров. Через шестьдесят шесть лет человек ступил на Луну."},
+119:{en:"Built on swampland given by two states, so that no single state could claim the capital.",
+   ru:"Построена на болотистой земле, отданной двумя штатами, — чтобы столица не принадлежала ни одному из них."},
+120:{en:"A gift from France. The poem at her base is about refugees.",
+   ru:"Подарок Франции. Стихотворение у её подножия — о беженцах."},
+121:{en:"The stripes never change. Only the stars are ever added.",
+   ru:"Полосы никогда не меняются. Добавляются только звёзды."},
+122:{en:"A 17-year-old designed the 50-star flag for a school project. His teacher gave him a B minus.",
+   ru:"Флаг с 50 звёздами придумал 17-летний школьник для учебного проекта. Учитель поставил ему четыре с минусом."},
+123:{en:"Written by a lawyer watching a bombardment, set to the tune of an old drinking song.",
+   ru:"Написан юристом, наблюдавшим за обстрелом, на мотив старой застольной песни."},
+124:{en:"Thirteen colonies, one country. The words mean something larger now.",
+   ru:"Тринадцать колоний — одна страна. Теперь в этих словах больше смысла."},
+125:{en:"Two presidents who signed the Declaration died on the same Fourth of July, fifty years later.",
+   ru:"Два президента, подписавших Декларацию, умерли в один и тот же день 4 июля — пятьдесят лет спустя."},
+126:{en:"Federal holidays close the federal government. The states decide the rest for themselves.",
+   ru:"В федеральные праздники закрыты федеральные учреждения. Остальное штаты решают сами."},
+127:{en:"One of the first observances was held by freed slaves honoring Union dead in Charleston, 1865.",
+   ru:"Одно из первых таких поминовений устроили освобождённые рабы, почтив павших солдат Союза в Чарлстоне в 1865 году."},
+128:{en:"The eleventh hour of the eleventh day of the eleventh month — when the guns stopped in 1918.",
+   ru:"Одиннадцатый час одиннадцатого дня одиннадцатого месяца — когда в 1918 году смолкли орудия."}
+};
+
 /* ═══ reference data ═══════════════════════════════════════ */
 const STATES = {
 "Alabama":"Montgomery","Alaska":"Juneau","Arizona":"Phoenix","Arkansas":"Little Rock",
@@ -1483,18 +2020,136 @@ const store={
   set(k,v){
     mem[k]=v;
     try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){}
+  },
+  del(k){
+    delete mem[k];
+    try{ localStorage.removeItem(k); }catch(e){}
   }
 };
 const KEY_STATS="civics2020:stats", KEY_PREFS="civics2020:prefs", KEY_AI="civics2020:aikey";
+const KEY_PLAYERS="civics2020:players", KEY_CUR="civics2020:current",
+      KEY_LOCALS="civics2020:locals";
+const sKey=id=>"civics2020:stats:"+id;
+const pKey=id=>"civics2020:prefs:"+id;
+const MAXP=10;
+const PCOL=["#2E7D6E","#A8761F","#41528F","#8C3A57","#2F6D8F",
+            "#6B7B2E","#9A4A2A","#4A4A7A","#2E7D4A","#7A4A8C"];
+
+let players=[], curId=null, pendingStats=null, pendingDelete=null;
+
+function loadPlayers(){
+  players=store.get(KEY_PLAYERS)||[];
+  curId=store.get(KEY_CUR)||null;
+  if(curId && !players.some(p=>p.id===curId)) curId=null;
+}
+function savePlayers(){ store.set(KEY_PLAYERS,players); store.set(KEY_CUR,curId); }
+function curPlayer(){ return players.find(p=>p.id===curId)||null; }
+
+function initials(name){
+  const parts=String(name).trim().split(/\s+/).filter(Boolean);
+  if(!parts.length) return "?";
+  if(parts.length===1) return parts[0].slice(0,2).toUpperCase();
+  return (parts[0][0]+parts[1][0]).toUpperCase();
+}
+function statsFor(id){ return store.get(sKey(id))||{}; }
+function masteredIn(st){
+  let n=0;
+  for(const q of QUESTIONS){ const s=st[q.n]; if(s&&s.streak>=MASTER_AT) n++; }
+  return n;
+}
+function seenIn(st){
+  let n=0;
+  for(const q of QUESTIONS){ const s=st[q.n]; if(s&&s.asked>0) n++; }
+  return n;
+}
+
+function addPlayer(name){
+  if(players.length>=MAXP) return null;
+  const id="p"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+  const used=players.map(p=>p.color);
+  const color=PCOL.find(c=>used.indexOf(c)<0)||PCOL[players.length%PCOL.length];
+  players.push({id,name:String(name).trim().slice(0,24),color,made:Date.now()});
+  /* the first player inherits any progress made before profiles existed */
+  if(pendingStats){ store.set(sKey(id),pendingStats); pendingStats=null;
+    store.del(KEY_STATS); }
+  curId=id; savePlayers();
+  return id;
+}
+function removePlayer(id){
+  store.del(sKey(id)); store.del(pKey(id));
+  players=players.filter(p=>p.id!==id);
+  if(curId===id) curId=null;
+  savePlayers();
+}
+function selectPlayer(id){
+  curId=id; savePlayers(); loadPlayerData();
+}
+function saveStats(){ if(curId) store.set(sKey(curId),S.stats); }
 
 /* ═══ app state ════════════════════════════════════════════ */
 const S={
-  caps:"both", order:"random", rate:0.78, len:20,
+  caps:"both", order:"smart", rate:0.78, len:20,
   local:{}, stats:{},
   queue:[], idx:0, phase:"idle", results:[],
   finalText:"", verdictShown:false, currentCorrect:null, manual:false,
-  aikey:"", aimode:"miss", aiToken:0, ttsOK:false
+  aikey:"", aimode:"miss", aiToken:0, ttsOK:false,
+  mode:"practice", hinted:false, gained:[], fx:"full"
 };
+const MASTER_AT=3;                      /* consecutive correct answers to retire a question */
+
+/* The three sections of the test, used for colour and for nothing else. */
+const GROUP={
+  "Principles of American Government":"gov","System of Government":"gov",
+  "Rights and Responsibilities":"gov","Colonial Period and Independence":"hist",
+  "1800s":"hist","Recent American History":"hist","Symbols":"sym","Holidays":"sym"
+};
+const groupOf=q=>GROUP[q.c]||"gov";
+
+function statOf(n){ return S.stats[n]||{asked:0,wrong:0,streak:0}; }
+function isMastered(n){ return statOf(n).streak>=MASTER_AT; }
+function isSeen(n){ return statOf(n).asked>0; }
+
+/* Honest estimate of answering question n correctly, smoothed so that a single
+   lucky answer does not read as certainty. Unseen questions sit at 0.5. */
+function pOf(n){
+  const s=statOf(n), right=s.asked-s.wrong;
+  return Math.min(0.97,(right+1.5)/(s.asked+3));
+}
+
+/* Probability of passing a real test: 20 drawn at random, 12 needed.
+   Monte Carlo is simpler here than the exact Poisson-binomial and plenty accurate. */
+function readiness(){
+  const ns=QUESTIONS.map(q=>q.n), ps={};
+  ns.forEach(n=>ps[n]=pOf(n));
+  const TRIALS=2000, pool=ns.slice();
+  let pass=0;
+  for(let t=0;t<TRIALS;t++){
+    for(let i=0;i<20;i++){                         /* partial Fisher-Yates: 20 distinct */
+      const j=i+Math.floor(Math.random()*(pool.length-i));
+      const tmp=pool[i]; pool[i]=pool[j]; pool[j]=tmp;
+    }
+    let ok=0;
+    for(let i=0;i<20;i++) if(Math.random()<ps[pool[i]]) ok++;
+    if(ok>=12) pass++;
+  }
+  const mastered=ns.filter(isMastered).length;
+  const learning=ns.filter(n=>isSeen(n)&&!isMastered(n)).length;
+  return {pct:Math.round(pass/TRIALS*100), mastered, learning,
+          unseen:ns.length-mastered-learning, any:ns.some(isSeen)};
+}
+
+/* Russian encouragement. Varied on purpose — one repeated phrase stops landing. */
+const CHEER_OK=["Отлично.","Так точно.","Верно — и вы это знали.","Чисто.","Уверенно.",
+  "Да, именно так.","Хорошо идёт.","Без запинки.","Точно в цель."];
+const CHEER_RUN=["Три подряд.","Четыре подряд — ровно идёте.","Пять подряд.",
+  "Шесть подряд. Это уже уверенное знание."];
+function cheerFor(streakInSession){
+  if(streakInSession>=3){
+    const i=Math.min(streakInSession-3,CHEER_RUN.length-1);
+    if(streakInSession===3||streakInSession===5||streakInSession>=6) return CHEER_RUN[i];
+  }
+  return CHEER_OK[Math.floor(Math.random()*CHEER_OK.length)];
+}
 const $=id=>document.getElementById(id);
 
 /* ═══ speech ═══════════════════════════════════════════════ */
@@ -1686,6 +2341,152 @@ function evaluate(q,transcript){
   return {ok:n>=need,matched:n,ref};
 }
 
+/* ═══ celebration ══════════════════════════════════════════
+   Sounds are synthesised with Web Audio — no files to download, and it reuses
+   the same AudioContext the speech code already unlocks. */
+const FX_COLORS=["#2E7D6E","#A8761F","#41528F","#C9A227","#8C3A57","#4FA58F","#E0B050"];
+let fxc=null, fxg=null, fxParts=[], fxRAF=0, fxW=0, fxH=0;
+const reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+function fxInit(){
+  if(fxc) return;
+  fxc=$("fx"); if(!fxc||!fxc.getContext) return;
+  fxg=fxc.getContext("2d");
+  fxSize();
+  window.addEventListener("resize",fxSize);
+}
+function fxSize(){
+  if(!fxc) return;
+  const d=window.devicePixelRatio||1;
+  fxW=window.innerWidth; fxH=window.innerHeight;
+  fxc.width=Math.floor(fxW*d); fxc.height=Math.floor(fxH*d);
+  fxg.setTransform(d,0,0,d,0,0);
+}
+function confetti(n){
+  for(let i=0;i<n;i++){
+    fxParts.push({k:"c",
+      x:fxW*(0.15+0.7*Math.random()), y:fxH*0.42+Math.random()*40,
+      vx:(Math.random()-0.5)*7, vy:-5-Math.random()*8,
+      w:5+Math.random()*7, h:8+Math.random()*8,
+      rot:Math.random()*Math.PI, vr:(Math.random()-0.5)*0.35,
+      col:FX_COLORS[(Math.random()*FX_COLORS.length)|0], life:0, max:95+Math.random()*45});
+  }
+}
+function balloons(n){
+  for(let i=0;i<n;i++){
+    fxParts.push({k:"b",
+      x:fxW*(0.08+0.84*Math.random()), y:fxH+40+Math.random()*120,
+      vy:-(1.5+Math.random()*1.5), r:15+Math.random()*11,
+      sway:Math.random()*Math.PI*2, sp:0.035+Math.random()*0.03,
+      col:FX_COLORS[(Math.random()*FX_COLORS.length)|0], life:0, max:260});
+  }
+}
+function fxTick(){
+  if(!fxg){ fxRAF=0; return; }
+  fxg.clearRect(0,0,fxW,fxH);
+  for(let i=fxParts.length-1;i>=0;i--){
+    const p=fxParts[i];
+    p.life++;
+    const fade=Math.max(0,1-p.life/p.max);
+    if(p.k==="c"){
+      p.vy+=0.32; p.x+=p.vx; p.y+=p.vy; p.vx*=0.995; p.rot+=p.vr;
+      fxg.save(); fxg.translate(p.x,p.y); fxg.rotate(p.rot);
+      fxg.globalAlpha=fade; fxg.fillStyle=p.col;
+      fxg.fillRect(-p.w/2,-p.h/2,p.w,p.h);
+      fxg.restore();
+    }else{
+      p.sway+=p.sp; p.y+=p.vy; p.x+=Math.sin(p.sway)*0.9;
+      fxg.save(); fxg.globalAlpha=fade*0.95;
+      fxg.strokeStyle="rgba(80,100,105,.45)"; fxg.lineWidth=1;
+      fxg.beginPath(); fxg.moveTo(p.x,p.y+p.r);
+      fxg.quadraticCurveTo(p.x+Math.sin(p.sway)*7,p.y+p.r+16,p.x,p.y+p.r+30); fxg.stroke();
+      fxg.fillStyle=p.col; fxg.beginPath();
+      fxg.ellipse(p.x,p.y,p.r*0.82,p.r,0,0,Math.PI*2); fxg.fill();
+      fxg.globalAlpha=fade*0.4; fxg.fillStyle="#fff";
+      fxg.beginPath(); fxg.ellipse(p.x-p.r*0.3,p.y-p.r*0.35,p.r*0.2,p.r*0.28,0,0,Math.PI*2); fxg.fill();
+      fxg.restore();
+    }
+    if(p.life>p.max||p.y>fxH+120||(p.k==="b"&&p.y<-120)) fxParts.splice(i,1);
+  }
+  if(fxParts.length) fxRAF=requestAnimationFrame(fxTick);
+  else { fxRAF=0; fxg.clearRect(0,0,fxW,fxH); }
+}
+function fxGo(){ fxInit(); if(!fxRAF&&fxg) fxRAF=requestAnimationFrame(fxTick); }
+
+/* ── sounds ── */
+function audioReady(){
+  try{
+    const AC=window.AudioContext||window.webkitAudioContext;
+    if(!AC) return false;
+    if(!actx) actx=new AC();
+    if(actx.state==="suspended") actx.resume();
+    return actx.state!=="closed";
+  }catch(e){ return false; }
+}
+function tone(freq,at,dur,type,vol){
+  const t0=actx.currentTime+at;
+  const o=actx.createOscillator(), g=actx.createGain();
+  o.type=type||"sine"; o.frequency.setValueAtTime(freq,t0);
+  g.gain.setValueAtTime(0.0001,t0);
+  g.gain.exponentialRampToValueAtTime(vol||0.16,t0+0.02);
+  g.gain.exponentialRampToValueAtTime(0.0001,t0+dur);
+  o.connect(g); g.connect(actx.destination);
+  o.start(t0); o.stop(t0+dur+0.04);
+}
+function chime(){
+  /* a major triad, arpeggiated — reads as "yes" without being a game jingle */
+  [[659.25,0],[830.61,0.085],[987.77,0.17],[1318.5,0.255]]
+    .forEach(([f,t])=>tone(f,t,0.42,"triangle",0.13));
+}
+function whoop(){
+  const t0=actx.currentTime;
+  const o=actx.createOscillator(), g=actx.createGain();
+  o.type="sine";
+  o.frequency.setValueAtTime(400,t0);
+  o.frequency.exponentialRampToValueAtTime(820,t0+0.17);
+  o.frequency.exponentialRampToValueAtTime(610,t0+0.33);
+  g.gain.setValueAtTime(0.0001,t0);
+  g.gain.exponentialRampToValueAtTime(0.13,t0+0.06);
+  g.gain.exponentialRampToValueAtTime(0.0001,t0+0.42);
+  o.connect(g); g.connect(actx.destination);
+  o.start(t0); o.stop(t0+0.46);
+}
+function applause(dur,vol){
+  /* band-passed noise with a wobbling envelope — close enough to a small crowd */
+  const len=Math.max(1,Math.floor(actx.sampleRate*dur));
+  const buf=actx.createBuffer(1,len,actx.sampleRate);
+  const d=buf.getChannelData(0);
+  for(let i=0;i<len;i++){
+    const t=i/len;
+    const env=Math.sin(Math.PI*Math.min(1,t*1.15))*(0.55+0.45*Math.sin(t*95)*Math.sin(t*37));
+    d[i]=(Math.random()*2-1)*env;
+  }
+  const s=actx.createBufferSource(); s.buffer=buf;
+  const bp=actx.createBiquadFilter(); bp.type="bandpass";
+  bp.frequency.value=1600; bp.Q.value=0.6;
+  const g=actx.createGain(); g.gain.value=vol||0.11;
+  s.connect(bp); bp.connect(g); g.connect(actx.destination);
+  s.start();
+}
+
+/* level: "small" for a correct answer, "big" for a question learned or a pass */
+function celebrate(level){
+  if(S.fx==="off") return;
+  const big=level==="big";
+  if(!reduced){
+    confetti(big?70:26);
+    if(big) balloons(7);
+    fxGo();
+  }
+  if(S.fx==="full" && audioReady()){
+    try{
+      chime();
+      if(big){ whoop(); applause(1.5,0.12); }
+      else applause(0.5,0.07);
+    }catch(e){}
+  }
+}
+
 /* ═══ AI grading (optional, user supplies their own key) ═══ */
 const AI_MODEL="claude-opus-5-5";
 function aiReady(){ return !!(S.aikey && S.aikey.trim().length>10); }
@@ -1760,6 +2561,8 @@ function applyCaps(){
   $("qru").classList.toggle("hide",!ru);
   $("silent").style.display=(S.caps==="none")?"block":"none";
   document.querySelectorAll(".acc .ru").forEach(e=>e.classList.toggle("hide",S.caps==="en"));
+  $("ctxen").classList.toggle("hide",S.caps==="ru");
+  $("ctxru").classList.toggle("hide",S.caps==="en");
 }
 function render(){
   const q=S.queue[S.idx];
@@ -1768,6 +2571,12 @@ function render(){
   $("qcat").textContent=q.c;
   $("qen").textContent=q.q;
   $("qru").textContent=q.qr;
+  const cardEl=$("qcard");
+  cardEl.className="card g-"+groupOf(q);
+  $("ctxline").classList.add("off");
+  $("cheer").classList.add("off");
+  $("hintbtn").classList.toggle("hide",S.mode==="exam");
+  S.hinted=false;
   $("heardtxt").textContent="";
   $("heard").classList.remove("off");
   $("verdict").classList.add("off");
@@ -1839,6 +2648,29 @@ function grade(transcript,force){
   $("seal").classList.remove("live","busy");
   setAiLine("","");
 
+  if(S.mode==="practice"){
+    if(ok===true){
+      S.run=(S.run||0)+1;
+      const st=statOf(q.n);
+      const willMaster = !S.hinted && st.streak+1>=MASTER_AT && st.streak<MASTER_AT;
+      celebrate(willMaster||S.run>=5?"big":"small");
+      const left=QUESTIONS.filter(x=>!isMastered(x.n)).length-(willMaster?1:0);
+      $("cheer").textContent = willMaster
+        ? "Вопрос выучен. Осталось "+left+" из 128."
+        : cheerFor(S.run);
+      $("cheer").classList.remove("off");
+    }else{
+      S.run=0;
+      $("cheer").classList.add("off");
+    }
+    const c=CONTEXT[q.n];
+    if(c && ok!==null){
+      $("ctxen").textContent=c.en;
+      $("ctxru").textContent=c.ru;
+      $("ctxline").classList.remove("off");
+    }
+  }
+
   /* Ask Claude where the word-matcher is least trustworthy: when it said no.
      "Show answer" (force===false) and unanswered questions never call out. */
   const worth = aiReady() && force!==false && transcript.trim() && !ref.manual
@@ -1865,11 +2697,37 @@ async function askClaude(q,transcript,ref,wordVerdict){
   }
   setAiLine("", "Claude: "+(res.why||(res.pass?"accepted":"not accepted")));
 }
+/* A hint shows the shape of the answer and its Russian meaning, never the answer. */
+function maskAnswer(s){
+  return s.replace(/\([^)]*\)/g,"").trim()
+          .split(/\s+/).map(w=>{
+            const core=w.replace(/[^A-Za-z0-9]/g,"");
+            if(core.length<2) return w;
+            return core[0]+"·".repeat(Math.min(core.length-1,7));
+          }).join(" ");
+}
+function showHint(){
+  if(S.mode==="exam"||S.phase==="graded") return;
+  const q=S.queue[S.idx];
+  const ref=refFor(q);
+  if(!ref.answers.length){
+    showNotice("Для этого вопроса подсказки нет — ответ зависит от вашего штата.");
+    return;
+  }
+  S.hinted=true;
+  const a0=ref.answers[0];
+  const bits=['<strong>'+esc(maskAnswer(a0.en))+'</strong>'];
+  if(a0.ru && S.caps!=="en") bits.push('<span style="opacity:.85">'+esc(a0.ru)+'</span>');
+  if(q.need>1) bits.push('<span style="opacity:.7">Нужно назвать '+q.need+'.</span>');
+  showNotice(bits.join("<br>"));
+}
+
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
 
 function flipMark(){
   if(S.phase!=="graded") return;
   S.currentCorrect = S.currentCorrect===true?false:true;
+  if(S.currentCorrect && S.mode==="practice") celebrate("small");
   const st=$("stamp");
   st.className="stamp "+(S.currentCorrect?"ok":"no");
   st.textContent=S.currentCorrect?"Correct":"Try again";
@@ -1882,7 +2740,21 @@ function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random
 
 function buildQueue(){
   let pool;
-  if(S.order==="star") pool=shuffle(QUESTIONS.filter(q=>q.s));
+  if(S.mode==="exam") return shuffle(QUESTIONS.slice()).slice(0,20);
+  if(S.order==="smart"){
+    /* Unseen first, then what is least secure; mastered questions come back rarely. */
+    const tier=q=>{
+      const s=statOf(q.n);
+      if(!s.asked) return 0;
+      if(s.streak>=MASTER_AT) return 3;
+      return s.wrong>0?1:2;
+    };
+    pool=shuffle(QUESTIONS.slice()).sort((x,y)=>{
+      const t=tier(x)-tier(y); if(t) return t;
+      return statOf(x.n).streak-statOf(y.n).streak;
+    });
+  }
+  else if(S.order==="star") pool=shuffle(QUESTIONS.filter(q=>q.s));
   else if(S.order==="order") pool=QUESTIONS.slice();
   else if(S.order==="missed"){
     pool=QUESTIONS.filter(q=>(S.stats[q.n]||{}).wrong>0)
@@ -1902,18 +2774,28 @@ function startSession(forced){
     alert("Пока нет пропущенных вопросов. Пройдите сессию в случайном порядке — приложение запомнит ошибки.\n\nNo missed questions yet. Run a random session first.");
     return;
   }
-  S.queue=q; S.idx=0; S.results=[];
+  S.queue=q; S.idx=0; S.results=[]; S.gained=[]; S.run=0;
+  document.body.classList.toggle("formal",S.mode==="exam");
   show("scr-exam");
   ask();
 }
 function record(){
   const q=S.queue[S.idx];
   if(S.currentCorrect===null) return;
-  const st=S.stats[q.n]||{asked:0,wrong:0};
-  st.asked++; if(!S.currentCorrect) st.wrong++;
+  const st=S.stats[q.n]||{asked:0,wrong:0,streak:0};
+  if(st.streak===undefined) st.streak=0;
+  const wasMastered=st.streak>=MASTER_AT;
+  st.asked++;
+  if(S.currentCorrect){
+    /* a hinted answer keeps its credit but does not advance mastery */
+    if(!S.hinted) st.streak++;
+  }else{
+    st.wrong++; st.streak=0;
+  }
   S.stats[q.n]=st;
+  if(!wasMastered && st.streak>=MASTER_AT) S.gained.push(q.n);
   S.results.push({n:q.n,ok:S.currentCorrect});
-  store.set(KEY_STATS,S.stats);
+  saveStats();
 }
 function advance(){
   if(S.phase==="graded") record();
@@ -1923,14 +2805,35 @@ function advance(){
   else finish();
 }
 function finish(){
-  hushSpeech();
+  try{speechSynthesis.cancel();}catch(e){}
+  if(rec){ try{ rec.abort(); }catch(e){} recRunning=false; }
   const scored=S.results.length, ok=S.results.filter(r=>r.ok).length;
   const pct=scored?Math.round(ok/scored*100):0;
+  const exam=S.mode==="exam";
+
+  $("donetitle").textContent = exam?"Record of examination":"Session";
   $("bigscore").textContent=ok+"/"+scored;
   $("pct").textContent=pct+"% correct";
-  $("passline").textContent = !scored ? "Ни один ответ не был засчитан."
-    : pct>=60 ? "На настоящем тесте это проходной результат (нужно 60%)."
-    : "На настоящем тесте нужно 60%. Ещё немного практики.";
+
+  const rw=$("ribbonwrap");
+  if(exam && scored){
+    const passed=ok>=12 && scored>=20 ? true : (ok/scored)>=0.6;
+    rw.innerHTML='<span class="ribbon '+(passed?"pass":"fail")+'">'+
+      (passed?"Pass":"Not yet")+'</span>';
+    $("passline").textContent = passed
+      ? "На настоящем тесте этого достаточно: нужно 12 из 20."
+      : "На настоящем тесте нужно 12 из 20. Ещё немного практики.";
+  }else{
+    rw.innerHTML="";
+    if(!scored){ $("passline").textContent="Ни один ответ не был засчитан."; }
+    else{
+      const g=S.gained.length;
+      const left=QUESTIONS.filter(x=>!isMastered(x.n)).length;
+      $("passline").textContent = (g?("Выучено за эту сессию: "+g+". "):"")+
+        "Осталось выучить "+left+" из 128.";
+    }
+  }
+
   const missed=S.results.filter(r=>!r.ok).map(r=>QUESTIONS.find(q=>q.n===r.n));
   const box=$("missedlist");
   if(missed.length){
@@ -1938,13 +2841,19 @@ function finish(){
       '<div class="item"><span class="n">'+String(q.n).padStart(3,"0")+'</span>'+
       '<div class="q">'+esc(q.q)+'<span class="ru">'+esc(q.qr)+'</span></div></div>').join("");
     $("drill").style.display="block";
-    $("drill").onclick=()=>startSession(shuffle(missed.slice()));
+    $("drill").onclick=()=>{ S.mode="practice"; document.body.classList.remove("formal");
+      startSession(shuffle(missed.slice())); };
   }else{
-    box.innerHTML='<h3>To review · Повторить</h3><p class="empty">Ничего. Все ответы верны.</p>';
+    box.innerHTML='<h3>To review · Повторить</h3><p class="empty">'+
+      (scored?"Ничего. Все ответы верны.":"Пока нечего повторять.")+'</p>';
     $("drill").style.display="none";
   }
+  document.body.classList.remove("formal");
   show("scr-done");
+  if(scored && (exam ? (ok>=12&&scored>=20)||(ok/scored)>=0.6 : (S.gained.length>0||ok===scored)))
+    setTimeout(()=>celebrate("big"),220);
 }
+
 function show(id){
   document.querySelectorAll(".screen").forEach(s=>s.classList.toggle("on",s.id===id));
   window.scrollTo(0,0);
@@ -1959,6 +2868,7 @@ function segment(id,onPick){
   });
 }
 const ORDHINT={
+  smart:"Сначала то, что вы ещё не выучили; выученное возвращается реже.",
   random:"Все 128 вопросов в случайном порядке.",
   missed:"Только те, где вы ошибались — самые проблемные первыми.",
   order:"По порядку, с первого вопроса.",
@@ -1966,8 +2876,9 @@ const ORDHINT={
 };
 
 function savePrefs(){
-  store.set(KEY_PREFS,{caps:S.caps,order:S.order,rate:S.rate,len:S.len,
-    local:S.local,aimode:S.aimode});
+  if(curId) store.set(pKey(curId),{caps:S.caps,order:S.order,rate:S.rate,len:S.len,
+    aimode:S.aimode,mode:S.mode,fx:S.fx});
+  store.set(KEY_LOCALS,S.local);
 }
 function readLocals(){
   ["senator","rep","governor","capital","president","vp","speaker","chief"].forEach(k=>{
@@ -2007,6 +2918,66 @@ function init(){
   segment("ratseg",v=>{S.rate=parseFloat(v);savePrefs();});
   segment("lenseg",v=>{S.len=(v==="all"?"all":parseInt(v,10));savePrefs();});
   segment("aiseg",v=>{S.aimode=v;savePrefs();});
+  segment("modeseg",v=>{ S.mode=v; applyMode(); savePrefs(); });
+  segment("fxseg",v=>{
+    S.fx=v; savePrefs();
+    if(v!=="off"){ if(v==="full") audioReady(); celebrate("small"); }
+  });
+
+  $("mapgrid").addEventListener("click",e=>{
+    const b=e.target.closest("button"); if(!b||!b.dataset.n) return;
+    $("mapgrid").querySelectorAll("button").forEach(x=>x.classList.remove("sel"));
+    b.classList.add("sel");
+    mapSel=+b.dataset.n;
+    peekAt(mapSel);
+  });
+  $("readystrip").addEventListener("click",()=>{ renderMap(); show("scr-map"); });
+  $("mapback").addEventListener("click",()=>{ show("scr-setup"); paintReady(); });
+  $("mapstart").addEventListener("click",()=>{
+    const left=QUESTIONS.filter(q=>!isMastered(q.n));
+    if(!left.length){
+      $("peek").innerHTML='<span class="st">Все 128 выучены. Попробуйте режим Interview.</span>';
+      return;
+    }
+    S.mode="practice";
+    const mark=(id,val)=>$(id).querySelectorAll("button").forEach(b=>
+      b.setAttribute("aria-pressed",String(b.dataset.v===String(val))));
+    mark("modeseg","practice"); applyMode();
+    const n=S.len==="all"?left.length:Math.min(S.len,left.length);
+    startSession(shuffle(left).slice(0,n));
+  });
+  $("hintbtn").addEventListener("click",showHint);
+
+  $("plist").addEventListener("click",e=>{
+    const del=e.target.closest("[data-del]");
+    if(del){ askDelete(del.dataset.del); return; }
+    const sel=e.target.closest(".psel");
+    if(sel){ selectPlayer(sel.dataset.id); closeAddRow(); show("scr-setup"); }
+  });
+  $("addplayer").addEventListener("click",openAddRow);
+  $("savename").addEventListener("click",()=>{
+    const nm=$("newname").value.trim();
+    if(!nm){ try{ $("newname").focus(); }catch(e){} return; }
+    const id=addPlayer(nm);
+    if(!id) return;
+    closeAddRow(); loadPlayerData(); renderPlayers(); show("scr-setup");
+  });
+  $("newname").addEventListener("keydown",e=>{ if(e.key==="Enter") $("savename").click(); });
+
+  $("modalno").addEventListener("click",closeModal);
+  $("modal").addEventListener("click",e=>{ if(e.target===$("modal")) closeModal(); });
+  $("modalyes").addEventListener("click",()=>{
+    if(!pendingDelete) return closeModal();
+    const wasCur=(pendingDelete===curId);
+    removePlayer(pendingDelete);
+    closeModal();
+    if(wasCur){ S.stats={}; paintChip(); }
+    renderPlayers();
+    show("scr-players");
+  });
+
+  $("whochip").addEventListener("click",()=>{ renderPlayers(); show("scr-players"); });
+  $("switchplayer").addEventListener("click",()=>{ renderPlayers(); show("scr-players"); });
   $("aikey").addEventListener("change",()=>{
     S.aikey=$("aikey").value.trim();
     store.set(KEY_AI,S.aikey);
@@ -2040,7 +3011,8 @@ function init(){
   });
 
   $("begin").addEventListener("click",()=>{
-    unlockAudio();
+    if(!curId){ renderPlayers(); show("scr-players"); return; }
+    unlockAudio(); audioReady();
     readLocals();
     /* unlock audio + mic inside the user gesture */
     startSession();
@@ -2086,14 +3058,21 @@ function init(){
   $("typein").addEventListener("keydown",e=>{ if(e.key==="Enter") $("typego").click(); });
   $("quit").addEventListener("click",()=>{ if(S.phase==="graded") record(); finish(); });
   $("again").addEventListener("click",()=>startSession());
-  $("home").addEventListener("click",()=>{ show("scr-setup"); paintProgress(); });
+  $("begin").addEventListener("click",()=>{},{once:false});
+  $("home").addEventListener("click",()=>{ show("scr-setup"); paintProgress(); paintReady(); paintChip(); });
   $("resetbtn").addEventListener("click",e=>{
     e.preventDefault();
-    if(confirm("Стереть всю статистику? / Erase all progress?")){ S.stats={}; store.set(KEY_STATS,{}); paintProgress(); }
+    if(confirm("Стереть всю статистику? / Erase all progress?")){
+      S.stats={}; saveStats(); paintProgress(); paintReady(); renderMap(); }
   });
 
-  if(!SR){ /* leave a hint on the setup screen */ }
-  load();
+  loadGlobals();
+  loadPlayers();
+  migrateIfNeeded();
+  if(curId) loadPlayerData(); else { paintChip(); applyMode(); }
+  renderPlayers();
+  show("scr-players");
+  micStatus();
 }
 function micStatus(){
   const el=$("micstat"); if(!el) return;
@@ -2135,45 +3114,179 @@ function applyStateInfo(state,force){
   if(cap && (force||!$("f-capital").value.trim())) $("f-capital").value=cap;
 }
 
+let mapSel=null;
+function renderMap(){
+  const r=readiness();
+  $("mapbig").textContent=r.mastered+" / 128";
+  $("mapsub").textContent = r.any
+    ? "Вопрос считается выученным после "+MASTER_AT+" верных ответов подряд."
+    : "Пройдите первую сессию — карта начнёт заполняться.";
+
+  const g=$("mapgrid");
+  g.innerHTML="";
+  QUESTIONS.forEach(q=>{
+    const b=document.createElement("button");
+    b.type="button";
+    b.className = isMastered(q.n)?"mast":(isSeen(q.n)?"seen":"");
+    b.setAttribute("aria-label","Question "+q.n);
+    b.dataset.n=String(q.n);
+    g.appendChild(b);
+  });
+
+  paintReady(r);
+}
+
+function peekAt(n){
+  const q=QUESTIONS.find(x=>x.n===n); if(!q) return;
+  const s=statOf(n);
+  let st;
+  if(!s.asked) st="Ещё не отвечали.";
+  else if(isMastered(n)) st="Выучено — "+s.streak+" верных подряд.";
+  else st="Отвечали "+s.asked+" раз, ошибок "+s.wrong+". Подряд верно: "+s.streak+" из "+MASTER_AT+".";
+  $("peek").innerHTML='<span class="n">Q '+String(n).padStart(3,"0")+'</span>'+
+    '<span class="q">'+esc(q.q)+'</span>'+
+    '<span class="r">'+esc(q.qr)+'</span>'+
+    '<span class="st">'+esc(st)+'</span>';
+}
+
+function paintReady(r){
+  r=r||readiness();
+  if(!r.any){
+    $("readypct").textContent="—";
+    $("readylab").textContent="Readiness";
+    $("readysub").textContent="Пройдите первую сессию, чтобы увидеть оценку";
+    $("barm").style.width="0"; $("barl").style.width="0";
+    return;
+  }
+  $("readypct").textContent=r.pct+"%";
+  $("readylab").textContent="Chance of passing";
+  $("readysub").textContent="Выучено "+r.mastered+" из 128 · учим "+r.learning;
+  $("barm").style.width=(r.mastered/128*100)+"%";
+  $("barl").style.width=(r.learning/128*100)+"%";
+}
+
+function applyMode(){
+  const exam=S.mode==="exam";
+  document.body.classList.toggle("formal",false);   /* only during a session */
+  $("orderfield").style.display=exam?"none":"block";
+  $("lenfield").style.display=exam?"none":"block";
+  $("aibox").style.display=exam?"none":"block";
+  $("modehint").textContent = exam
+    ? "Как на собеседовании: 20 случайных вопросов, без подсказок и фактов. Нужно 12 верных."
+    : "Спокойная тренировка: после верного ответа — интересный факт, есть подсказки, вопросы уходят из оборота, когда вы их выучили.";
+  $("begin").textContent = exam?"Begin examination":"Begin practice";
+}
+
 function paintProgress(){
-  const ns=Object.keys(S.stats);
-  const wrong=ns.filter(n=>S.stats[n].wrong>0).length;
-  $("progline").textContent = ns.length
-    ? "Изучено вопросов: "+ns.length+" из 128 · с ошибками: "+wrong
+  const seen=QUESTIONS.filter(q=>isSeen(q.n)).length;
+  const mast=QUESTIONS.filter(q=>isMastered(q.n)).length;
+  $("progline").textContent = seen
+    ? "Отвечали на "+seen+" из 128 · выучено "+mast
     : "Статистика появится после первой сессии.";
 }
-function load(){
-  const st=store.get(KEY_STATS); if(st) S.stats=st;
+function loadGlobals(){
   const k=store.get(KEY_AI); if(k){ S.aikey=k; $("aikey").value=k; }
-  const p=store.get(KEY_PREFS);
-  if(p){
-    S.caps=p.caps||S.caps; S.order=p.order||S.order;
-    S.rate=p.rate||S.rate; S.len=p.len||S.len; S.local=p.local||{};
-    S.aimode=p.aimode||S.aimode;
+
+  let L=store.get(KEY_LOCALS);
+  if(!L){                                    /* carry officials over from before profiles */
+    const old=store.get(KEY_PREFS);
+    if(old&&old.local) L=old.local;
   }
+  S.local=L||{};
   if(!S.local.president) S.local.president=CURRENT.president;
-  if(!S.local.vp) S.local.vp=CURRENT.vp;
-  if(!S.local.speaker) S.local.speaker=CURRENT.speaker;
-  if(!S.local.chief) S.local.chief=CURRENT.chief;
-  ["senator","rep","governor","capital","president","vp","speaker","chief"].forEach(k=>{
-    if(S.local[k]) $("f-"+k).value=S.local[k];
+  if(!S.local.vp)        S.local.vp=CURRENT.vp;
+  if(!S.local.speaker)   S.local.speaker=CURRENT.speaker;
+  if(!S.local.chief)     S.local.chief=CURRENT.chief;
+  if(!S.local.state){ S.local.state="North Carolina"; S.local.capital="Raleigh"; }
+
+  ["senator","rep","governor","capital","president","vp","speaker","chief"].forEach(f=>{
+    if(S.local[f]) $("f-"+f).value=S.local[f];
   });
-  if(!p && !S.local.state){            /* first run on this device */
-    S.local.state="North Carolina";
-    S.local.capital="Raleigh";
-  }
   if(S.local.state) $("stsel").value=S.local.state;
   applyStateInfo(S.local.state,false);
-  ["senator","rep","governor","capital"].forEach(k=>{
-    if(S.local[k]) $("f-"+k).value=S.local[k];
+  ["senator","rep","governor","capital"].forEach(f=>{
+    if(S.local[f]) $("f-"+f).value=S.local[f];
   });
+  store.set(KEY_LOCALS,S.local);
+}
+
+function loadPlayerData(){
+  S.stats=curId?statsFor(curId):{};
+  const p=(curId&&store.get(pKey(curId)))||{};
+  S.caps=p.caps||"both"; S.order=p.order||"smart"; S.rate=p.rate||0.78;
+  S.len=p.len||20; S.aimode=p.aimode||"miss"; S.mode=p.mode||"practice"; S.fx=p.fx||"full";
+
   const mark=(id,val)=>$(id).querySelectorAll("button").forEach(b=>
     b.setAttribute("aria-pressed",String(b.dataset.v===String(val))));
   mark("capseg",S.caps); mark("ordseg",S.order); mark("ratseg",S.rate);
-  mark("lenseg",S.len); mark("aiseg",S.aimode);
-  $("ordhint").textContent=ORDHINT[S.order];
-  paintProgress(); micStatus();
+  mark("lenseg",S.len); mark("aiseg",S.aimode); mark("modeseg",S.mode); mark("fxseg",S.fx);
+  $("ordhint").textContent=ORDHINT[S.order]||"";
+  applyMode(); paintReady(); paintProgress(); paintChip(); applyCaps();
 }
+
+/* Progress made before there were profiles is held until the first player exists. */
+function migrateIfNeeded(){
+  if(players.length) return;
+  const old=store.get(KEY_STATS);
+  if(old && Object.keys(old).length) pendingStats=old;
+}
+
+function paintChip(){
+  const p=curPlayer();
+  $("chipav").textContent=p?initials(p.name):"—";
+  $("chipav").style.background=p?p.color:"var(--faint)";
+  $("chipname").textContent=p?p.name:"—";
+}
+
+function renderPlayers(){
+  const box=$("plist");
+  box.innerHTML=players.map(p=>{
+    const st=statsFor(p.id);
+    const m=masteredIn(st), seen=seenIn(st);
+    const sub = seen? ("Выучено "+m+" из 128") : "Ещё не занимался";
+    return '<div class="prow'+(p.id===curId?' cur':'')+'">'+
+      '<button class="psel" data-id="'+esc(p.id)+'">'+
+        '<span class="pav" style="background:'+esc(p.color)+'">'+esc(initials(p.name))+'</span>'+
+        '<span class="pmeta"><span class="nm">'+esc(p.name)+'</span>'+
+        '<span class="sb">'+esc(sub)+'</span>'+
+        '<span class="pmini"><i style="width:'+(m/128*100).toFixed(1)+'%"></i></span></span>'+
+      '</button>'+
+      '<button class="pdel" data-del="'+esc(p.id)+'" aria-label="Delete '+esc(p.name)+'">&times;</button>'+
+    '</div>';
+  }).join("");
+
+  const full=players.length>=MAXP;
+  $("addplayer").classList.toggle("off",full||!$("addrow").classList.contains("off"));
+  $("whosub").textContent = players.length?"Кто занимается?":"Создайте игрока, чтобы начать";
+  $("pfoot").textContent = full
+    ? "Достигнут предел в 10 игроков. Удалите кого-нибудь, чтобы добавить нового."
+    : "До 10 игроков. У каждого свой прогресс, который сохраняется на этом телефоне.";
+  if(!players.length) openAddRow();
+}
+
+function openAddRow(){
+  $("addrow").classList.remove("off");
+  $("addplayer").classList.add("off");
+  try{ $("newname").focus(); }catch(e){}
+}
+function closeAddRow(){
+  $("addrow").classList.add("off");
+  $("newname").value="";
+  $("addplayer").classList.toggle("off",players.length>=MAXP);
+}
+
+function askDelete(id){
+  const p=players.find(x=>x.id===id); if(!p) return;
+  const st=statsFor(id), m=masteredIn(st), seen=seenIn(st);
+  pendingDelete=id;
+  $("modalbody").textContent="Удалить игрока «"+p.name+"»?";
+  $("modalsub").textContent = seen
+    ? "Весь его прогресс будет стёрт: выучено "+m+" из 128, отвечал на "+seen+". Это нельзя отменить."
+    : "У этого игрока пока нет прогресса.";
+  $("modal").classList.remove("off");
+}
+function closeModal(){ pendingDelete=null; $("modal").classList.add("off"); }
+
 document.addEventListener("DOMContentLoaded",init);
 </script>
 </body>
