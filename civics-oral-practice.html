@@ -34,6 +34,11 @@
   --accent:var(--teal);
   --actsH:74px;
 
+  --flag-red:#B22234;
+  --flag-blue:#3C3B6E;
+  --flag-red-w:#FBE4E6;
+  --flag-blue-w:#E4E5F2;
+
   --sans:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,
     "Helvetica Neue","Noto Sans",Arial,sans-serif;
   --disp:var(--sans);
@@ -105,10 +110,12 @@ body.formal::before{opacity:.25}
 /* ── setup / shared ──────────────────── */
 .hero{text-align:center;padding:20px 0 4px;flex:0 0 auto}
 .hero h1{font-family:var(--disp);font-weight:800;font-size:27px;letter-spacing:.04em;
-  margin:0 0 8px;line-height:1.2;color:var(--teal-d)}
+  margin:0 0 8px;line-height:1.2;
+  background:linear-gradient(95deg,var(--flag-blue) 0%,var(--teal-d) 48%,var(--flag-red) 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent}
 .hero .sub{font-size:16px;color:var(--soft);margin:0;line-height:1.45}
-.torch{width:52px;height:4px;border-radius:3px;margin:14px auto;
-  background:linear-gradient(90deg,var(--teal),var(--amber),var(--violet))}
+.torch{width:66px;height:5px;border-radius:3px;margin:12px auto;
+  background:linear-gradient(90deg,var(--flag-blue),var(--teal),var(--amber),var(--flag-red))}
 
 .field{margin:0 0 18px;flex:0 0 auto}
 .field > label,.legend{display:block;font-family:var(--disp);font-size:11.5px;letter-spacing:.12em;
@@ -135,9 +142,11 @@ body.formal::before{opacity:.25}
 .modes button#m-exam[aria-pressed="true"]{border-color:#2B4257;background:#E3E9EF}
 .modes button#m-exam[aria-pressed="true"] .t{color:#2B4257}
 
-.ready{display:flex;align-items:center;gap:13px;width:100%;appearance:none;cursor:pointer;
-  background:var(--card);border:1px solid var(--rule);border-radius:14px;
-  padding:13px 15px;margin:0 0 18px;text-align:left}
+.ready{position:relative;display:flex;align-items:center;gap:13px;width:100%;appearance:none;
+  cursor:pointer;background:var(--card);border:1px solid var(--rule);border-radius:14px;
+  padding:13px 15px;margin:0 0 18px;text-align:left;overflow:hidden}
+.ready::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;
+  background:linear-gradient(180deg,var(--flag-red) 0 33%,#fff 33% 66%,var(--flag-blue) 66% 100%)}
 .ready .big{font-family:var(--mono);font-size:29px;line-height:1;color:var(--teal-d);
   font-variant-numeric:tabular-nums;flex:0 0 auto}
 .ready .lab{flex:1;min-width:0}
@@ -170,9 +179,12 @@ details.local[open] > summary::after{content:"–"}
 .localbody .row:last-child{margin:0}
 .localbody .row label{display:block;font-size:14px;color:var(--soft);margin:0 0 6px}
 
-.primary{display:block;width:100%;appearance:none;cursor:pointer;
+.primary{position:relative;display:block;width:100%;appearance:none;cursor:pointer;
   background:var(--accent);color:#fff;border:none;border-radius:13px;padding:17px;
-  font-family:var(--disp);font-size:16px;letter-spacing:.03em;font-weight:700}
+  font-family:var(--disp);font-size:16px;letter-spacing:.03em;font-weight:700;overflow:hidden}
+.primary::after{content:"";position:absolute;left:0;right:0;bottom:0;height:4px;
+  background:repeating-linear-gradient(90deg,
+    rgba(255,255,255,.85) 0 13px, rgba(255,255,255,.25) 13px 26px)}
 .primary:active{opacity:.88}
 .secondary{display:block;width:100%;appearance:none;cursor:pointer;background:transparent;
   border:1px solid var(--rule);border-radius:13px;padding:14px;margin-top:9px;
@@ -335,10 +347,65 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid 
 /* ── celebration ─────────────────────── */
 #fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:50}
 
+/* ── patriotic trim ──────────────────── */
+/* a ribbon of stripes pinned to the very top of every screen */
+body::after{
+  content:"";position:fixed;left:0;right:0;z-index:55;height:5px;pointer-events:none;
+  top:env(safe-area-inset-top,0px);
+  background:repeating-linear-gradient(90deg,
+    var(--flag-red) 0 15px, #fff 15px 30px);
+  border-bottom:1px solid rgba(60,59,110,.25);
+}
+body.formal::after{opacity:.35}
+
+.stars{display:flex;align-items:center;justify-content:center;gap:9px;margin:12px 0 2px}
+.stars svg{width:15px;height:15px;flex:0 0 auto}
+.stars .r{fill:var(--flag-red)}
+.stars .b{fill:var(--flag-blue)}
+.stars .line{flex:1;height:2px;border-radius:2px;max-width:70px;
+  background:linear-gradient(90deg,transparent,var(--flag-blue))}
+.stars .line.rev{background:linear-gradient(90deg,var(--flag-blue),transparent)}
+
+/* bunting swags across the top of the launch screen */
+.bunting{position:relative;height:30px;margin:0 -20px 2px;flex:0 0 auto;overflow:hidden}
+.bunting i{position:absolute;top:-19px;width:40px;height:40px;border-radius:50%;
+  box-shadow:inset 0 -3px 0 rgba(0,0,0,.08)}
+.bunting i:nth-child(3n+1){background:var(--flag-red)}
+.bunting i:nth-child(3n+2){background:#F3F6FA}
+.bunting i:nth-child(3n+3){background:var(--flag-blue)}
+
+/* a flag that waves on its own, for the launch screen */
+.wavingflag{width:92px;height:62px;overflow:visible}
+@media (prefers-reduced-motion:no-preference){
+  .wavingflag .col{animation:ripple 2.4s ease-in-out infinite}
+  @keyframes ripple{
+    0%,100%{transform:translateY(0) scaleY(1)}
+    25%{transform:translateY(-2.4px) scaleY(1.035)}
+    75%{transform:translateY(2.4px) scaleY(.965)}}
+}
+.unclesam{width:76px;height:104px;flex:0 0 auto}
+@media (prefers-reduced-motion:no-preference){
+  .unclesam{animation:tip 5.5s ease-in-out infinite;transform-origin:50% 90%}
+  @keyframes tip{0%,100%{transform:rotate(-2deg)}50%{transform:rotate(2deg)}}
+}
+
+.welcome{display:flex;align-items:flex-end;justify-content:center;gap:14px;
+  margin:4px 0 10px;flex:0 0 auto}
+
+/* star corners on the question card */
+.card .corner{position:absolute;width:11px;height:11px;opacity:.5;pointer-events:none}
+.card .corner.a{top:9px;right:11px}
+.card .corner.b{bottom:9px;left:11px}
+.card .corner svg{width:100%;height:100%;fill:var(--flag-blue)}
+body.formal .card .corner{display:none}
+
 /* ── players ─────────────────────────── */
 .plist{display:flex;flex-direction:column;gap:9px;margin:0 0 16px;flex:0 0 auto}
-.prow{display:flex;align-items:center;gap:10px;width:100%;background:var(--card);
-  border:2px solid var(--rule);border-radius:14px;padding:12px 13px}
+.prow{position:relative;display:flex;align-items:center;gap:10px;width:100%;background:var(--card);
+  border:2px solid var(--rule);border-radius:14px;padding:12px 13px;overflow:hidden}
+.prow::after{content:"";position:absolute;right:0;top:0;bottom:0;width:4px;
+  background:linear-gradient(180deg,var(--flag-red) 0 33%,#fff 33% 66%,var(--flag-blue) 66% 100%);
+  opacity:.65}
 .prow.cur{border-color:var(--teal);background:var(--teal-w)}
 .psel{display:flex;align-items:center;gap:12px;flex:1;min-width:0;appearance:none;
   background:none;border:none;padding:0;font:inherit;color:inherit;text-align:left;cursor:pointer}
@@ -427,10 +494,97 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid 
 
 <!-- ══ PLAYERS ════════════════════════ -->
 <section class="screen on" id="scr-players">
+  <div class="bunting" aria-hidden="true">
+    <i style="left:-14px"></i><i style="left:26px"></i><i style="left:66px"></i>
+    <i style="left:106px"></i><i style="left:146px"></i><i style="left:186px"></i>
+    <i style="left:226px"></i><i style="left:266px"></i><i style="left:306px"></i>
+    <i style="left:346px"></i><i style="left:386px"></i>
+  </div>
+
   <div class="hero">
     <h1>Civics Oral Practice</h1>
+    <div class="welcome" aria-hidden="true">
+      <svg class="wavingflag" viewBox="0 0 92 62">
+        <defs><clipPath id="fclip"><rect x="0" y="0" width="92" height="52" rx="2"/></clipPath></defs>
+        <g clip-path="url(#fclip)">
+          <g class="col" style="animation-delay:0s">
+            <rect x="0" y="0" width="16" height="52" fill="#fff"/>
+            <g fill="#B22234"><rect x="0" y="0" width="16" height="4"/><rect x="0" y="8" width="16" height="4"/>
+            <rect x="0" y="16" width="16" height="4"/><rect x="0" y="24" width="16" height="4"/>
+            <rect x="0" y="32" width="16" height="4"/><rect x="0" y="40" width="16" height="4"/>
+            <rect x="0" y="48" width="16" height="4"/></g>
+            <rect x="0" y="0" width="16" height="28" fill="#3C3B6E"/>
+            <g fill="#fff"><circle cx="4" cy="6" r="1.5"/><circle cx="11" cy="6" r="1.5"/>
+            <circle cx="7.5" cy="14" r="1.5"/><circle cx="4" cy="22" r="1.5"/><circle cx="11" cy="22" r="1.5"/></g>
+          </g>
+          <g class="col" style="animation-delay:.2s">
+            <rect x="16" y="0" width="16" height="52" fill="#fff"/>
+            <g fill="#B22234"><rect x="16" y="0" width="16" height="4"/><rect x="16" y="8" width="16" height="4"/>
+            <rect x="16" y="16" width="16" height="4"/><rect x="16" y="24" width="16" height="4"/>
+            <rect x="16" y="32" width="16" height="4"/><rect x="16" y="40" width="16" height="4"/>
+            <rect x="16" y="48" width="16" height="4"/></g>
+            <rect x="16" y="0" width="16" height="28" fill="#3C3B6E"/>
+            <g fill="#fff"><circle cx="20" cy="6" r="1.5"/><circle cx="27" cy="6" r="1.5"/>
+            <circle cx="23.5" cy="14" r="1.5"/><circle cx="20" cy="22" r="1.5"/><circle cx="27" cy="22" r="1.5"/></g>
+          </g>
+          <g class="col" style="animation-delay:.4s">
+            <rect x="32" y="0" width="16" height="52" fill="#fff"/>
+            <g fill="#B22234"><rect x="32" y="0" width="16" height="4"/><rect x="32" y="8" width="16" height="4"/>
+            <rect x="32" y="16" width="16" height="4"/><rect x="32" y="24" width="16" height="4"/>
+            <rect x="32" y="32" width="16" height="4"/><rect x="32" y="40" width="16" height="4"/>
+            <rect x="32" y="48" width="16" height="4"/></g>
+          </g>
+          <g class="col" style="animation-delay:.6s">
+            <rect x="48" y="0" width="16" height="52" fill="#fff"/>
+            <g fill="#B22234"><rect x="48" y="0" width="16" height="4"/><rect x="48" y="8" width="16" height="4"/>
+            <rect x="48" y="16" width="16" height="4"/><rect x="48" y="24" width="16" height="4"/>
+            <rect x="48" y="32" width="16" height="4"/><rect x="48" y="40" width="16" height="4"/>
+            <rect x="48" y="48" width="16" height="4"/></g>
+          </g>
+          <g class="col" style="animation-delay:.8s">
+            <rect x="64" y="0" width="28" height="52" fill="#fff"/>
+            <g fill="#B22234"><rect x="64" y="0" width="28" height="4"/><rect x="64" y="8" width="28" height="4"/>
+            <rect x="64" y="16" width="28" height="4"/><rect x="64" y="24" width="28" height="4"/>
+            <rect x="64" y="32" width="28" height="4"/><rect x="64" y="40" width="28" height="4"/>
+            <rect x="64" y="48" width="28" height="4"/></g>
+          </g>
+        </g>
+        <rect x="-3" y="0" width="3" height="62" rx="1.5" fill="#8A6A3B"/>
+      </svg>
+
+      <svg class="unclesam" viewBox="0 0 76 104">
+        <ellipse cx="38" cy="96" rx="27" ry="7" fill="rgba(60,59,110,.10)"/>
+        <!-- coat -->
+        <path d="M14 96 Q15 70 27 63 L38 69 L49 63 Q61 70 62 96 Z" fill="#3C3B6E"/>
+        <path d="M31 65 L38 96 L45 65 L38 70 Z" fill="#F3F6FA"/>
+        <path d="M38 70 l5 5 -5 5 -5 -5 Z" fill="#B22234"/>
+        <!-- beard + face -->
+        <ellipse cx="38" cy="40" rx="13" ry="12.5" fill="#F2CDA8"/>
+        <!-- beard, given its own edge so it reads against the face -->
+        <path d="M24.5 43 q13.5 9 27 0 q.5 10 -3 17 q-4 8 -10.5 10 q-6.5 -2 -10.5 -10 q-3.5 -7 -3 -17 Z"
+              fill="#EDF2F6" stroke="#C3D0DB" stroke-width="1.3" stroke-linejoin="round"/>
+        <path d="M33 52 q5 3.5 10 0 q-2.5 4 -5 4 q-2.5 0 -5 -4 Z" fill="#C96A66"/>
+        <path d="M30.5 46.5 q7.5 4 15 0 q-3.5 3 -7.5 3 q-4 0 -7.5 -3 Z" fill="#DCE5EC"/>
+        <circle cx="33" cy="37" r="1.8" fill="#2B3A46"/><circle cx="43" cy="37" r="1.8" fill="#2B3A46"/>
+        <path d="M30.5 31.5 q7.5 -4 15 0" stroke="#C3D0DB" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+        <!-- hat -->
+        <ellipse cx="38" cy="27" rx="25" ry="5.5" fill="#2E2E52"/>
+        <path d="M21 27 V9 q0 -4 4 -4 h26 q4 0 4 4 v18 Z" fill="#F3F6FA"/>
+        <g fill="#B22234"><rect x="21" y="5" width="34" height="3.4" rx="1"/>
+          <rect x="21" y="11.5" width="34" height="3.4"/><rect x="21" y="18" width="34" height="3.4"/></g>
+        <rect x="21" y="21.6" width="34" height="5.4" fill="#3C3B6E"/>
+        <g fill="#fff"><circle cx="28" cy="24.3" r="1.3"/><circle cx="38" cy="24.3" r="1.3"/>
+          <circle cx="48" cy="24.3" r="1.3"/></g>
+      </svg>
+    </div>
     <p class="sub" id="whosub">Кто занимается?</p>
-    <div class="torch"></div>
+    <div class="stars" aria-hidden="true">
+      <span class="line"></span>
+      <svg viewBox="0 0 24 24"><path class="r" d="M12 1.6l2.9 6.5 7.1.7-5.3 4.7 1.5 7-6.2-3.6-6.2 3.6 1.5-7L2 8.8l7.1-.7z"/></svg>
+      <svg viewBox="0 0 24 24"><path class="b" d="M12 1.6l2.9 6.5 7.1.7-5.3 4.7 1.5 7-6.2-3.6-6.2 3.6 1.5-7L2 8.8l7.1-.7z"/></svg>
+      <svg viewBox="0 0 24 24"><path class="r" d="M12 1.6l2.9 6.5 7.1.7-5.3 4.7 1.5 7-6.2-3.6-6.2 3.6 1.5-7L2 8.8l7.1-.7z"/></svg>
+      <span class="line rev"></span>
+    </div>
   </div>
 
   <div class="plist" id="plist"></div>
@@ -648,6 +802,8 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid 
   </div>
 
   <div class="card" id="qcard">
+    <span class="corner a" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 1.6l2.9 6.5 7.1.7-5.3 4.7 1.5 7-6.2-3.6-6.2 3.6 1.5-7L2 8.8l7.1-.7z"/></svg></span>
+    <span class="corner b" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 1.6l2.9 6.5 7.1.7-5.3 4.7 1.5 7-6.2-3.6-6.2 3.6 1.5-7L2 8.8l7.1-.7z"/></svg></span>
     <div class="qhead">
       <span class="eyebrow" id="qcat">American Government</span>
       <span class="num" id="qnum">Q 001</span>
@@ -1835,6 +1991,12 @@ function yearWords(n){
   }
   return null;
 }
+const ORD2CARD={};
+(function(){
+  for(let i=0;i<20;i++) ORD2CARD[ordinal(i)]=ONES[i];
+  for(let i=2;i<10;i++) ORD2CARD[TENS[i].replace(/y$/,"ieth")]=TENS[i];
+  ORD2CARD["hundredth"]="hundred"; ORD2CARD["thousandth"]="thousand";
+})();
 const STOP=new Set(["the","a","an","of","to","in","on","for","and","or","is","are","was","were",
 "be","been","that","this","these","those","it","its","as","at","by","with","from","so","their",
 "because","since","when","while","after","before","if","then","there","here","also","such",
@@ -1844,6 +2006,7 @@ function normalize(s,extend){
   s=" "+String(s).toLowerCase()+" ";
   s=s.replace(/[\u2018\u2019\u02BC]/g,"'").replace(/[\u201C\u201D\u00AB\u00BB]/g," ");
   s=s.replace(/&/g," and ");
+  s=s.replace(/\ba (hundred|thousand|million)\b/g," one $1 ");
   s=s.replace(/\bdon'?t\b/g," do not ").replace(/\bdoesn'?t\b/g," does not ")
      .replace(/\bdidn'?t\b/g," did not ").replace(/\bisn'?t\b/g," is not ")
      .replace(/\baren'?t\b/g," are not ").replace(/\bwasn'?t\b/g," was not ")
@@ -1869,6 +2032,7 @@ function normalize(s,extend){
   });
   /* "u s s r" -> "ussr" */
   s=s.replace(/\b(?:[a-z]\s){1,4}[a-z]\b/g,m=>m.replace(/\s/g,""));
+  if(extend) s=s.replace(/\b([a-z]+)\b/g,(m,w)=>ORD2CARD[w]?(w+" "+ORD2CARD[w]):m);
   s=s.replace(/[^a-z0-9\u0400-\u04FF\s'-]/g," ");
   s=s.replace(/[-']/g," ");
   return s.replace(/\s+/g," ").trim();
@@ -1886,8 +2050,8 @@ function stem(w){
 }
 /* civics paraphrase classes — any member satisfies any other */
 const SYN=[
- ["write","make","create","pass","draft","enact","author","produce",
-  "form","establish","found","organize","set","build","setup"],
+ ["write","make","create","pass","draft","enact","author","produce","wrote","writer",
+  "form","establish","found","organize","set","build","setup","written"],
  ["congress","legislature","legislative"],
  ["obey","follow","abide","respect","uphold"],
  ["protect","defend","guard","preserve","safeguard","save"],
@@ -1898,10 +2062,19 @@ const SYN=[
  ["kill","assassinate","murder","shot"],
  ["soldier","troop","serviceman","servicemember"],
  ["military","army","armed","forces"],
- ["country","nation","america","us","usa","our","american"],
+ ["country","nation","america","us","usa","our","american","here","nationwide"],
  ["free","freed","freedom","liberty"],
  ["leader","head","chief","charge","boss","command"],
  ["judge","justice"],
+ ["citizen","people","person","public","resident","american"],
+ ["naturalize","naturalization","naturalized"],
+ ["branch","part","piece","section","arm"],
+ ["police","protection","protect","law enforcement"],
+ ["recession","depression","downturn","slump"],
+ ["crash","collapse","crashed"],
+ ["diplomat","diplomacy","ambassador","minister"],
+ ["britain","british","england","english","brittain","britian"],
+ ["colony","colonies","colonial","colonist"],
  ["court","judiciary","judicial"],
  ["tax","taxes","taxation"],
  ["speech","expression","speak"],
@@ -2007,17 +2180,62 @@ function required(ans){
   const core=ans.replace(/\(([^)]*)\)/g," ");
   return toks(core).filter(t=>!STOP.has(t)).map(stem);
 }
-function hitsOne(bag,ans){
+/* "president" tells you which answer this is; "of the United States" does not.
+   Weight every token by how rare it is across the whole answer corpus, so a
+   candidate is judged on the words that carry the meaning. */
+let IDF=null;
+function buildIDF(){
+  IDF={};
+  const docs=[];
+  QUESTIONS.forEach(q=>q.a.forEach(ans=>{
+    const t=required(ans);
+    if(t.length) docs.push(new Set(t));
+  }));
+  const N=Math.max(1,docs.length), df={};
+  docs.forEach(d=>d.forEach(t=>{ df[t]=(df[t]||0)+1; }));
+  Object.keys(df).forEach(t=>{ IDF[t]=Math.log(N/df[t])+0.35; });
+}
+function weightOf(t){
+  if(!IDF) buildIDF();
+  const w=IDF[t];
+  return w===undefined ? 2.6 : Math.max(0.30,w);   /* unseen word = very distinctive */
+}
+
+const PASS=0.60, MAYBE=0.38;
+function bagHasNumber(bag){
+  for(const t of bag) if(NUMW.has(t)) return true;
+  return false;
+}
+
+/* 0..1 — how much of this answer's meaning the candidate actually produced */
+function scoreOne(bag,ans){
+  let best=0;
   for(const v of variants(ans)){
     const req=required(v);
     if(!req.length) continue;
-    const got=req.filter(t=>bagHas(bag,t)).length;
-    const ratio=got/req.length;
-    const need=req.length<=2?1:(req.length<=5?0.67:0.55);
-    if(ratio>=need && got>=Math.min(2,req.length)) return true;
+    const ws=req.map(weightOf);
+    let maxW=0; for(const w of ws) if(w>maxW) maxW=w;
+    let total=0, got=0, hits=0, top=false;
+    for(let i=0;i<req.length;i++){
+      total+=ws[i];
+      if(bagHas(bag,req[i])){ got+=ws[i]; hits++; if(ws[i]>=maxW*0.9) top=true; }
+    }
+    let r = total ? got/total : 0;
+    /* the bonus rewards naming the key word, but one stray hit must never
+       carry a whole answer — require real overlap, or a one-word answer */
+    if(top && (hits>=2 || req.length===1)) r=Math.min(1,r+0.17);
+
+    /* numbers are the whole answer when they appear in one */
+    const reqNums=req.filter(t=>NUMW.has(t));
+    if(reqNums.length && bagHasNumber(bag)){
+      const allThere=reqNums.every(t=>bag.has(t));
+      if(!allThere) r=0;              /* said a number, said the wrong one */
+    }
+    if(r>best) best=r;
   }
-  return false;
+  return best;
 }
+function hitsOne(bag,ans){ return scoreOne(bag,ans)>=PASS; }
 function hitsName(bag,name){
   const t=toks(name).filter(x=>x.length>1);
   if(!t.length) return false;
@@ -2274,6 +2492,10 @@ function ttsNote(msg,kind){
 
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 let rec=null, recRunning=false, sawFinal=false;
+/* Safari closes the microphone after a short silence. Reopening it a couple of
+   times gives a slower speaker room to think, and to finish a long answer. */
+const TRIES_SILENT=3, TRIES_AFTER_SPEECH=2;
+let listenTries=0, stopRequested=false;
 function buildRec(){
   if(!SR) return null;
   const r=new SR();
@@ -2297,10 +2519,32 @@ function buildRec(){
   };
   r.onend=()=>{
     recRunning=false;
-    $("seal").classList.remove("live");
-    if(S.phase!=="listening") return;
-    if(sawFinal||S.finalText.trim()) grade(S.finalText);
-    else { S.phase="ready"; setState("Tap to answer","Нажмите и говорите"); }
+    if(S.phase!=="listening"){ $("seal").classList.remove("live"); return; }
+
+    const said=(S.finalText||"").trim();
+    const limit = said ? TRIES_AFTER_SPEECH : TRIES_SILENT;
+    listenTries++;
+
+    /* the speaker tapped the mic to finish, so take what we have */
+    if(stopRequested || listenTries>=limit){
+      $("seal").classList.remove("live");
+      if(said) grade(S.finalText);
+      else { S.phase="ready"; setState("Tap to answer","Нажмите на микрофон и говорите"); }
+      return;
+    }
+
+    /* otherwise give them another window */
+    setState(said?"Still listening":"Listening",
+             said?"Говорите дальше или нажмите микрофон":"Говорите…");
+    setTimeout(()=>{
+      if(S.phase!=="listening"||recRunning) return;
+      try{ rec.start(); }
+      catch(e){
+        $("seal").classList.remove("live");
+        if(said) grade(S.finalText);
+        else { S.phase="ready"; setState("Tap to answer","Нажмите на микрофон и говорите"); }
+      }
+    },140);
   };
   return r;
 }
@@ -2313,11 +2557,17 @@ function micBlocked(){
 }
 function showNotice(html){ $("notice").innerHTML=html; $("notice").classList.remove("off"); }
 
+function stopListening(){
+  stopRequested=true;
+  if(rec){ try{ rec.abort(); }catch(e){ try{ rec.stop(); }catch(_){} } }
+  recRunning=false;
+}
 function listen(){
   if(!SR){ micBlocked(); return; }
   if(!rec) rec=buildRec();
   if(recRunning){ try{rec.stop();}catch(e){} return; }
   sawFinal=false; S.finalText="";
+  listenTries=0; stopRequested=false;
   S.phase="listening";
   $("seal").classList.add("live");
   setState("Listening","Говорите — нажмите ещё раз, когда закончите");
@@ -2354,11 +2604,17 @@ function evaluate(q,transcript){
   if(ref.manual||!transcript.trim()) return {ok:null,ref};
   const bag=bagOf(transcript);
   const need=q.need||1;
-  let n=0;
+  let n=0, near=0;
   for(const a of ref.answers){
-    if(ref.isName?hitsName(bag,a.en):hitsOne(bag,a.en)) n++;
+    if(ref.isName){ if(hitsName(bag,a.en)) n++; continue; }
+    const s=scoreOne(bag,a.en);
+    if(s>=PASS) n++;
+    else if(s>=MAYBE) near++;
   }
-  return {ok:n>=need,matched:n,ref};
+  if(n>=need) return {ok:true,matched:n,ref};
+  /* close enough that the app should not call it wrong on its own */
+  if(n+near>=need) return {ok:null,matched:n,ref,unsure:true};
+  return {ok:false,matched:n,ref};
 }
 
 /* ═══ celebration ══════════════════════════════════════════
@@ -2403,6 +2659,57 @@ function balloons(n){
       col:FX_COLORS[(Math.random()*FX_COLORS.length)|0], life:0, max:260});
   }
 }
+function starPath(g,x,y,r){
+  g.beginPath();
+  for(let i=0;i<10;i++){
+    const rad=(i%2?r*0.46:r), ang=-Math.PI/2+i*Math.PI/5;
+    const px=x+Math.cos(ang)*rad, py=y+Math.sin(ang)*rad;
+    i?g.lineTo(px,py):g.moveTo(px,py);
+  }
+  g.closePath(); g.fill();
+}
+/* A real wave: the flag is drawn as vertical columns, each offset along a sine. */
+function drawFlag(p,fade){
+  const w=p.w, h=w*0.54, cols=12, cw=w/cols, sh=h/13;
+  fxg.save();
+  fxg.translate(p.x,p.y);
+  fxg.rotate(p.rot);
+  fxg.globalAlpha=fade;
+  fxg.fillStyle="#7A5B33";
+  fxg.fillRect(-3,-4,3,h+16);                         /* pole */
+  for(let i=0;i<cols;i++){
+    const ph=p.phase+i*0.52;
+    const dy=Math.sin(ph)*h*0.12*(i/cols+0.25);
+    const sy=1+Math.cos(ph)*0.05;
+    for(let s=0;s<13;s++){
+      fxg.fillStyle=(s%2===0)?"#B22234":"#FFFFFF";
+      fxg.fillRect(i*cw-0.4, dy+s*sh*sy, cw+0.8, sh*sy+0.8);
+    }
+    if(i<Math.round(cols*0.42)){
+      fxg.fillStyle="#3C3B6E";
+      fxg.fillRect(i*cw-0.4, dy, cw+0.8, sh*7*sy);
+    }
+  }
+  fxg.fillStyle="#FFFFFF";
+  for(let r=0;r<3;r++) for(let c=0;c<4;c++){
+    const sx=(c+0.6)*(w*0.42/4), sy2=(r+0.6)*(sh*7/3);
+    const ph=p.phase+(sx/cw)*0.52;
+    starPath(fxg,sx,sy2+Math.sin(ph)*h*0.12*((sx/cw)/cols+0.25),h*0.042);
+  }
+  fxg.restore();
+}
+function flags(n){
+  for(let i=0;i<n;i++){
+    fxParts.push({k:"f",
+      x:fxW*(0.08+0.84*Math.random()), y:fxH*(0.3+0.4*Math.random()),
+      vx:(Math.random()-0.5)*1.1, vy:-(0.7+Math.random()*0.8),
+      w:52+Math.random()*34, rot:(Math.random()-0.5)*0.32,
+      vr:(Math.random()-0.5)*0.008,
+      phase:Math.random()*6.28, sp:0.17+Math.random()*0.07,
+      life:0, max:150+Math.random()*50});
+  }
+}
+
 function fxTick(){
   if(!fxg){ fxRAF=0; return; }
   fxg.clearRect(0,0,fxW,fxH);
@@ -2416,6 +2723,9 @@ function fxTick(){
       fxg.globalAlpha=fade*0.88; fxg.fillStyle=p.col;
       fxg.fillRect(-p.w/2,-p.h/2,p.w,p.h);
       fxg.restore();
+    }else if(p.k==="f"){
+      p.phase+=p.sp; p.x+=p.vx; p.y+=p.vy; p.rot+=p.vr;
+      drawFlag(p,fade);
     }else{
       p.sway+=p.sp; p.y+=p.vy; p.x+=Math.sin(p.sway)*0.9;
       fxg.save(); fxg.globalAlpha=fade*0.95;
@@ -2428,7 +2738,8 @@ function fxTick(){
       fxg.beginPath(); fxg.ellipse(p.x-p.r*0.3,p.y-p.r*0.35,p.r*0.2,p.r*0.28,0,0,Math.PI*2); fxg.fill();
       fxg.restore();
     }
-    if(p.life>p.max||p.y>fxH+120||(p.k==="b"&&p.y<-120)) fxParts.splice(i,1);
+    if(p.life>p.max||(p.k==="c"&&p.y>fxH+120)||((p.k==="b"||p.k==="f")&&p.y<-180))
+      fxParts.splice(i,1);
   }
   if(fxParts.length) fxRAF=requestAnimationFrame(fxTick);
   else { fxRAF=0; fxg.clearRect(0,0,fxW,fxH); }
@@ -2498,7 +2809,8 @@ function celebrate(level){
   const big=level==="big";
   if(!reduced && fxOK()){
     confetti(big?190:80);
-    if(big) balloons(16);
+    if(big){ balloons(16); flags(3); }
+    else if(Math.random()<0.3) flags(1);    /* a flag now and then */
     fxGo();
   }
   if(S.fx==="full" && audioReady()){
@@ -2656,12 +2968,13 @@ function grade(transcript,force){
   const q=S.queue[S.idx];
   const ev=evaluate(q,transcript);
   const ref=ev.ref;
+  const unsure=!!ev.unsure;
   let ok = (force===false) ? false : ev.ok;
   S.phase="graded"; S.manual=(ok===null); S.currentCorrect=ok;
 
   const st=$("stamp");
   st.className="stamp "+(ok===true?"ok":ok===false?"no":"self");
-  st.textContent = ok===true?"Correct" : ok===false?"Try again" : "Your call";
+  st.textContent = ok===true?"Correct" : ok===false?"Try again" : (unsure?"Almost":"Your call");
   st.style.animation="none"; void st.offsetWidth; st.style.animation="";
 
   if(ref.manual && force!==false){
@@ -2690,8 +3003,9 @@ function grade(transcript,force){
   $("markbtn").classList.remove("hide");
   $("markbtn").textContent = ok===true?"Mark missed":"Mark correct";
   $("next").textContent = (S.idx+1<S.queue.length)?"Next":"Finish";
-  setState(ok===true?"Correct":ok===false?"Missed":"Mark it yourself",
-           ok===true?"Верно":ok===false?"Неверно":"Отметьте сами");
+  if(unsure) $("cheer").classList.add("off");
+  setState(ok===true?"Correct":ok===false?"Missed":(unsure?"Almost — your call":"Mark it yourself"),
+           ok===true?"Верно":ok===false?"Неверно":(unsure?"Почти — решите сами":"Отметьте сами"));
   $("seal").classList.remove("live","busy");
   setAiLine("","");
 
@@ -3084,7 +3398,16 @@ function init(){
     cancelAuto();
     if(S.phase==="asking"){ hushSpeech(); $("seal").classList.remove("busy"); listen(); }
     else if(S.phase==="ready") listen();
-    else if(S.phase==="listening"){ if(recRunning){try{rec.stop();}catch(e){}} else { S.phase="ready"; } }
+    else if(S.phase==="listening"){
+      stopRequested=true;
+      if(recRunning){ try{rec.stop();}catch(e){} }
+      else {
+        const said=(S.finalText||"").trim();
+        if(said) grade(S.finalText);
+        else { S.phase="ready"; $("seal").classList.remove("live");
+               setState("Tap to answer","Нажмите на микрофон и говорите"); }
+      }
+    }
     else if(S.phase==="graded") advance();
   });
   $("repeat").addEventListener("click",()=>{
@@ -3109,7 +3432,7 @@ function init(){
   });
   $("dunno").addEventListener("click",()=>{
     if(S.phase==="graded") return;
-    if(recRunning){try{rec.stop();}catch(e){}}
+    stopListening();
     hushSpeech();
     S.phase="listening";
     grade(S.finalText||"",false);
