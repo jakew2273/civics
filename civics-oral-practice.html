@@ -5,393 +5,421 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="theme-color" content="#2E7D6E">
+<meta name="theme-color" content="#2E9E82">
 <title>Civics Oral Practice</title>
 <style>
-/* Palette taken from the Statue of Liberty's copper patina: weathered green on
-   warm stone, with brass and ink. Sections of the test are colour-coded. */
+/* Bright but calm: a pale sky ground with mint, peach and lilac washes, and three
+   saturated section colours. Everything is set in the system sans. */
 :root{
-  --ground:#EDF3F0;
-  --well:#E0EBE6;
-  --card:#FCFDFC;
-  --ink:#122429;
-  --soft:#4F676F;
-  --faint:#89A1A6;
-  --rule:#C7D9D4;
+  --ground:#F2F7FD;
+  --well:#E6EEF8;
+  --card:#FFFFFF;
+  --ink:#16222E;
+  --soft:#54697D;
+  --faint:#8DA1B4;
+  --rule:#D5E1EE;
 
-  --patina:#2E7D6E;
-  --patina-d:#1E5A4E;
-  --patina-w:#DCEBE6;
-  --brass:#A8761F;
-  --brass-w:#F6EBD6;
-  --indigo:#41528F;
-  --indigo-w:#E2E6F3;
-  --deny:#A8392F;
-  --deny-w:#F7E4E1;
+  --teal:#2E9E82;
+  --teal-d:#1E7A64;
+  --teal-w:#DFF4ED;
+  --amber:#E0962B;
+  --amber-d:#A86A12;
+  --amber-w:#FDEFD8;
+  --violet:#5E68CC;
+  --violet-d:#454EA6;
+  --violet-w:#E7E9FA;
+  --rose:#D1544A;
+  --rose-w:#FCE5E2;
 
-  --accent:var(--patina);
+  --accent:var(--teal);
+  --actsH:74px;
 
-  --disp:"Copperplate","Copperplate Gothic Light",Optima,"Gill Sans","Trebuchet MS",sans-serif;
-  --serif:Charter,"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
-  --cyr:Georgia,"PT Serif","Times New Roman",serif;
-  --mono:"SF Mono",Menlo,"Courier New",monospace;
+  --sans:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,
+    "Helvetica Neue","Noto Sans",Arial,sans-serif;
+  --disp:var(--sans);
+  --serif:var(--sans);
+  --cyr:var(--sans);
+  --mono:ui-monospace,"SF Mono",Menlo,"Roboto Mono","Courier New",monospace;
 }
-/* Interview mode strips the colour back out: it should feel like a federal office. */
 body.formal{
-  --ground:#E8EDEF; --well:#DCE3E6; --card:#FCFDFD;
-  --accent:#243A45; --patina:#28564C; --rule:#C3D0D5;
+  --ground:#EDF1F5; --well:#E0E7EE; --accent:#2B4257;
+  --teal:#2B6E5C; --rule:#CBD7E2;
 }
 
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{height:100%}
+html,body{height:100%;overflow:hidden}
 body{
-  margin:0;background:var(--ground);color:var(--ink);
-  font-family:var(--serif);
+  margin:0;color:var(--ink);font-family:var(--sans);
   -webkit-text-size-adjust:100%;overscroll-behavior:none;
+  background:var(--ground);
 }
+/* the colour wash — fixed, so it never scrolls or repaints */
 body::before{
-  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.45;
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
   background:
-    repeating-linear-gradient(64deg,transparent 0 7px,rgba(46,125,110,.07) 7px 8px),
-    repeating-linear-gradient(-64deg,transparent 0 7px,rgba(18,36,41,.045) 7px 8px);
+    radial-gradient(42vmax 42vmax at 8% 4%,  rgba(46,158,130,.16), transparent 62%),
+    radial-gradient(38vmax 38vmax at 96% 12%, rgba(224,150,43,.15), transparent 62%),
+    radial-gradient(46vmax 46vmax at 50% 104%,rgba(94,104,204,.14), transparent 62%);
 }
-.app{position:relative;z-index:1;min-height:100%;display:flex;flex-direction:column;
-  padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
-.screen{display:none;flex:1;flex-direction:column;padding:0 20px}
+body.formal::before{opacity:.25}
+
+.app{position:relative;z-index:1;height:100%;display:flex;flex-direction:column}
+.screen{display:none;flex:1;min-height:0;flex-direction:column;
+  padding:env(safe-area-inset-top) 20px env(safe-area-inset-bottom);
+  overflow-y:auto;-webkit-overflow-scrolling:touch}
 .screen.on{display:flex}
+#scr-exam{overflow:hidden;padding-bottom:calc(var(--actsH) + env(safe-area-inset-bottom))}
 
-.eyebrow{font-family:var(--disp);font-size:12px;letter-spacing:.2em;text-transform:uppercase;
-  color:var(--soft);font-weight:600}
-.num{font-family:var(--mono);font-size:13px;letter-spacing:.04em;color:var(--soft);
-  font-variant-numeric:tabular-nums}
+.eyebrow{font-family:var(--disp);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--soft);font-weight:700}
+.num{font-family:var(--mono);font-size:13px;color:var(--soft);font-variant-numeric:tabular-nums}
 
-/* ── top bar ─────────────────────────── */
-.bar{display:flex;align-items:center;justify-content:space-between;gap:12px;
-  padding:14px 0 12px;border-bottom:1px solid var(--rule)}
+/* ── bars ────────────────────────────── */
+.bar{display:flex;align-items:center;gap:8px;padding:10px 0 9px;
+  border-bottom:1px solid var(--rule);flex:0 0 auto}
 .bar .mid{flex:1;text-align:center;min-width:0}
+.bar .mid .num{display:block;font-size:12.5px}
+.stat{display:block;font-size:11.5px;line-height:1.3;color:var(--faint);
+  margin-top:2px;min-height:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stat #staten:not(:empty)::before{content:" · "}
 .iconbtn{appearance:none;border:1px solid var(--rule);background:var(--card);color:var(--soft);
-  font-family:var(--disp);font-size:12px;letter-spacing:.12em;text-transform:uppercase;
-  padding:9px 13px;border-radius:3px;cursor:pointer;font-weight:600}
+  font-family:var(--disp);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;
+  padding:9px 12px;border-radius:9px;cursor:pointer;font-weight:700;flex:0 0 auto}
 .iconbtn:active{background:var(--well)}
 
-/* ── setup ───────────────────────────── */
-.hero{text-align:center;padding:24px 0 6px}
-.hero h1{font-family:var(--disp);font-weight:600;font-size:30px;letter-spacing:.12em;
-  text-transform:uppercase;margin:0 0 10px;line-height:1.25;color:var(--patina-d)}
-.hero .sub{font-family:var(--cyr);font-size:16.5px;color:var(--soft);margin:0;line-height:1.5}
-.torch{width:46px;height:3px;background:linear-gradient(90deg,var(--patina),var(--brass));
-  margin:16px auto;border-radius:2px}
+/* the microphone now lives in the header */
+.mic{position:relative;flex:0 0 auto;width:44px;height:44px;border-radius:50%;
+  appearance:none;cursor:pointer;background:var(--card);color:var(--soft);
+  border:1.5px solid var(--rule);display:flex;align-items:center;justify-content:center;
+  transition:color .18s,border-color .18s,background .18s}
+.mic svg{width:21px;height:21px;fill:currentColor}
+.mic.live{color:#fff;background:var(--amber);border-color:var(--amber)}
+.mic.busy{color:var(--faint)}
+.ring{position:absolute;inset:-4px;border-radius:50%;border:2px solid var(--amber);opacity:0}
+@media (prefers-reduced-motion:no-preference){
+  .mic.live .ring{animation:pulse 1.7s ease-out infinite}
+  .mic.live .ring:nth-child(2){animation-delay:.55s}
+  @keyframes pulse{0%{transform:scale(1);opacity:.7}100%{transform:scale(1.7);opacity:0}}
+}
 
-.field{margin:0 0 20px}
-.field > label,.legend{display:block;font-family:var(--disp);font-size:12px;letter-spacing:.16em;
-  text-transform:uppercase;color:var(--soft);font-weight:600;margin:0 0 9px}
-.hint{font-family:var(--cyr);font-size:14.5px;color:var(--faint);line-height:1.5;margin:8px 0 0}
+/* ── setup / shared ──────────────────── */
+.hero{text-align:center;padding:20px 0 4px;flex:0 0 auto}
+.hero h1{font-family:var(--disp);font-weight:800;font-size:27px;letter-spacing:.04em;
+  margin:0 0 8px;line-height:1.2;color:var(--teal-d)}
+.hero .sub{font-size:16px;color:var(--soft);margin:0;line-height:1.45}
+.torch{width:52px;height:4px;border-radius:3px;margin:14px auto;
+  background:linear-gradient(90deg,var(--teal),var(--amber),var(--violet))}
+
+.field{margin:0 0 18px;flex:0 0 auto}
+.field > label,.legend{display:block;font-family:var(--disp);font-size:11.5px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--soft);font-weight:700;margin:0 0 8px}
+.hint{font-size:14px;color:var(--faint);line-height:1.45;margin:8px 0 0}
 
 .seg{display:flex;flex-wrap:wrap;gap:6px}
 .seg button{flex:1 1 auto;min-width:calc(50% - 3px);appearance:none;cursor:pointer;
-  background:var(--card);border:1px solid var(--rule);border-radius:3px;
-  padding:13px 8px;font-family:var(--disp);font-size:13px;letter-spacing:.08em;
-  text-transform:uppercase;color:var(--soft);font-weight:600;line-height:1.35}
-.seg button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+  background:var(--card);border:1px solid var(--rule);border-radius:10px;
+  padding:12px 8px;font-family:var(--disp);font-size:13px;color:var(--soft);
+  font-weight:600;line-height:1.3}
+.seg button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);
+  color:#fff;font-weight:700}
 
-/* mode picker — the one big choice */
 .modes{display:flex;gap:8px;margin:0 0 6px}
 .modes button{flex:1;appearance:none;cursor:pointer;text-align:left;
-  background:var(--card);border:1.5px solid var(--rule);border-radius:5px;padding:14px 13px}
-.modes button .t{display:block;font-family:var(--disp);font-size:14px;letter-spacing:.1em;
-  text-transform:uppercase;font-weight:600;color:var(--ink);margin-bottom:4px}
-.modes button .d{display:block;font-family:var(--cyr);font-size:13px;color:var(--faint);line-height:1.4}
-.modes button[aria-pressed="true"]{border-color:var(--patina);background:var(--patina-w)}
-.modes button[aria-pressed="true"] .t{color:var(--patina-d)}
+  background:var(--card);border:2px solid var(--rule);border-radius:13px;padding:13px 12px}
+.modes button .t{display:block;font-family:var(--disp);font-size:15px;font-weight:700;
+  color:var(--ink);margin-bottom:3px}
+.modes button .d{display:block;font-size:12.5px;color:var(--faint);line-height:1.35}
+.modes button[aria-pressed="true"]{border-color:var(--teal);background:var(--teal-w)}
+.modes button[aria-pressed="true"] .t{color:var(--teal-d)}
 .modes button[aria-pressed="true"] .d{color:var(--soft)}
-.modes button#m-exam[aria-pressed="true"]{border-color:#243A45;background:#E2E8EA}
-.modes button#m-exam[aria-pressed="true"] .t{color:#243A45}
+.modes button#m-exam[aria-pressed="true"]{border-color:#2B4257;background:#E3E9EF}
+.modes button#m-exam[aria-pressed="true"] .t{color:#2B4257}
 
-/* readiness strip */
-.ready{display:flex;align-items:center;gap:14px;width:100%;appearance:none;cursor:pointer;
-  background:var(--card);border:1px solid var(--rule);border-radius:5px;
-  padding:14px 15px;margin:0 0 20px;text-align:left}
-.ready .big{font-family:var(--mono);font-size:30px;font-weight:400;line-height:1;
-  color:var(--patina-d);font-variant-numeric:tabular-nums;flex:0 0 auto}
+.ready{display:flex;align-items:center;gap:13px;width:100%;appearance:none;cursor:pointer;
+  background:var(--card);border:1px solid var(--rule);border-radius:14px;
+  padding:13px 15px;margin:0 0 18px;text-align:left}
+.ready .big{font-family:var(--mono);font-size:29px;line-height:1;color:var(--teal-d);
+  font-variant-numeric:tabular-nums;flex:0 0 auto}
 .ready .lab{flex:1;min-width:0}
-.ready .lab .t{display:block;font-family:var(--disp);font-size:11.5px;letter-spacing:.14em;
-  text-transform:uppercase;color:var(--soft);font-weight:600;margin-bottom:3px}
-.ready .lab .d{display:block;font-family:var(--cyr);font-size:13.5px;color:var(--faint);line-height:1.4}
-.ready .arrow{font-family:var(--mono);font-size:18px;color:var(--faint);flex:0 0 auto}
-.bars{display:flex;height:7px;border-radius:4px;overflow:hidden;background:var(--well);margin-top:7px}
+.ready .lab .t{display:block;font-family:var(--disp);font-size:11px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--soft);font-weight:700;margin-bottom:2px}
+.ready .lab .d{display:block;font-size:13px;color:var(--faint);line-height:1.35}
+.ready .arrow{font-size:20px;color:var(--faint);flex:0 0 auto}
+.bars{display:flex;height:7px;border-radius:4px;overflow:hidden;background:var(--well);margin-top:6px}
 .bars i{display:block;height:100%}
-.bars i.m{background:var(--patina)}
-.bars i.l{background:var(--brass)}
+.bars i.m{background:var(--teal)}
+.bars i.l{background:var(--amber)}
 
-select,input[type=text],input[type=password],input[type=date]{width:100%;appearance:none;
-  background:var(--card);border:1px solid var(--rule);border-radius:3px;padding:13px 12px;
-  font-family:var(--serif);font-size:17px;color:var(--ink)}
+select,input[type=text],input[type=password]{width:100%;appearance:none;background:var(--card);
+  border:1px solid var(--rule);border-radius:10px;padding:13px 12px;
+  font-family:var(--sans);font-size:17px;color:var(--ink)}
 select{background-image:linear-gradient(45deg,transparent 50%,var(--soft) 50%),
   linear-gradient(135deg,var(--soft) 50%,transparent 50%);
   background-position:calc(100% - 17px) 22px,calc(100% - 12px) 22px;
   background-size:5px 5px,5px 5px;background-repeat:no-repeat;padding-right:34px}
 
-details.local{border:1px solid var(--rule);border-radius:4px;background:var(--card);margin:0 0 20px}
-details.local > summary{list-style:none;cursor:pointer;padding:15px 15px;
-  font-family:var(--disp);font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;
-  color:var(--soft);font-weight:600;display:flex;justify-content:space-between;align-items:center}
+details.local{border:1px solid var(--rule);border-radius:12px;background:var(--card);margin:0 0 18px}
+details.local > summary{list-style:none;cursor:pointer;padding:14px 15px;
+  font-family:var(--disp);font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--soft);font-weight:700;display:flex;justify-content:space-between;align-items:center}
 details.local > summary::-webkit-details-marker{display:none}
 details.local > summary::after{content:"+";font-family:var(--mono);font-size:17px;color:var(--faint)}
 details.local[open] > summary::after{content:"–"}
-.localbody{padding:0 15px 15px;border-top:1px solid var(--rule);padding-top:15px}
-.localbody .row{margin:0 0 14px}
+.localbody{padding:0 15px 15px;border-top:1px solid var(--rule);padding-top:14px}
+.localbody .row{margin:0 0 13px}
 .localbody .row:last-child{margin:0}
-.localbody .row label{display:block;font-family:var(--cyr);font-size:14.5px;color:var(--soft);margin:0 0 6px}
+.localbody .row label{display:block;font-size:14px;color:var(--soft);margin:0 0 6px}
 
 .primary{display:block;width:100%;appearance:none;cursor:pointer;
-  background:var(--accent);color:#fff;border:none;border-radius:4px;padding:18px;
-  font-family:var(--disp);font-size:15px;letter-spacing:.18em;text-transform:uppercase;font-weight:600}
+  background:var(--accent);color:#fff;border:none;border-radius:13px;padding:17px;
+  font-family:var(--disp);font-size:16px;letter-spacing:.03em;font-weight:700}
 .primary:active{opacity:.88}
+.secondary{display:block;width:100%;appearance:none;cursor:pointer;background:transparent;
+  border:1px solid var(--rule);border-radius:13px;padding:14px;margin-top:9px;
+  font-family:var(--disp);font-size:13.5px;color:var(--soft);font-weight:600}
 
-.foot{padding:22px 0 28px;text-align:center}
-.foot p{font-family:var(--cyr);font-size:13.5px;color:var(--faint);line-height:1.6;margin:0 0 6px}
-.foot a{color:var(--patina)}
-.diag{font-family:var(--mono);font-size:12.5px;letter-spacing:.01em}
+.foot{padding:18px 0 24px;text-align:center;flex:0 0 auto}
+.foot p{font-size:13px;color:var(--faint);line-height:1.55;margin:0 0 5px}
+.foot a{color:var(--teal-d)}
+.diag{font-family:var(--mono);font-size:12px}
 
-/* ── exam ────────────────────────────── */
+/* ── exam card ───────────────────────── */
 .card{position:relative;flex:1;min-height:0;display:flex;flex-direction:column;
-  background:var(--card);border:1px solid var(--rule);border-radius:5px;
-  margin:16px 0;padding:20px 18px;overflow-y:auto;-webkit-overflow-scrolling:touch}
-.card::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;
-  background:var(--accent);border-radius:5px 5px 0 0}
-.card.g-gov::before{background:var(--patina)}
-.card.g-hist::before{background:var(--brass)}
-.card.g-sym::before{background:var(--indigo)}
-body.formal .card::before{background:#243A45}
+  background:var(--card);border:1px solid var(--rule);border-radius:16px;
+  margin:12px 0 0;padding:16px 16px 14px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.card::before{content:"";position:absolute;left:0;right:0;top:0;height:4px;
+  background:var(--accent);border-radius:16px 16px 0 0}
+.card.g-gov::before{background:var(--teal)}
+.card.g-hist::before{background:var(--amber)}
+.card.g-sym::before{background:var(--violet)}
+body.formal .card::before{background:#2B4257}
 
 .qhead{display:flex;justify-content:space-between;align-items:baseline;gap:10px;
-  border-bottom:1px solid var(--rule);padding-bottom:10px;margin-bottom:16px}
+  border-bottom:1px solid var(--rule);padding-bottom:9px;margin-bottom:14px;flex:0 0 auto}
 .qhead .eyebrow{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.card.g-gov .qhead .eyebrow{color:var(--patina-d)}
-.card.g-hist .qhead .eyebrow{color:var(--brass)}
-.card.g-sym .qhead .eyebrow{color:var(--indigo)}
+.card.g-gov  .qhead .eyebrow{color:var(--teal-d)}
+.card.g-hist .qhead .eyebrow{color:var(--amber-d)}
+.card.g-sym  .qhead .eyebrow{color:var(--violet-d)}
 body.formal .qhead .eyebrow{color:var(--soft)}
-.qhead .num{flex:0 0 auto}
-button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
 
-.qen{font-family:var(--serif);font-size:27px;line-height:1.28;margin:0;font-weight:500}
-.qru{font-family:var(--cyr);font-size:19px;line-height:1.45;color:var(--soft);margin:14px 0 0}
+.qen{font-size:clamp(21px,5.9vw,27px);line-height:1.25;margin:0;font-weight:600;
+  letter-spacing:-.01em}
+.qru{font-size:clamp(15px,4.3vw,18px);line-height:1.4;color:var(--soft);margin:11px 0 0}
 .qen.hide,.qru.hide{display:none}
-.silent{font-family:var(--disp);font-size:12.5px;letter-spacing:.16em;text-transform:uppercase;
-  color:var(--faint);text-align:center;margin:34px 0}
+.silent{font-family:var(--disp);font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--faint);text-align:center;margin:28px 0}
 
-.heard{margin:16px 0 0;padding:12px 13px;background:var(--well);border-radius:3px;
-  border-left:3px solid var(--rule);min-height:46px}
-.heard .lbl{font-family:var(--disp);font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;
-  color:var(--faint);font-weight:600;display:block;margin-bottom:5px}
-.heard .txt{font-family:var(--serif);font-size:18px;line-height:1.4;color:var(--ink)}
+.heard{margin:13px 0 0;padding:11px 12px;background:var(--well);border-radius:10px;
+  border-left:3px solid var(--rule);flex:0 0 auto}
+.heard .lbl{font-family:var(--disp);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--faint);font-weight:700;display:block;margin-bottom:4px}
+.heard .txt{font-size:17px;line-height:1.35}
 .heard .txt:empty::after{content:"—";color:var(--faint)}
 .heard.off{display:none}
+.spacer{flex:1;min-height:6px}
 
-.spacer{flex:1;min-height:8px}
+.notice{background:var(--amber-w);border:1px solid #EFD6A8;border-radius:10px;padding:11px 12px;
+  font-size:14px;line-height:1.5;color:#7A5712;margin:0 0 12px;flex:0 0 auto}
+.notice.off{display:none}
 
-.verdict{margin-top:16px;border-top:1px solid var(--rule);padding-top:15px}
+/* ── verdict: an overlay, so nothing on the page moves ── */
+.verdict{position:fixed;left:0;right:0;z-index:40;
+  bottom:calc(var(--actsH) + env(safe-area-inset-bottom));
+  background:var(--card);border-top:4px solid var(--teal);
+  border-radius:20px 20px 0 0;padding:16px 18px 18px;
+  max-height:62vh;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  box-shadow:0 -12px 40px rgba(22,34,46,.17)}
+.verdict.no{border-top-color:var(--rose)}
+.verdict.self{border-top-color:var(--faint)}
 .verdict.off{display:none}
-.stamp{display:inline-block;font-family:var(--disp);font-size:16px;letter-spacing:.22em;
-  text-transform:uppercase;font-weight:600;padding:8px 16px;border:2px double currentColor;
-  border-radius:3px;transform:rotate(-6deg);margin:0 0 14px}
-.stamp.ok{color:var(--patina)}
-.stamp.no{color:var(--deny)}
-.stamp.self{color:var(--soft)}
 @media (prefers-reduced-motion:no-preference){
-  .stamp{animation:thud .34s cubic-bezier(.2,1.5,.5,1) both}
-  @keyframes thud{from{transform:rotate(-6deg) scale(2.5);opacity:0}
-    60%{opacity:1}to{transform:rotate(-6deg) scale(1);opacity:1}}
+  .verdict{animation:rise .26s cubic-bezier(.2,.9,.3,1) both}
+  @keyframes rise{from{transform:translateY(16px);opacity:0}to{transform:translateY(0);opacity:1}}
 }
-.acc{margin:0 0 10px}
-.acc .lbl{font-family:var(--disp);font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;
-  color:var(--faint);font-weight:600;display:block;margin-bottom:6px}
-.acc ul{margin:0;padding:0;list-style:none}
-.acc li{font-family:var(--serif);font-size:19px;line-height:1.4;margin:0 0 8px;
-  padding-left:14px;position:relative}
-.acc li::before{content:"";position:absolute;left:0;top:.62em;width:6px;height:1px;background:var(--faint)}
-.acc li .ru{display:block;font-family:var(--cyr);font-size:15.5px;color:var(--soft);
-  line-height:1.4;margin-top:2px}
-.acc li .ru.hide{display:none}
-.more{font-family:var(--cyr);font-size:14px;color:var(--faint);margin:3px 0 0 14px}
+.grab{width:38px;height:4px;border-radius:3px;background:var(--rule);margin:0 auto 12px}
 
-/* the context line — the reason practice mode exists */
-.ctx{margin:14px 0 0;padding:13px 14px;background:var(--patina-w);border-radius:4px;
-  border-left:3px solid var(--patina)}
-.card.g-hist .ctx{background:var(--brass-w);border-left-color:var(--brass)}
-.card.g-sym .ctx{background:var(--indigo-w);border-left-color:var(--indigo)}
-.ctx .en{font-family:var(--serif);font-size:17px;line-height:1.45;color:var(--ink);display:block}
-.ctx .ru{font-family:var(--cyr);font-size:15px;line-height:1.45;color:var(--soft);
-  display:block;margin-top:6px}
+.stamp{display:inline-block;font-family:var(--disp);font-size:15px;letter-spacing:.08em;
+  text-transform:uppercase;font-weight:800;padding:8px 16px;border-radius:999px;
+  margin:0 0 12px;color:#fff;background:var(--teal)}
+.stamp.no{background:var(--rose)}
+.stamp.self{background:var(--faint)}
+@media (prefers-reduced-motion:no-preference){
+  .stamp{animation:pop .32s cubic-bezier(.2,1.5,.5,1) both}
+  @keyframes pop{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
+}
+.acc{margin:0 0 8px}
+.acc .lbl{font-family:var(--disp);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--faint);font-weight:700;display:block;margin-bottom:5px}
+.acc ul{margin:0;padding:0;list-style:none}
+.acc li{font-size:17.5px;line-height:1.35;margin:0 0 7px;padding-left:14px;position:relative;
+  font-weight:500}
+.acc li::before{content:"";position:absolute;left:0;top:.62em;width:7px;height:2px;
+  border-radius:1px;background:var(--teal)}
+.acc li .ru{display:block;font-size:14.5px;color:var(--soft);line-height:1.35;
+  margin-top:2px;font-weight:400}
+.acc li .ru.hide{display:none}
+.more{font-size:13.5px;color:var(--faint);margin:2px 0 0 14px}
+
+.ctx{margin:12px 0 0;padding:12px 13px;background:var(--teal-w);border-radius:11px}
+.verdict.hist .ctx{background:var(--amber-w)}
+.verdict.sym  .ctx{background:var(--violet-w)}
+.ctx .en{font-size:16px;line-height:1.4;display:block;font-weight:500}
+.ctx .ru{font-size:14.5px;line-height:1.4;color:var(--soft);display:block;margin-top:5px}
 .ctx .en.hide,.ctx .ru.hide{display:none}
 .ctx.off{display:none}
 
-.cheer{font-family:var(--cyr);font-size:15.5px;color:var(--patina-d);margin:12px 0 0;line-height:1.45}
+.cheer{font-size:15.5px;color:var(--teal-d);margin:10px 0 0;line-height:1.4;font-weight:600}
 .cheer.off{display:none}
-
-.aiwhy{font-family:var(--mono);font-size:13px;line-height:1.5;color:var(--soft);
-  margin:12px 0 0;padding-left:14px;border-left:2px solid var(--rule)}
+.aiwhy{font-family:var(--mono);font-size:12.5px;line-height:1.45;color:var(--soft);
+  margin:10px 0 0;padding-left:12px;border-left:2px solid var(--rule)}
 .aiwhy.off{display:none}
-.aiwhy.bad{color:var(--deny)}
+.aiwhy.bad{color:var(--rose)}
 @media (prefers-reduced-motion:no-preference){
   .aiwhy.wait{animation:breathe 1.3s ease-in-out infinite}
   @keyframes breathe{0%,100%{opacity:.45}50%{opacity:1}}
 }
-.warn{font-family:var(--cyr);font-size:14px;line-height:1.55;color:#6B5518;
-  background:var(--brass-w);border:1px solid #E2CE9E;border-radius:3px;padding:10px 11px;margin:10px 0 0}
-
-/* mic seal */
-.stage{padding:4px 0 16px;text-align:center}
-.seal{position:relative;width:100px;height:100px;margin:0 auto;border-radius:50%;
-  appearance:none;cursor:pointer;background:var(--card);color:var(--soft);
-  border:1px solid var(--rule);
-  box-shadow:0 0 0 1px var(--card) inset,0 0 0 5px var(--ground),0 0 0 6px var(--rule);
-  display:flex;align-items:center;justify-content:center;transition:color .2s,border-color .2s}
-.seal svg{width:33px;height:33px;fill:currentColor}
-.seal.live{color:var(--brass);border-color:var(--brass);
-  box-shadow:0 0 0 1px var(--card) inset,0 0 0 5px var(--ground),0 0 0 6px var(--brass)}
-.seal.busy{color:var(--faint)}
-.ring{position:absolute;inset:-6px;border-radius:50%;border:1px solid var(--brass);opacity:0}
+/* the countdown to the next question */
+.autobar{height:4px;border-radius:3px;background:var(--well);margin:14px 0 0;overflow:hidden}
+.autobar.off{display:none}
+.autobar i{display:block;height:100%;width:100%;background:var(--teal);transform-origin:left center}
 @media (prefers-reduced-motion:no-preference){
-  .seal.live .ring{animation:pulse 1.8s ease-out infinite}
-  .seal.live .ring:nth-child(2){animation-delay:.6s}
-  @keyframes pulse{0%{transform:scale(1);opacity:.75}100%{transform:scale(1.55);opacity:0}}
+  .autobar.run i{animation:drain linear forwards}
+  @keyframes drain{from{transform:scaleX(1)}to{transform:scaleX(0)}}
 }
-.state{font-family:var(--disp);font-size:12.5px;letter-spacing:.18em;text-transform:uppercase;
-  color:var(--soft);font-weight:600;margin:14px 0 0;min-height:16px}
-.staten{font-family:var(--cyr);font-size:14px;color:var(--faint);margin:4px 0 0;min-height:17px}
 
-.acts{display:flex;gap:6px;padding:0 0 16px}
+.warn{font-size:13.5px;line-height:1.5;color:#7A5712;background:var(--amber-w);
+  border:1px solid #EFD6A8;border-radius:10px;padding:10px 11px;margin:10px 0 0}
+
+/* ── fixed action bar ────────────────── */
+.acts{position:fixed;left:0;right:0;bottom:0;z-index:45;display:flex;gap:6px;
+  padding:10px 18px calc(10px + env(safe-area-inset-bottom));
+  background:var(--ground);border-top:1px solid var(--rule)}
 .acts button{flex:1;appearance:none;cursor:pointer;background:var(--card);
-  border:1px solid var(--rule);border-radius:3px;padding:14px 5px;
-  font-family:var(--disp);font-size:12px;letter-spacing:.08em;text-transform:uppercase;
-  color:var(--soft);font-weight:600;line-height:1.3}
+  border:1px solid var(--rule);border-radius:11px;padding:13px 4px;
+  font-family:var(--disp);font-size:12.5px;color:var(--soft);font-weight:700;line-height:1.25}
 .acts button:active{background:var(--well)}
-.acts button.go{background:var(--accent);border-color:var(--accent);color:#fff;flex:1.5}
+.acts button.go{background:var(--accent);border-color:var(--accent);color:#fff;flex:1.4}
 .acts button.hide{display:none}
 
-.typebox{display:none;gap:6px;padding:0 0 16px}
+.typebox{display:none;gap:6px;position:fixed;left:0;right:0;z-index:46;
+  bottom:calc(var(--actsH) + env(safe-area-inset-bottom));
+  padding:9px 18px;background:var(--ground);border-top:1px solid var(--rule)}
 .typebox.on{display:flex}
 .typebox input{flex:1}
 .typebox button{flex:0 0 auto;padding:0 16px;background:var(--accent);color:#fff;
-  border:1px solid var(--accent);border-radius:3px;font-family:var(--disp);font-size:12px;
-  letter-spacing:.1em;text-transform:uppercase;font-weight:600;cursor:pointer}
-
-.notice{background:var(--brass-w);border:1px solid #E2CE9E;border-radius:3px;padding:12px 13px;
-  font-family:var(--cyr);font-size:14.5px;line-height:1.55;color:#6B5518;margin:0 0 14px}
-.notice.off{display:none}
+  border:1px solid var(--accent);border-radius:10px;font-family:var(--disp);font-size:12.5px;
+  font-weight:700;cursor:pointer}
 
 /* ── summary ─────────────────────────── */
-.score{text-align:center;padding:28px 0 8px}
-.score .big{font-family:var(--mono);font-size:62px;font-weight:400;letter-spacing:-.02em;
-  line-height:1;font-variant-numeric:tabular-nums;color:var(--patina-d)}
-.score .of{font-family:var(--disp);font-size:13px;letter-spacing:.18em;text-transform:uppercase;
-  color:var(--soft);margin-top:12px;font-weight:600}
-.score .verd{font-family:var(--cyr);font-size:16px;color:var(--soft);margin-top:11px;line-height:1.5}
-.ribbon{display:inline-block;font-family:var(--disp);font-size:13px;letter-spacing:.2em;
-  text-transform:uppercase;font-weight:600;padding:8px 18px;border-radius:3px;margin-top:14px}
-.ribbon.pass{background:var(--patina);color:#fff}
-.ribbon.fail{background:var(--deny-w);color:var(--deny);border:1px solid var(--deny)}
+.score{text-align:center;padding:22px 0 6px;flex:0 0 auto}
+.score .big{font-family:var(--mono);font-size:58px;line-height:1;
+  font-variant-numeric:tabular-nums;color:var(--teal-d)}
+.score .of{font-family:var(--disp);font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--soft);margin-top:10px;font-weight:700}
+.score .verd{font-size:15.5px;color:var(--soft);margin-top:10px;line-height:1.45}
+.ribbon{display:inline-block;font-family:var(--disp);font-size:13px;letter-spacing:.08em;
+  text-transform:uppercase;font-weight:800;padding:9px 20px;border-radius:999px;margin-top:12px}
+.ribbon.pass{background:var(--teal);color:#fff}
+.ribbon.fail{background:var(--rose-w);color:var(--rose);border:1.5px solid var(--rose)}
 
-.list{margin:22px 0 0}
-.list h3{font-family:var(--disp);font-size:12.5px;letter-spacing:.16em;text-transform:uppercase;
-  color:var(--soft);font-weight:600;margin:0 0 11px;padding-bottom:8px;border-bottom:1px solid var(--rule)}
-.item{display:flex;gap:12px;padding:11px 0;border-bottom:1px solid var(--rule)}
-.item .n{font-family:var(--mono);font-size:13px;color:var(--faint);flex:0 0 30px;padding-top:4px}
-.item .q{font-family:var(--serif);font-size:17px;line-height:1.35}
-.item .q .ru{display:block;font-family:var(--cyr);font-size:14.5px;color:var(--soft);margin-top:3px}
-.empty{font-family:var(--cyr);font-size:15.5px;color:var(--faint);line-height:1.5;padding:14px 0}
+.list{margin:18px 0 0;flex:0 0 auto}
+.list h3{font-family:var(--disp);font-size:12px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--soft);font-weight:700;margin:0 0 9px;padding-bottom:7px;border-bottom:1px solid var(--rule)}
+.item{display:flex;gap:11px;padding:10px 0;border-bottom:1px solid var(--rule)}
+.item .n{font-family:var(--mono);font-size:12.5px;color:var(--faint);flex:0 0 30px;padding-top:3px}
+.item .q{font-size:16px;line-height:1.3;font-weight:500}
+.item .q .ru{display:block;font-size:14px;color:var(--soft);margin-top:2px;font-weight:400}
+.empty{font-size:15px;color:var(--faint);line-height:1.5;padding:12px 0}
 
 /* ── celebration ─────────────────────── */
 #fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:50}
 
 /* ── players ─────────────────────────── */
-.plist{display:flex;flex-direction:column;gap:9px;margin:0 0 18px}
+.plist{display:flex;flex-direction:column;gap:9px;margin:0 0 16px;flex:0 0 auto}
 .prow{display:flex;align-items:center;gap:10px;width:100%;background:var(--card);
-  border:1.5px solid var(--rule);border-radius:6px;padding:13px 14px}
-.psel{display:flex;align-items:center;gap:13px;flex:1;min-width:0;appearance:none;
+  border:2px solid var(--rule);border-radius:14px;padding:12px 13px}
+.prow.cur{border-color:var(--teal);background:var(--teal-w)}
+.psel{display:flex;align-items:center;gap:12px;flex:1;min-width:0;appearance:none;
   background:none;border:none;padding:0;font:inherit;color:inherit;text-align:left;cursor:pointer}
-.prow.cur{border-color:var(--patina);background:var(--patina-w)}
 .pav{flex:0 0 auto;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;
-  justify-content:center;color:#fff;font-family:var(--disp);font-size:17px;font-weight:600;
-  letter-spacing:.04em}
+  justify-content:center;color:#fff;font-family:var(--disp);font-size:16px;font-weight:800}
 .pmeta{flex:1;min-width:0}
-.pmeta .nm{display:block;font-family:var(--serif);font-size:19px;line-height:1.25;
+.pmeta .nm{display:block;font-size:18px;line-height:1.2;font-weight:600;
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.pmeta .sb{display:block;font-family:var(--cyr);font-size:13.5px;color:var(--faint);margin-top:3px}
-.pmini{display:flex;height:5px;border-radius:3px;overflow:hidden;background:var(--well);margin-top:7px}
-.pmini i{display:block;height:100%;background:var(--patina)}
+.pmeta .sb{display:block;font-size:13px;color:var(--faint);margin-top:2px}
+.pmini{display:flex;height:5px;border-radius:3px;overflow:hidden;background:var(--well);margin-top:6px}
+.pmini i{display:block;height:100%;background:var(--teal)}
 .pdel{flex:0 0 auto;appearance:none;background:none;border:none;cursor:pointer;
-  font-family:var(--mono);font-size:21px;line-height:1;color:var(--faint);padding:6px 4px}
-.pdel:active{color:var(--deny)}
+  font-family:var(--mono);font-size:22px;line-height:1;color:var(--faint);padding:6px 4px}
+.pdel:active{color:var(--rose)}
 
 .addrow{display:flex;gap:7px;margin:0 0 10px}
 .addrow input{flex:1}
-.addrow button{flex:0 0 auto;padding:0 17px;background:var(--patina);color:#fff;
-  border:1px solid var(--patina);border-radius:3px;font-family:var(--disp);font-size:12.5px;
-  letter-spacing:.1em;text-transform:uppercase;font-weight:600;cursor:pointer}
+.addrow button{flex:0 0 auto;padding:0 18px;background:var(--teal);color:#fff;
+  border:1px solid var(--teal);border-radius:10px;font-family:var(--disp);font-size:13px;
+  font-weight:700;cursor:pointer}
 .addrow.off{display:none}
 .ghost{display:block;width:100%;appearance:none;cursor:pointer;background:var(--card);
-  border:1.5px dashed var(--rule);border-radius:6px;padding:15px;color:var(--soft);
-  font-family:var(--disp);font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:600}
+  border:2px dashed var(--rule);border-radius:14px;padding:15px;color:var(--soft);
+  font-family:var(--disp);font-size:13.5px;font-weight:700}
 .ghost.off{display:none}
 
-/* who is playing, shown on the setup screen */
-.chip{display:flex;align-items:center;gap:11px;width:100%;appearance:none;cursor:pointer;
+.chip{display:flex;align-items:center;gap:10px;width:100%;appearance:none;cursor:pointer;
   background:var(--card);border:1px solid var(--rule);border-radius:999px;
-  padding:7px 14px 7px 7px;margin:0 0 18px;text-align:left}
-.chip .pav{width:34px;height:34px;font-size:14px}
-.chip .who{flex:1;min-width:0;font-family:var(--serif);font-size:17px;
+  padding:6px 14px 6px 6px;margin:0 0 16px;text-align:left}
+.chip .pav{width:34px;height:34px;font-size:13px}
+.chip .who{flex:1;min-width:0;font-size:16.5px;font-weight:600;
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.chip .sw{flex:0 0 auto;font-family:var(--disp);font-size:11px;letter-spacing:.12em;
-  text-transform:uppercase;color:var(--faint);font-weight:600}
+.chip .sw{flex:0 0 auto;font-family:var(--disp);font-size:11.5px;color:var(--faint);font-weight:700}
 
 /* ── confirm dialog ──────────────────── */
 .modal{position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;
-  padding:22px;background:rgba(18,36,41,.5)}
+  padding:22px;background:rgba(22,34,46,.5)}
 .modal.off{display:none}
-.sheet{background:var(--card);border-radius:8px;padding:22px 20px;max-width:380px;width:100%;
-  box-shadow:0 18px 50px rgba(18,36,41,.3)}
-.sheet h3{font-family:var(--disp);font-size:15px;letter-spacing:.12em;text-transform:uppercase;
-  margin:0 0 12px;color:var(--deny);font-weight:600}
-.sheet p{font-family:var(--cyr);font-size:15.5px;line-height:1.55;color:var(--ink);margin:0 0 8px}
+.sheet{background:var(--card);border-radius:18px;padding:22px 20px;max-width:380px;width:100%;
+  box-shadow:0 18px 50px rgba(22,34,46,.3)}
+.sheet h3{font-family:var(--disp);font-size:15px;letter-spacing:.06em;text-transform:uppercase;
+  margin:0 0 12px;color:var(--rose);font-weight:800}
+.sheet p{font-size:15.5px;line-height:1.5;color:var(--ink);margin:0 0 8px}
 .sheet p.sub{font-size:14px;color:var(--soft)}
-.mbtns{display:flex;gap:8px;margin-top:20px}
-.mbtns button{flex:1;appearance:none;cursor:pointer;border-radius:4px;padding:14px 8px;
-  font-family:var(--disp);font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:600}
+.mbtns{display:flex;gap:8px;margin-top:18px}
+.mbtns button{flex:1;appearance:none;cursor:pointer;border-radius:11px;padding:14px 8px;
+  font-family:var(--disp);font-size:13px;font-weight:700}
 .mbtns .no{background:var(--card);border:1px solid var(--rule);color:var(--soft)}
-.mbtns .yes{background:var(--deny);border:1px solid var(--deny);color:#fff}
+.mbtns .yes{background:var(--rose);border:1px solid var(--rose);color:#fff}
 
 /* ── mastery map ─────────────────────── */
-.mapwrap{padding:18px 0 0}
-.bignum{text-align:center;padding:4px 0 18px}
-.bignum .n{font-family:var(--mono);font-size:54px;line-height:1;color:var(--patina-d);
+.mapwrap{padding:12px 0 0;flex:1;min-height:0;display:flex;flex-direction:column}
+.bignum{text-align:center;padding:2px 0 14px;flex:0 0 auto}
+.bignum .n{font-family:var(--mono);font-size:46px;line-height:1;color:var(--teal-d);
   font-variant-numeric:tabular-nums}
-.bignum .c{font-family:var(--disp);font-size:12.5px;letter-spacing:.18em;text-transform:uppercase;
-  color:var(--soft);font-weight:600;margin-top:10px}
-.bignum .s{font-family:var(--cyr);font-size:14.5px;color:var(--faint);margin-top:9px;line-height:1.5}
+.bignum .c{font-family:var(--disp);font-size:12px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--soft);font-weight:700;margin-top:8px}
+.bignum .s{font-size:14px;color:var(--faint);margin-top:7px;line-height:1.45}
 
-.grid{display:grid;grid-template-columns:repeat(16,1fr);gap:4px;margin:8px 0 0}
-.grid b{display:block;aspect-ratio:1;border-radius:2px;background:var(--rule);
+.grid{display:grid;grid-template-columns:repeat(16,1fr);gap:4px;margin:4px 0 0;flex:0 0 auto}
+.grid b{display:block;aspect-ratio:1;border-radius:3px;background:var(--rule);
   cursor:pointer;border:none;padding:0}
-.grid b.seen{background:var(--brass)}
-.grid b.mast{background:var(--patina)}
-.grid b.sel{outline:2px solid var(--ink);outline-offset:1px}
+.grid b.seen{background:var(--amber)}
+.grid b.mast{background:var(--teal)}
+.grid b.sel{outline:2.5px solid var(--ink);outline-offset:1px}
 
-.legend{display:flex;gap:16px;flex-wrap:wrap;margin:16px 0 0;
-  font-family:var(--cyr);font-size:13.5px;color:var(--soft)}
-.legend span{display:flex;align-items:center;gap:7px}
-.legend i{width:12px;height:12px;border-radius:2px;display:block}
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin:13px 0 0;font-size:13px;color:var(--soft);
+  flex:0 0 auto}
+.legend span{display:flex;align-items:center;gap:6px}
+.legend i{width:12px;height:12px;border-radius:3px;display:block}
 .legend i.u{background:var(--rule)}
-.legend i.s{background:var(--brass)}
-.legend i.m{background:var(--patina)}
+.legend i.s{background:var(--amber)}
+.legend i.m{background:var(--teal)}
 
-.peek{margin:16px 0 0;padding:14px;background:var(--card);border:1px solid var(--rule);
-  border-radius:4px;min-height:72px}
-.peek .n{font-family:var(--mono);font-size:12.5px;color:var(--faint);display:block;margin-bottom:6px}
-.peek .q{font-family:var(--serif);font-size:17px;line-height:1.35;display:block}
-.peek .r{font-family:var(--cyr);font-size:14.5px;color:var(--soft);display:block;margin-top:4px}
-.peek .st{font-family:var(--cyr);font-size:13.5px;color:var(--faint);display:block;margin-top:8px}
+.peek{margin:13px 0 0;padding:13px;background:var(--card);border:1px solid var(--rule);
+  border-radius:12px;flex:0 0 auto}
+.peek .n{font-family:var(--mono);font-size:12px;color:var(--faint);display:block;margin-bottom:5px}
+.peek .q{font-size:16px;line-height:1.3;display:block;font-weight:500}
+.peek .r{font-size:14px;color:var(--soft);display:block;margin-top:3px}
+.peek .st{font-size:13.5px;color:var(--faint);display:block;margin-top:7px}
+.mapgo{padding:16px 0 22px;flex:0 0 auto}
 </style>
 </head>
 <body>
@@ -400,7 +428,7 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid 
 <!-- ══ PLAYERS ════════════════════════ -->
 <section class="screen on" id="scr-players">
   <div class="hero">
-    <h1>Civics<br>Oral Practice</h1>
+    <h1>Civics Oral Practice</h1>
     <p class="sub" id="whosub">Кто занимается?</p>
     <div class="torch"></div>
   </div>
@@ -419,12 +447,40 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid 
   </div>
 </section>
 
+<!-- ══ MASTERY MAP ════════════════════ -->
+<section class="screen" id="scr-map">
+  <div class="bar">
+    <button class="iconbtn" id="mapback">Players</button>
+    <div class="mid"><span class="eyebrow" id="maptitle">Your progress</span></div>
+    <button class="iconbtn" id="mapsettings">Settings</button>
+  </div>
+  <div class="mapwrap">
+    <div class="bignum">
+      <div class="n" id="mapbig">0 / 128</div>
+      <div class="c">Questions mastered</div>
+      <div class="s" id="mapsub"></div>
+    </div>
+    <div class="grid" id="mapgrid"></div>
+    <div class="legend">
+      <span><i class="u"></i> Не видели</span>
+      <span><i class="s"></i> Учим</span>
+      <span><i class="m"></i> Выучено</span>
+    </div>
+    <div class="peek" id="peek">
+      <span class="st">Нажмите на квадрат, чтобы увидеть вопрос.</span>
+    </div>
+    <div class="mapgo">
+      <button class="primary" id="mapstart">Start practice</button>
+    </div>
+  </div>
+</section>
+
 <!-- ══ SETUP ══════════════════════════ -->
 <section class="screen" id="scr-setup">
-  <div class="hero">
-    <h1>Civics<br>Oral Practice</h1>
-    <p class="sub">Устная подготовка к тесту на гражданство США — 128 вопросов</p>
-    <div class="torch"></div>
+  <div class="bar">
+    <button class="iconbtn" id="setupback">Back</button>
+    <div class="mid"><span class="eyebrow">Settings</span></div>
+    <span style="width:66px"></span>
   </div>
 
   <button class="chip" id="whochip">
@@ -467,27 +523,6 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid 
       <button data-v="ru" aria-pressed="false">Только русский</button>
       <button data-v="none" aria-pressed="false">No captions</button>
     </div>
-    <p class="hint">Вопрос всегда звучит вслух по-английски. Субтитры только помогают.</p>
-  </div>
-
-  <div class="field" id="orderfield">
-    <span class="legend">Question order · Порядок вопросов</span>
-    <div class="seg four" id="ordseg">
-      <button data-v="smart" aria-pressed="true">Smart</button>
-      <button data-v="random" aria-pressed="false">Random</button>
-      <button data-v="missed" aria-pressed="false">Missed most</button>
-      <button data-v="star" aria-pressed="false">20 starred (65/20)</button>
-    </div>
-    <p class="hint" id="ordhint">Сначала то, что вы ещё не выучили; выученное возвращается реже.</p>
-  </div>
-
-  <div class="field" id="lenfield">
-    <span class="legend">Session length · Длина сессии</span>
-    <div class="seg" id="lenseg">
-      <button data-v="10" aria-pressed="false" style="min-width:0">10</button>
-      <button data-v="20" aria-pressed="true" style="min-width:0">20</button>
-      <button data-v="all" aria-pressed="false" style="min-width:0">All</button>
-    </div>
   </div>
 
   <div class="field">
@@ -497,7 +532,26 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid 
       <button data-v="quiet" aria-pressed="false" style="min-width:0">No sound</button>
       <button data-v="off" aria-pressed="false" style="min-width:0">Off</button>
     </div>
-    <p class="hint">Конфетти и звук за верный ответ. В режиме Interview — только в конце.</p>
+  </div>
+
+  <div class="field" id="orderfield">
+    <span class="legend">Question order · Порядок вопросов</span>
+    <div class="seg four" id="ordseg">
+      <button data-v="smart" aria-pressed="true">Smart</button>
+      <button data-v="random" aria-pressed="false">Random</button>
+      <button data-v="missed" aria-pressed="false">Missed most</button>
+      <button data-v="star" aria-pressed="false">20 starred</button>
+    </div>
+    <p class="hint" id="ordhint">Сначала то, что вы ещё не выучили.</p>
+  </div>
+
+  <div class="field" id="lenfield">
+    <span class="legend">Session length · Длина сессии</span>
+    <div class="seg" id="lenseg">
+      <button data-v="10" aria-pressed="false" style="min-width:0">10</button>
+      <button data-v="20" aria-pressed="true" style="min-width:0">20</button>
+      <button data-v="all" aria-pressed="false" style="min-width:0">All</button>
+    </div>
   </div>
 
   <div class="field">
@@ -516,10 +570,10 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid 
         <select id="stsel"><option value="">Не выбран / Not set</option></select>
       </div>
       <div class="row" id="distrow" style="display:none">
-        <label for="distsel">Избирательный округ / Congressional district (Q29)</label>
+        <label for="distsel">Избирательный округ / District (Q29)</label>
         <select id="distsel"><option value="">Не выбран / Not set</option></select>
-        <p class="hint" style="margin-top:6px">Не знаете свой округ? Введите почтовый индекс на
-        house.gov/representatives/find-your-representative, затем выберите номер здесь.</p>
+        <p class="hint" style="margin-top:6px">Не знаете свой округ? Введите индекс на
+        house.gov/representatives/find-your-representative.</p>
       </div>
       <div class="row"><label for="f-senator">Your U.S. senators (Q23)</label>
         <input type="text" id="f-senator" placeholder="Выберите штат выше"></div>
@@ -537,8 +591,7 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid 
         <input type="text" id="f-speaker"></div>
       <div class="row"><label for="f-chief">Chief Justice now (Q57)</label>
         <input type="text" id="f-chief"></div>
-      <p class="hint">Эти ответы меняются. Проверьте их на uscis.gov/citizenship/testupdates
-      незадолго до собеседования.</p>
+      <p class="hint">Эти ответы меняются. Проверьте их на uscis.gov/citizenship/testupdates.</p>
     </div>
   </details>
 
@@ -546,7 +599,7 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid 
     <summary>Smart grading &middot; AI-оценка</summary>
     <div class="localbody">
       <p class="hint" style="margin-top:0">Без ключа приложение сравнивает слова. С ключом ответ
-      проверяет Claude — он понимает смысл, а не совпадение слов.</p>
+      проверяет Claude — он понимает смысл.</p>
       <div class="row">
         <label for="aikey">Anthropic API key</label>
         <input type="password" id="aikey" placeholder="sk-ant-..." autocomplete="off"
@@ -560,14 +613,14 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid 
         </div>
       </div>
       <p class="warn"><strong>Ключ хранится только на этом телефоне.</strong> Он никогда не
-      попадает в файл, который вы загрузили на GitHub. Получить ключ: console.anthropic.com.</p>
+      попадает в файл на GitHub.</p>
     </div>
   </details>
 
-  <button class="iconbtn" id="testsound" style="width:100%;padding:14px;margin:0 0 10px;
-    letter-spacing:.14em;font-size:12.5px">&#9654;&nbsp; Test sound &middot; Проверить звук</button>
-  <p class="hint" id="soundhint" style="margin:0 0 20px;text-align:center">Телефон должен быть
-  не на беззвучном режиме — боковой переключатель и громкость.</p>
+  <button class="iconbtn" id="testsound" style="width:100%;padding:14px;margin:0 0 16px;
+    font-size:13px">&#9654;&nbsp; Test sound &middot; Проверить звук</button>
+  <p class="hint" id="soundhint" style="margin:-10px 0 16px;text-align:center">Телефон должен быть
+  не на беззвучном режиме.</p>
 
   <button class="primary" id="begin">Begin</button>
 
@@ -575,8 +628,7 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid 
     <p class="diag" id="micstat"></p>
     <p class="diag" id="gradestat"></p>
     <p id="progline"></p>
-    <p>128 вопросов версии 2020 года. На собеседовании задают 20; нужно ответить верно на 12.</p>
-    <p><a href="#" id="resetbtn">Сбросить статистику / Reset progress</a></p>
+    <p><a href="#" id="resetbtn">Сбросить статистику этого игрока</a></p>
   </div>
 </section>
 
@@ -584,8 +636,15 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid 
 <section class="screen" id="scr-exam">
   <div class="bar">
     <button class="iconbtn" id="quit">End</button>
-    <div class="mid"><span class="num" id="counter">1 / 20</span></div>
-    <button class="iconbtn" id="repeat">Repeat</button>
+    <div class="mid">
+      <span class="num" id="counter">1 / 20</span>
+      <span class="stat"><span id="state">Ready</span><span id="staten"></span></span>
+    </div>
+    <button class="iconbtn" id="repeat">&#8635;</button>
+    <button class="mic" id="seal" aria-label="Speak your answer">
+      <span class="ring"></span><span class="ring"></span>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a1 1 0 0 1 2 0 7 7 0 0 1-6 6.93V21a1 1 0 0 1-2 0v-3.07A7 7 0 0 1 5 11a1 1 0 0 1 2 0 5 5 0 0 0 10 0z"/></svg>
+    </button>
   </div>
 
   <div class="card" id="qcard">
@@ -593,51 +652,15 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid 
       <span class="eyebrow" id="qcat">American Government</span>
       <span class="num" id="qnum">Q 001</span>
     </div>
-
     <div class="notice off" id="notice"></div>
-
     <p class="qen" id="qen"></p>
     <p class="qru" id="qru"></p>
     <p class="silent" id="silent" style="display:none">Listen · Слушайте</p>
-
+    <div class="spacer"></div>
     <div class="heard" id="heard">
       <span class="lbl">You said</span>
       <div class="txt" id="heardtxt"></div>
     </div>
-
-    <div class="spacer"></div>
-
-    <div class="verdict off" id="verdict">
-      <span class="stamp ok" id="stamp">Correct</span>
-      <div class="acc" id="acc"></div>
-      <p class="cheer off" id="cheer"></p>
-      <div class="ctx off" id="ctxline">
-        <span class="en" id="ctxen"></span>
-        <span class="ru" id="ctxru"></span>
-      </div>
-      <p class="aiwhy off" id="aiwhy"></p>
-    </div>
-  </div>
-
-  <div class="stage">
-    <button class="seal" id="seal" aria-label="Speak your answer">
-      <span class="ring"></span><span class="ring"></span>
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a1 1 0 0 1 2 0 7 7 0 0 1-6 6.93V21a1 1 0 0 1-2 0v-3.07A7 7 0 0 1 5 11a1 1 0 0 1 2 0 5 5 0 0 0 10 0z"/></svg>
-    </button>
-    <p class="state" id="state">Ready</p>
-    <p class="staten" id="staten">Нажмите и говорите</p>
-  </div>
-
-  <div class="typebox" id="typebox">
-    <input type="text" id="typein" placeholder="Type your answer" autocomplete="off" autocorrect="off">
-    <button id="typego">Check</button>
-  </div>
-
-  <div class="acts">
-    <button id="hintbtn">Hint</button>
-    <button id="dunno">Show answer</button>
-    <button id="markbtn" class="hide">Mark correct</button>
-    <button id="next" class="go">Skip</button>
   </div>
 </section>
 
@@ -646,7 +669,7 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid 
   <div class="bar">
     <button class="iconbtn" id="again">Again</button>
     <div class="mid"><span class="eyebrow" id="donetitle">Session</span></div>
-    <button class="iconbtn" id="home">Setup</button>
+    <button class="iconbtn" id="home">Progress</button>
   </div>
   <div class="score">
     <div class="big" id="bigscore">0/0</div>
@@ -655,41 +678,38 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid 
     <div class="verd" id="passline"></div>
   </div>
   <div class="list" id="missedlist"></div>
-  <div style="padding:22px 0 30px">
+  <div style="padding:18px 0 28px">
     <button class="primary" id="drill">Drill the missed ones</button>
-    <button class="iconbtn" id="switchplayer" style="width:100%;padding:14px;margin-top:10px;
-      letter-spacing:.14em;font-size:12.5px">Switch player &middot; Сменить игрока</button>
+    <button class="secondary" id="switchplayer">Switch player &middot; Сменить игрока</button>
   </div>
 </section>
 
-<!-- ══ MASTERY MAP ════════════════════ -->
-<section class="screen" id="scr-map">
-  <div class="bar">
-    <button class="iconbtn" id="mapback">Back</button>
-    <div class="mid"><span class="eyebrow">Your progress</span></div>
-    <span style="width:62px"></span>
-  </div>
-  <div class="mapwrap">
-    <div class="bignum">
-      <div class="n" id="mapbig">0 / 128</div>
-      <div class="c">Questions mastered</div>
-      <div class="s" id="mapsub"></div>
-    </div>
-    <div class="grid" id="mapgrid"></div>
-    <div class="legend">
-      <span><i class="u"></i> Не видели</span>
-      <span><i class="s"></i> Учим</span>
-      <span><i class="m"></i> Выучено</span>
-    </div>
-    <div class="peek" id="peek">
-      <span class="st">Нажмите на квадрат, чтобы увидеть вопрос.</span>
-    </div>
-  </div>
-  <div style="padding:22px 0 30px">
-    <button class="primary" id="mapstart">Practice what's left</button>
-  </div>
-</section>
+</div>
 
+<!-- verdict floats above everything so the page never shifts -->
+<div class="verdict off" id="verdict">
+  <div class="grab"></div>
+  <span class="stamp" id="stamp">Correct</span>
+  <div class="acc" id="acc"></div>
+  <p class="cheer off" id="cheer"></p>
+  <div class="ctx off" id="ctxline">
+    <span class="en" id="ctxen"></span>
+    <span class="ru" id="ctxru"></span>
+  </div>
+  <p class="aiwhy off" id="aiwhy"></p>
+  <div class="autobar off" id="autobar"><i></i></div>
+</div>
+
+<div class="typebox" id="typebox">
+  <input type="text" id="typein" placeholder="Type your answer" autocomplete="off" autocorrect="off">
+  <button id="typego">Check</button>
+</div>
+
+<div class="acts" id="acts" style="display:none">
+  <button id="hintbtn">Hint</button>
+  <button id="dunno">Show answer</button>
+  <button id="markbtn" class="hide">Mark correct</button>
+  <button id="next" class="go">Skip</button>
 </div>
 
 <canvas id="fx" aria-hidden="true"></canvas>
@@ -2344,19 +2364,21 @@ function evaluate(q,transcript){
 /* ═══ celebration ══════════════════════════════════════════
    Sounds are synthesised with Web Audio — no files to download, and it reuses
    the same AudioContext the speech code already unlocks. */
-const FX_COLORS=["#2E7D6E","#A8761F","#41528F","#C9A227","#8C3A57","#4FA58F","#E0B050"];
+const FX_COLORS=["#2E9E82","#E0962B","#5E68CC","#F2C14E","#D1544A","#49C2A0","#8E6FD8","#38B6D9"];
 let fxc=null, fxg=null, fxParts=[], fxRAF=0, fxW=0, fxH=0;
 const reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 function fxInit(){
   if(fxc) return;
-  fxc=$("fx"); if(!fxc||!fxc.getContext) return;
-  fxg=fxc.getContext("2d");
+  fxc=$("fx");
+  if(!fxc||typeof fxc.getContext!=="function"){ fxc=null; return; }
+  try{ fxg=fxc.getContext("2d"); }catch(e){ fxg=null; }
+  if(!fxg){ fxc=null; return; }          /* no canvas: run without celebrations */
   fxSize();
   window.addEventListener("resize",fxSize);
 }
 function fxSize(){
-  if(!fxc) return;
+  if(!fxc||!fxg) return;
   const d=window.devicePixelRatio||1;
   fxW=window.innerWidth; fxH=window.innerHeight;
   fxc.width=Math.floor(fxW*d); fxc.height=Math.floor(fxH*d);
@@ -2365,18 +2387,18 @@ function fxSize(){
 function confetti(n){
   for(let i=0;i<n;i++){
     fxParts.push({k:"c",
-      x:fxW*(0.15+0.7*Math.random()), y:fxH*0.42+Math.random()*40,
-      vx:(Math.random()-0.5)*7, vy:-5-Math.random()*8,
-      w:5+Math.random()*7, h:8+Math.random()*8,
+      x:fxW*(0.05+0.9*Math.random()), y:fxH*0.40+Math.random()*60,
+      vx:(Math.random()-0.5)*11, vy:-7-Math.random()*11,
+      w:7+Math.random()*9, h:10+Math.random()*11,
       rot:Math.random()*Math.PI, vr:(Math.random()-0.5)*0.35,
-      col:FX_COLORS[(Math.random()*FX_COLORS.length)|0], life:0, max:95+Math.random()*45});
+      col:FX_COLORS[(Math.random()*FX_COLORS.length)|0], life:0, max:78+Math.random()*34});
   }
 }
 function balloons(n){
   for(let i=0;i<n;i++){
     fxParts.push({k:"b",
       x:fxW*(0.08+0.84*Math.random()), y:fxH+40+Math.random()*120,
-      vy:-(1.5+Math.random()*1.5), r:15+Math.random()*11,
+      vy:-(1.7+Math.random()*1.8), r:17+Math.random()*14,
       sway:Math.random()*Math.PI*2, sp:0.035+Math.random()*0.03,
       col:FX_COLORS[(Math.random()*FX_COLORS.length)|0], life:0, max:260});
   }
@@ -2389,9 +2411,9 @@ function fxTick(){
     p.life++;
     const fade=Math.max(0,1-p.life/p.max);
     if(p.k==="c"){
-      p.vy+=0.32; p.x+=p.vx; p.y+=p.vy; p.vx*=0.995; p.rot+=p.vr;
+      p.vy+=0.52; p.x+=p.vx; p.y+=p.vy; p.vx*=0.993; p.rot+=p.vr;
       fxg.save(); fxg.translate(p.x,p.y); fxg.rotate(p.rot);
-      fxg.globalAlpha=fade; fxg.fillStyle=p.col;
+      fxg.globalAlpha=fade*0.88; fxg.fillStyle=p.col;
       fxg.fillRect(-p.w/2,-p.h/2,p.w,p.h);
       fxg.restore();
     }else{
@@ -2412,6 +2434,7 @@ function fxTick(){
   else { fxRAF=0; fxg.clearRect(0,0,fxW,fxH); }
 }
 function fxGo(){ fxInit(); if(!fxRAF&&fxg) fxRAF=requestAnimationFrame(fxTick); }
+function fxOK(){ fxInit(); return !!fxg; }
 
 /* ── sounds ── */
 function audioReady(){
@@ -2473,9 +2496,9 @@ function applause(dur,vol){
 function celebrate(level){
   if(S.fx==="off") return;
   const big=level==="big";
-  if(!reduced){
-    confetti(big?70:26);
-    if(big) balloons(7);
+  if(!reduced && fxOK()){
+    confetti(big?190:80);
+    if(big) balloons(16);
     fxGo();
   }
   if(S.fx==="full" && audioReady()){
@@ -2485,6 +2508,29 @@ function celebrate(level){
       else applause(0.5,0.07);
     }catch(e){}
   }
+}
+
+/* ═══ auto-advance ════════════════════════════════════════
+   After a correct answer: let the celebration finish, then hold 2s so the
+   reader can take in the answer and the fact, then move on. Any tap cancels. */
+const CELEB_MS={small:1300,big:2300,none:0};
+const HOLD_MS=2000;
+let autoT=0;
+function cancelAuto(){
+  if(autoT){ clearTimeout(autoT); autoT=0; }
+  const b=$("autobar");
+  if(b){ b.classList.add("off"); b.classList.remove("run");
+    const i=b.firstElementChild; if(i) i.style.animation="none"; }
+}
+function scheduleAuto(ms){
+  cancelAuto();
+  const b=$("autobar"); if(!b) return;
+  const i=b.firstElementChild;
+  b.classList.remove("off");
+  if(i){ i.style.animation="none"; void i.offsetWidth;
+         i.style.animation="drain "+ms+"ms linear forwards"; }
+  b.classList.add("run");
+  autoT=setTimeout(()=>{ autoT=0; advance(); },ms);
 }
 
 /* ═══ AI grading (optional, user supplies their own key) ═══ */
@@ -2571,15 +2617,16 @@ function render(){
   $("qcat").textContent=q.c;
   $("qen").textContent=q.q;
   $("qru").textContent=q.qr;
+  cancelAuto();
   const cardEl=$("qcard");
   cardEl.className="card g-"+groupOf(q);
+  $("verdict").className="verdict off";
   $("ctxline").classList.add("off");
   $("cheer").classList.add("off");
   $("hintbtn").classList.toggle("hide",S.mode==="exam");
   S.hinted=false;
   $("heardtxt").textContent="";
   $("heard").classList.remove("off");
-  $("verdict").classList.add("off");
   $("notice").classList.add("off");
   $("markbtn").classList.add("hide");
   $("next").textContent="Skip";
@@ -2633,8 +2680,8 @@ function grade(transcript,force){
       '</ul>'+(ref.answers.length>show.length?
         '<p class="more">+ '+(ref.answers.length-show.length)+' more accepted answers</p>':'');
   }
-  $("verdict").classList.remove("off");
-  try{ $("verdict").scrollIntoView({block:"nearest",behavior:"smooth"}); }catch(e){}
+  $("verdict").className="verdict "+(ok===false?"no ":ok===null?"self ":"")+groupOf(q);
+  $("verdict").scrollTop=0;
   /* even with captions off, show what was asked once it has been answered */
   $("qen").classList.remove("hide");
   $("silent").style.display="none";
@@ -2654,13 +2701,14 @@ function grade(transcript,force){
       const st=statOf(q.n);
       const willMaster = !S.hinted && st.streak+1>=MASTER_AT && st.streak<MASTER_AT;
       celebrate(willMaster||S.run>=5?"big":"small");
+      S.celeb = (S.fx==="off") ? "none" : (willMaster||S.run>=5?"big":"small");
       const left=QUESTIONS.filter(x=>!isMastered(x.n)).length-(willMaster?1:0);
       $("cheer").textContent = willMaster
         ? "Вопрос выучен. Осталось "+left+" из 128."
         : cheerFor(S.run);
       $("cheer").classList.remove("off");
     }else{
-      S.run=0;
+      S.run=0; S.celeb="none";
       $("cheer").classList.add("off");
     }
     const c=CONTEXT[q.n];
@@ -2676,6 +2724,10 @@ function grade(transcript,force){
   const worth = aiReady() && force!==false && transcript.trim() && !ref.manual
              && (S.aimode==="all" || ok===false);
   if(worth) askClaude(q,transcript,ref,ok);
+
+  /* a correct answer moves on by itself; a wrong one waits to be read */
+  if(ok===true && !worth) scheduleAuto((CELEB_MS[S.celeb]||0)+HOLD_MS);
+  else cancelAuto();
 }
 
 async function askClaude(q,transcript,ref,wordVerdict){
@@ -2696,6 +2748,7 @@ async function askClaude(q,transcript,ref,wordVerdict){
     setState(res.pass?"Correct":"Missed",res.pass?"Верно":"Неверно");
   }
   setAiLine("", "Claude: "+(res.why||(res.pass?"accepted":"not accepted")));
+  if(res.pass===true) scheduleAuto((CELEB_MS[S.celeb]||CELEB_MS.small)+HOLD_MS);
 }
 /* A hint shows the shape of the answer and its Russian meaning, never the answer. */
 function maskAnswer(s){
@@ -2726,8 +2779,9 @@ function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;","
 
 function flipMark(){
   if(S.phase!=="graded") return;
+  cancelAuto();
   S.currentCorrect = S.currentCorrect===true?false:true;
-  if(S.currentCorrect && S.mode==="practice") celebrate("small");
+  if(S.currentCorrect && S.mode==="practice"){ celebrate("small"); S.celeb="small"; }
   const st=$("stamp");
   st.className="stamp "+(S.currentCorrect?"ok":"no");
   st.textContent=S.currentCorrect?"Correct":"Try again";
@@ -2798,6 +2852,7 @@ function record(){
   saveStats();
 }
 function advance(){
+  cancelAuto();
   if(S.phase==="graded") record();
   hushSpeech();
   if(recRunning){try{rec.stop();}catch(e){}}
@@ -2856,7 +2911,15 @@ function finish(){
 
 function show(id){
   document.querySelectorAll(".screen").forEach(s=>s.classList.toggle("on",s.id===id));
-  window.scrollTo(0,0);
+  const exam=(id==="scr-exam");
+  $("acts").style.display=exam?"flex":"none";
+  if(!exam){
+    cancelAuto();
+    $("verdict").className="verdict off";
+    $("typebox").classList.remove("on");
+  }
+  const el=document.getElementById(id);
+  if(el) el.scrollTop=0;
 }
 
 /* ═══ wiring ═══════════════════════════════════════════════ */
@@ -2932,17 +2995,17 @@ function init(){
     peekAt(mapSel);
   });
   $("readystrip").addEventListener("click",()=>{ renderMap(); show("scr-map"); });
-  $("mapback").addEventListener("click",()=>{ show("scr-setup"); paintReady(); });
+  $("mapback").addEventListener("click",()=>{ renderPlayers(); show("scr-players"); });
+  $("mapsettings").addEventListener("click",()=>{ paintChip(); paintReady(); paintProgress();
+    show("scr-setup"); });
+  $("setupback").addEventListener("click",()=>{ renderMap(); show("scr-map"); });
   $("mapstart").addEventListener("click",()=>{
+    if(!curId){ renderPlayers(); show("scr-players"); return; }
+    unlockAudio(); audioReady();
+    readLocals();
+    if(S.mode==="exam"){ startSession(); return; }
     const left=QUESTIONS.filter(q=>!isMastered(q.n));
-    if(!left.length){
-      $("peek").innerHTML='<span class="st">Все 128 выучены. Попробуйте режим Interview.</span>';
-      return;
-    }
-    S.mode="practice";
-    const mark=(id,val)=>$(id).querySelectorAll("button").forEach(b=>
-      b.setAttribute("aria-pressed",String(b.dataset.v===String(val))));
-    mark("modeseg","practice"); applyMode();
+    if(!left.length){ startSession(); return; }       /* all learned: review everything */
     const n=S.len==="all"?left.length:Math.min(S.len,left.length);
     startSession(shuffle(left).slice(0,n));
   });
@@ -2952,7 +3015,7 @@ function init(){
     const del=e.target.closest("[data-del]");
     if(del){ askDelete(del.dataset.del); return; }
     const sel=e.target.closest(".psel");
-    if(sel){ selectPlayer(sel.dataset.id); closeAddRow(); show("scr-setup"); }
+    if(sel){ selectPlayer(sel.dataset.id); closeAddRow(); renderMap(); show("scr-map"); }
   });
   $("addplayer").addEventListener("click",openAddRow);
   $("savename").addEventListener("click",()=>{
@@ -2960,7 +3023,7 @@ function init(){
     if(!nm){ try{ $("newname").focus(); }catch(e){} return; }
     const id=addPlayer(nm);
     if(!id) return;
-    closeAddRow(); loadPlayerData(); renderPlayers(); show("scr-setup");
+    closeAddRow(); loadPlayerData(); renderPlayers(); renderMap(); show("scr-map");
   });
   $("newname").addEventListener("keydown",e=>{ if(e.key==="Enter") $("savename").click(); });
 
@@ -3018,6 +3081,7 @@ function init(){
     startSession();
   });
   $("seal").addEventListener("click",()=>{
+    cancelAuto();
     if(S.phase==="asking"){ hushSpeech(); $("seal").classList.remove("busy"); listen(); }
     else if(S.phase==="ready") listen();
     else if(S.phase==="listening"){ if(recRunning){try{rec.stop();}catch(e){}} else { S.phase="ready"; } }
@@ -3025,6 +3089,7 @@ function init(){
   });
   $("repeat").addEventListener("click",()=>{
     const q=S.queue[S.idx]; if(!q) return;
+    cancelAuto();
     unlockAudio();
     if(rec){ try{ rec.abort(); }catch(e){} recRunning=false; }
 
@@ -3056,10 +3121,10 @@ function init(){
     $("heardtxt").textContent=t; S.phase="listening"; grade(t);
   });
   $("typein").addEventListener("keydown",e=>{ if(e.key==="Enter") $("typego").click(); });
-  $("quit").addEventListener("click",()=>{ if(S.phase==="graded") record(); finish(); });
+  $("quit").addEventListener("click",()=>{ cancelAuto(); if(S.phase==="graded") record(); finish(); });
   $("again").addEventListener("click",()=>startSession());
   $("begin").addEventListener("click",()=>{},{once:false});
-  $("home").addEventListener("click",()=>{ show("scr-setup"); paintProgress(); paintReady(); paintChip(); });
+  $("home").addEventListener("click",()=>{ renderMap(); show("scr-map"); });
   $("resetbtn").addEventListener("click",e=>{
     e.preventDefault();
     if(confirm("Стереть всю статистику? / Erase all progress?")){
@@ -3073,6 +3138,7 @@ function init(){
   renderPlayers();
   show("scr-players");
   micStatus();
+  fxInit();
 }
 function micStatus(){
   const el=$("micstat"); if(!el) return;
@@ -3132,6 +3198,15 @@ function renderMap(){
     b.dataset.n=String(q.n);
     g.appendChild(b);
   });
+
+  const left=QUESTIONS.filter(q=>!isMastered(q.n)).length;
+  const btn=$("mapstart");
+  if(btn){
+    btn.textContent = S.mode==="exam" ? "Begin examination"
+      : left ? "Start practice" : "Review all 128";
+  }
+  const t=$("maptitle");
+  if(t){ const p=curPlayer(); t.textContent = p? p.name : "Your progress"; }
 
   paintReady(r);
 }
