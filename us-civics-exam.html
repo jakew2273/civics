@@ -342,6 +342,7 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid 
 .acts button:active{background:var(--well)}
 .acts button.go{background:var(--accent);border-color:var(--accent);color:#fff;flex:1.4}
 .acts button.hide{display:none}
+.acts button.bad{background:var(--rose-w);border-color:var(--rose);color:var(--rose)}
 
 .typebox{display:none;gap:6px;position:fixed;z-index:46;
   left:calc(var(--sal) + var(--fi));right:calc(var(--sar) + var(--fi));
@@ -619,6 +620,7 @@ body.formal .card .corner{display:none}
 
   <div class="foot">
     <p id="pfoot">До 10 игроков. У каждого свой прогресс, который сохраняется на этом телефоне.</p>
+    <p class="diag ver">Version 4 · Oct 3</p>
   </div>
 </section>
 
@@ -732,6 +734,7 @@ body.formal .card .corner{display:none}
   <div class="field" id="lenfield">
     <span class="legend">Session length · Длина сессии</span>
     <div class="seg" id="lenseg">
+      <button data-v="5" aria-pressed="false" style="min-width:0">5</button>
       <button data-v="10" aria-pressed="false" style="min-width:0">10</button>
       <button data-v="20" aria-pressed="true" style="min-width:0">20</button>
       <button data-v="all" aria-pressed="false" style="min-width:0">All</button>
@@ -812,6 +815,7 @@ body.formal .card .corner{display:none}
     <p class="diag" id="micstat"></p>
     <p class="diag" id="gradestat"></p>
     <p id="progline"></p>
+    <p class="diag ver">Version 4 · Oct 3</p>
     <p><a href="#" id="resetbtn">Сбросить статистику этого игрока</a></p>
   </div>
 </section>
@@ -894,6 +898,7 @@ body.formal .card .corner{display:none}
 <div class="acts" id="acts" style="display:none">
   <button id="hintbtn">Hint</button>
   <button id="dunno">Show answer</button>
+  <button id="wrongbtn" class="bad hide">Incorrect</button>
   <button id="markbtn" class="hide">Mark correct</button>
   <button id="next" class="go">Skip</button>
 </div>
@@ -3491,6 +3496,7 @@ function render(){
   S.finalText=""; S.currentCorrect=null; S.manual=false;
   S.aiToken++; setAiLine("","");
   applyCaps();
+  paintActs(false);
 }
 function ask(){
   render();
@@ -3531,7 +3537,7 @@ function grade(transcript,force){
   st.className="stamp "+(ok===true?"ok":ok===false?"no":"self");
   const willAsk = aiReady() && force!==false && transcript.trim() && !ref.manual
                && (S.aimode==="all" || ok===false);
-  st.textContent = ok===true?"Correct" : ok===false?(willAsk?"Checking":"Not quite")
+  st.textContent = ok===true?"Correct" : ok===false?(willAsk?"Checking":"Incorrect")
                  : (unsure?"Almost":"Your call");
   st.style.animation="none"; void st.offsetWidth; st.style.animation="";
 
@@ -3564,7 +3570,7 @@ function grade(transcript,force){
   $("next").textContent = (S.idx+1<S.queue.length)?"Next":"Finish";
   $("next").disabled=false;
   if(unsure) $("cheer").classList.add("off");
-  setState(ok===true?"Correct":ok===false?"Missed":(unsure?"Almost — your call":"Mark it yourself"),
+  setState(ok===true?"Correct":ok===false?"Incorrect":(unsure?"Almost — your call":"Mark it yourself"),
            ok===true?"Верно":ok===false?"Неверно":(unsure?"Почти — решите сами":"Отметьте сами"));
   $("seal").classList.remove("live","busy");
   setAiLine("","");
@@ -3590,8 +3596,21 @@ function grade(transcript,force){
   }
 
   /* a correct answer moves on by itself; a wrong one waits to be read */
+  paintActs(worth);
   if(ok===true && !worth) cheerOnCorrect(q);
   else { cancelAuto(); if(!worth) S.run=0; }
+}
+
+/* The action bar. Before an answer: Hint · Show answer · Skip.
+   After a wrong (or undecided) answer: Mark correct · Incorrect · Next.
+   After a right one: Mark missed · Next. Nothing to press while Claude is checking. */
+function paintActs(checking){
+  const g=S.phase==="graded";
+  $("hintbtn").classList.toggle("hide", g || S.mode==="exam");
+  $("dunno").classList.toggle("hide", g);
+  $("wrongbtn").classList.toggle("hide", !g || !!checking || S.currentCorrect===true);
+  $("markbtn").classList.toggle("hide", !g || !!checking);
+  if(g) $("markbtn").textContent = S.currentCorrect===true ? "Mark missed" : "Mark correct";
 }
 
 /* ═══ praise ═══════════════════════════════════════════════
@@ -3648,22 +3667,23 @@ async function askClaude(q,transcript,ref,wordVerdict){
     setAiLine("bad",res.err);
     S.currentCorrect=true;S.manual=false;$("stamp").textContent="Correct";
     $("stamp").className="stamp ok";$("markbtn").textContent="Mark missed";
-    setState("Correct","Верно"); cheerOnCorrect(q); return; }
+    setState("Correct","Верно"); paintActs(false); cheerOnCorrect(q); return; }
   if(res.err){ setAiLine("bad",res.err+" Please review and mark this answer yourself.");
     S.run=0; S.currentCorrect=null;S.manual=true;$("stamp").textContent="Your call";
     $("stamp").className="stamp self";$("markbtn").textContent="Mark correct";
-    setState("Review answer","Отметьте сами");return; }
+    setState("Review answer","Отметьте сами"); paintActs(false); return; }
 
   {
     S.currentCorrect=res.pass;S.manual=false;
     const st=$("stamp");
     st.className="stamp "+(res.pass?"ok":"no");
-    st.textContent=res.pass?"Correct":"Try again";
+    st.textContent=res.pass?"Correct":"Incorrect";
     st.style.animation="none"; void st.offsetWidth; st.style.animation="";
     $("markbtn").textContent=res.pass?"Mark missed":"Mark correct";
-    setState(res.pass?"Correct":"Missed",res.pass?"Верно":"Неверно");
+    setState(res.pass?"Correct":"Incorrect",res.pass?"Верно":"Неверно");
   }
   setAiLine("", "Claude: "+(res.why||(res.pass?"accepted":"not accepted")));
+  paintActs(false);
   if(res.pass===true) cheerOnCorrect(q);
   else S.run=0;
 }
@@ -3700,11 +3720,12 @@ function flipMark(){
   S.currentCorrect = S.currentCorrect===true?false:true;
   if(S.currentCorrect){ cheerOnCorrect(S.queue[S.idx]); }
   else { cancelPraise(); hushSpeech(); S.run=0; $("cheer").classList.add("off"); }
+  paintActs(false);
   const st=$("stamp");
   st.className="stamp "+(S.currentCorrect?"ok":"no");
-  st.textContent=S.currentCorrect?"Correct":"Try again";
+  st.textContent=S.currentCorrect?"Correct":"Incorrect";
   $("markbtn").textContent=S.currentCorrect?"Mark missed":"Mark correct";
-  setState(S.currentCorrect?"Correct":"Missed",S.currentCorrect?"Верно":"Неверно");
+  setState(S.currentCorrect?"Correct":"Incorrect",S.currentCorrect?"Верно":"Неверно");
 }
 
 /* ═══ session ══════════════════════════════════════════════ */
@@ -3783,6 +3804,10 @@ function finish(){
   clearSilence();
   hushSpeech();
   stopRec();
+  for(let i=0;i<S.idx;i++){
+    if(!S.results.some(r=>r.i===i) && S.queue[i])
+      S.results.push({n:S.queue[i].n, ok:false, i});
+  }
   const scored=S.results.length, ok=S.results.filter(r=>r.ok).length;
   const pct=scored?Math.round(ok/scored*100):0;
   const exam=S.mode==="exam";
@@ -4040,7 +4065,7 @@ function init(){
     if(S.phase==="graded"){
       $("seal").classList.add("busy");
       speak(q.q,()=>{ $("seal").classList.remove("busy");
-        setState(S.currentCorrect===true?"Correct":S.currentCorrect===false?"Missed":"Mark it yourself",
+        setState(S.currentCorrect===true?"Correct":S.currentCorrect===false?"Incorrect":"Mark it yourself",
                  S.currentCorrect===true?"Верно":S.currentCorrect===false?"Неверно":"Отметьте сами"); });
       return;
     }
@@ -4057,6 +4082,12 @@ function init(){
     grade(S.finalText||"",false);
   });
   $("markbtn").addEventListener("click",flipMark);
+  $("wrongbtn").addEventListener("click",()=>{
+    if(S.phase!=="graded") return;
+    cancelAuto(); cancelPraise();
+    S.currentCorrect=false; S.run=0;
+    advance();
+  });
   $("next").addEventListener("click",advance);
   $("typego").addEventListener("click",()=>{
     const t=$("typein").value.trim(); if(!t) return;
