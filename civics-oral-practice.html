@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="theme-color" content="#2E9E82">
+<meta name="theme-color" content="#B22234">
 <title>Civics Oral Practice</title>
 <style>
 /* Bright but calm: a pale sky ground with mint, peach and lilac washes, and three
@@ -33,6 +33,13 @@
 
   --accent:var(--teal);
   --actsH:74px;
+  /* the star frame: a red band (--fw) plus a navy inner line, together --fi */
+  --fw:12px;
+  --fi:14px;
+  --sat:env(safe-area-inset-top,0px);
+  --sab:env(safe-area-inset-bottom,0px);
+  --sal:env(safe-area-inset-left,0px);
+  --sar:env(safe-area-inset-right,0px);
 
   --flag-red:#B22234;
   --flag-blue:#3C3B6E;
@@ -68,19 +75,34 @@ body::before{
 }
 body.formal::before{opacity:.25}
 
-.app{position:relative;z-index:1;height:100%;display:flex;flex-direction:column}
+/* the app sits inside the frame; the frame owns the safe areas */
+.app{position:fixed;z-index:1;display:flex;flex-direction:column;
+  top:calc(var(--sat) + var(--fi));bottom:calc(var(--sab) + var(--fi));
+  left:calc(var(--sal) + var(--fi));right:calc(var(--sar) + var(--fi))}
 .screen{display:none;flex:1;min-height:0;flex-direction:column;
-  padding:env(safe-area-inset-top) 20px env(safe-area-inset-bottom);
-  overflow-y:auto;-webkit-overflow-scrolling:touch}
+  padding:0 16px;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .screen.on{display:flex}
-#scr-exam{overflow:hidden;padding-bottom:calc(var(--actsH) + env(safe-area-inset-bottom))}
+#scr-exam{overflow:hidden;padding-bottom:calc(var(--actsH) + 10px)}
+
+/* ── star frame ──────────────────────── */
+.frame{position:fixed;inset:0;z-index:58;pointer-events:none}
+/* rounded inner edge: a navy line, with red filling the corners and the safe areas */
+.frame .ring{position:absolute;border-radius:12px;
+  top:calc(var(--sat) + var(--fi));bottom:calc(var(--sab) + var(--fi));
+  left:calc(var(--sal) + var(--fi));right:calc(var(--sar) + var(--fi));
+  box-shadow:0 0 0 2px var(--flag-blue),0 0 0 120px var(--flag-red)}
+/* the band of white stars on red */
+.frame .band{position:absolute;box-sizing:border-box;
+  top:var(--sat);bottom:var(--sab);left:var(--sal);right:var(--sar);
+  border:var(--fw) solid var(--flag-red);
+  border-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='42' height='42' viewBox='0 0 42 42'%3E%3Crect width='42' height='42' fill='%23B22234'/%3E%3Cpath fill='%23fff' d='M6.00 1.70L7.03 4.58L10.09 4.67L7.66 6.54L8.53 9.48L6.00 7.75L3.47 9.48L4.34 6.54L1.91 4.67L4.97 4.58ZM36.00 1.70L37.03 4.58L40.09 4.67L37.66 6.54L38.53 9.48L36.00 7.75L33.47 9.48L34.34 6.54L31.91 4.67L34.97 4.58ZM6.00 31.70L7.03 34.58L10.09 34.67L7.66 36.54L8.53 39.48L6.00 37.75L3.47 39.48L4.34 36.54L1.91 34.67L4.97 34.58ZM36.00 31.70L37.03 34.58L40.09 34.67L37.66 36.54L38.53 39.48L36.00 37.75L33.47 39.48L34.34 36.54L31.91 34.67L34.97 34.58ZM21.00 1.70L22.03 4.58L25.09 4.67L22.66 6.54L23.53 9.48L21.00 7.75L18.47 9.48L19.34 6.54L16.91 4.67L19.97 4.58ZM21.00 31.70L22.03 34.58L25.09 34.67L22.66 36.54L23.53 39.48L21.00 37.75L18.47 39.48L19.34 36.54L16.91 34.67L19.97 34.58ZM6.00 16.70L7.03 19.58L10.09 19.67L7.66 21.54L8.53 24.48L6.00 22.75L3.47 24.48L4.34 21.54L1.91 19.67L4.97 19.58ZM36.00 16.70L37.03 19.58L40.09 19.67L37.66 21.54L38.53 24.48L36.00 22.75L33.47 24.48L34.34 21.54L31.91 19.67L34.97 19.58Z'/%3E%3C/svg%3E") 12 round}
 
 .eyebrow{font-family:var(--disp);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;
   color:var(--soft);font-weight:700}
 .num{font-family:var(--mono);font-size:13px;color:var(--soft);font-variant-numeric:tabular-nums}
 
 /* ── bars ────────────────────────────── */
-.bar{display:flex;align-items:center;gap:8px;padding:10px 0 9px;
+.bar{display:flex;align-items:center;gap:8px;padding:12px 0 10px;
   border-bottom:1px solid var(--rule);flex:0 0 auto}
 .bar .mid{flex:1;text-align:center;min-width:0}
 .bar .mid .num{display:block;font-size:12.5px}
@@ -197,14 +219,13 @@ details.local[open] > summary::after{content:"–"}
 
 /* ── exam card ───────────────────────── */
 .card{position:relative;flex:1;min-height:0;display:flex;flex-direction:column;
-  background:var(--card);border:1px solid var(--rule);border-radius:16px;
-  margin:12px 0 0;padding:16px 16px 14px;overflow-y:auto;-webkit-overflow-scrolling:touch}
-.card::before{content:"";position:absolute;left:0;right:0;top:0;height:4px;
-  background:var(--accent);border-radius:16px 16px 0 0}
-.card.g-gov::before{background:var(--teal)}
-.card.g-hist::before{background:var(--amber)}
-.card.g-sym::before{background:var(--violet)}
-body.formal .card::before{background:#2B4257}
+  background:var(--card);border:1px solid var(--rule);border-top:5px solid var(--accent);
+  border-radius:16px;box-shadow:0 1px 2px rgba(22,34,46,.05),0 6px 18px rgba(22,34,46,.06);
+  margin:12px 0 0;padding:14px 16px 14px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.card.g-gov{border-top-color:var(--teal)}
+.card.g-hist{border-top-color:var(--amber)}
+.card.g-sym{border-top-color:var(--violet)}
+body.formal .card.g-gov,body.formal .card.g-hist,body.formal .card.g-sym{border-top-color:#2B4257}
 
 .qhead{display:flex;justify-content:space-between;align-items:baseline;gap:10px;
   border-bottom:1px solid var(--rule);padding-bottom:9px;margin-bottom:14px;flex:0 0 auto}
@@ -236,8 +257,9 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid 
 .notice.off{display:none}
 
 /* ── verdict: an overlay, so nothing on the page moves ── */
-.verdict{position:fixed;left:0;right:0;z-index:40;
-  bottom:calc(var(--actsH) + env(safe-area-inset-bottom));
+.verdict{position:fixed;z-index:40;
+  left:calc(var(--sal) + var(--fi));right:calc(var(--sar) + var(--fi));
+  bottom:calc(var(--actsH) + var(--sab) + var(--fi));
   background:var(--card);border-top:4px solid var(--teal);
   border-radius:20px 20px 0 0;padding:16px 18px 18px;
   max-height:62vh;overflow-y:auto;-webkit-overflow-scrolling:touch;
@@ -304,9 +326,10 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid 
   border:1px solid #EFD6A8;border-radius:10px;padding:10px 11px;margin:10px 0 0}
 
 /* ── fixed action bar ────────────────── */
-.acts{position:fixed;left:0;right:0;bottom:0;z-index:45;display:flex;gap:6px;
-  padding:10px 18px calc(10px + env(safe-area-inset-bottom));
-  background:var(--ground);border-top:1px solid var(--rule)}
+.acts{position:fixed;z-index:45;display:flex;gap:6px;
+  left:calc(var(--sal) + var(--fi));right:calc(var(--sar) + var(--fi));
+  bottom:calc(var(--sab) + var(--fi));
+  padding:10px 12px;background:var(--ground);border-top:1px solid var(--rule)}
 .acts button{flex:1;appearance:none;cursor:pointer;background:var(--card);
   border:1px solid var(--rule);border-radius:11px;padding:13px 4px;
   font-family:var(--disp);font-size:12.5px;color:var(--soft);font-weight:700;line-height:1.25}
@@ -314,9 +337,10 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid 
 .acts button.go{background:var(--accent);border-color:var(--accent);color:#fff;flex:1.4}
 .acts button.hide{display:none}
 
-.typebox{display:none;gap:6px;position:fixed;left:0;right:0;z-index:46;
-  bottom:calc(var(--actsH) + env(safe-area-inset-bottom));
-  padding:9px 18px;background:var(--ground);border-top:1px solid var(--rule)}
+.typebox{display:none;gap:6px;position:fixed;z-index:46;
+  left:calc(var(--sal) + var(--fi));right:calc(var(--sar) + var(--fi));
+  bottom:calc(var(--actsH) + var(--sab) + var(--fi));
+  padding:9px 12px;background:var(--ground);border-top:1px solid var(--rule)}
 .typebox.on{display:flex}
 .typebox input{flex:1}
 .typebox button{flex:0 0 auto;padding:0 16px;background:var(--accent);color:#fff;
@@ -348,15 +372,6 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid 
 #fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:50}
 
 /* ── patriotic trim ──────────────────── */
-/* a ribbon of stripes pinned to the very top of every screen */
-body::after{
-  content:"";position:fixed;left:0;right:0;z-index:55;height:5px;pointer-events:none;
-  top:env(safe-area-inset-top,0px);
-  background:repeating-linear-gradient(90deg,
-    var(--flag-red) 0 15px, #fff 15px 30px);
-  border-bottom:1px solid rgba(60,59,110,.25);
-}
-body.formal::after{opacity:.35}
 
 .stars{display:flex;align-items:center;justify-content:center;gap:9px;margin:12px 0 2px}
 .stars svg{width:15px;height:15px;flex:0 0 auto}
@@ -367,12 +382,11 @@ body.formal::after{opacity:.35}
 .stars .line.rev{background:linear-gradient(90deg,var(--flag-blue),transparent)}
 
 /* bunting swags across the top of the launch screen */
-.bunting{position:relative;height:30px;margin:0 -20px 2px;flex:0 0 auto;overflow:hidden}
-.bunting i{position:absolute;top:-19px;width:40px;height:40px;border-radius:50%;
-  box-shadow:inset 0 -3px 0 rgba(0,0,0,.08)}
-.bunting i:nth-child(3n+1){background:var(--flag-red)}
-.bunting i:nth-child(3n+2){background:#F3F6FA}
-.bunting i:nth-child(3n+3){background:var(--flag-blue)}
+.bunting{height:20px;margin:0 -16px 6px;flex:0 0 auto;
+  background:
+    radial-gradient(circle at 20px 0,var(--flag-blue) 0 18px,transparent 18.6px) 0 0/120px 20px repeat-x,
+    radial-gradient(circle at 60px 0,#fff 0 17px,#C9D5E3 17px 18px,transparent 18.6px) 0 0/120px 20px repeat-x,
+    radial-gradient(circle at 100px 0,var(--flag-red) 0 18px,transparent 18.6px) 0 0/120px 20px repeat-x}
 
 /* a flag that waves on its own, for the launch screen */
 .wavingflag{width:92px;height:62px;overflow:visible}
@@ -394,7 +408,8 @@ body.formal::after{opacity:.35}
 
 /* star corners on the question card */
 .card .corner{position:absolute;width:11px;height:11px;opacity:.5;pointer-events:none}
-.card .corner.a{top:9px;right:11px}
+.card .corner.a{top:7px;right:8px}
+.card .qhead{padding-right:12px}
 .card .corner.b{bottom:9px;left:11px}
 .card .corner svg{width:100%;height:100%;fill:var(--flag-blue)}
 body.formal .card .corner{display:none}
@@ -457,7 +472,7 @@ body.formal .card .corner{display:none}
 .mbtns .yes{background:var(--rose);border:1px solid var(--rose);color:#fff}
 
 /* ── mastery map ─────────────────────── */
-.mapwrap{padding:12px 0 0;flex:1;min-height:0;display:flex;flex-direction:column}
+.mapwrap{padding:12px 0 0;flex:1 0 auto;display:flex;flex-direction:column}
 .bignum{text-align:center;padding:2px 0 14px;flex:0 0 auto}
 .bignum .n{font-family:var(--mono);font-size:46px;line-height:1;color:var(--teal-d);
   font-variant-numeric:tabular-nums}
@@ -465,20 +480,25 @@ body.formal .card .corner{display:none}
   color:var(--soft);font-weight:700;margin-top:8px}
 .bignum .s{font-size:14px;color:var(--faint);margin-top:7px;line-height:1.45}
 
-.grid{display:grid;grid-template-columns:repeat(16,1fr);gap:4px;margin:4px 0 0;flex:0 0 auto}
-.grid b{display:block;aspect-ratio:1;border-radius:3px;background:var(--rule);
-  cursor:pointer;border:none;padding:0}
-.grid b.seen{background:var(--amber)}
-.grid b.mast{background:var(--teal)}
-.grid b.sel{outline:2.5px solid var(--ink);outline-offset:1px}
+/* ten to a row, so each row is a block of ten: 1–10, 11–20 … 121–128 */
+.grid{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:4px;margin:4px auto 0;
+  width:100%;max-width:460px;flex:0 0 auto}
+.grid button{display:flex;align-items:center;justify-content:center;aspect-ratio:1;min-width:0;
+  margin:0;padding:0;appearance:none;-webkit-appearance:none;cursor:pointer;border-radius:6px;
+  background:var(--card);border:1px solid var(--rule);color:var(--soft);
+  font-family:var(--mono);font-size:clamp(10px,2.9vw,13px);font-weight:600;line-height:1;
+  font-variant-numeric:tabular-nums;letter-spacing:-.03em}
+.grid button.seen{background:var(--amber-w);border:1.5px solid var(--amber);color:var(--amber-d);font-weight:700}
+.grid button.mast{background:var(--teal-d);border:1.5px solid var(--teal-d);color:#fff;font-weight:700}
+.grid button.sel{outline:2.5px solid var(--ink);outline-offset:1.5px;position:relative;z-index:1}
 
 .legend{display:flex;gap:14px;flex-wrap:wrap;margin:13px 0 0;font-size:13px;color:var(--soft);
   flex:0 0 auto}
 .legend span{display:flex;align-items:center;gap:6px}
-.legend i{width:12px;height:12px;border-radius:3px;display:block}
-.legend i.u{background:var(--rule)}
-.legend i.s{background:var(--amber)}
-.legend i.m{background:var(--teal)}
+.legend i{width:14px;height:14px;border-radius:4px;display:block;box-sizing:border-box}
+.legend i.u{background:var(--card);border:1px solid var(--rule)}
+.legend i.s{background:var(--amber-w);border:1.5px solid var(--amber)}
+.legend i.m{background:var(--teal-d)}
 
 .peek{margin:13px 0 0;padding:13px;background:var(--card);border:1px solid var(--rule);
   border-radius:12px;flex:0 0 auto}
@@ -494,12 +514,7 @@ body.formal .card .corner{display:none}
 
 <!-- ══ PLAYERS ════════════════════════ -->
 <section class="screen on" id="scr-players">
-  <div class="bunting" aria-hidden="true">
-    <i style="left:-14px"></i><i style="left:26px"></i><i style="left:66px"></i>
-    <i style="left:106px"></i><i style="left:146px"></i><i style="left:186px"></i>
-    <i style="left:226px"></i><i style="left:266px"></i><i style="left:306px"></i>
-    <i style="left:346px"></i><i style="left:386px"></i>
-  </div>
+  <div class="bunting" aria-hidden="true"></div>
 
   <div class="hero">
     <h1>Civics Oral Practice</h1>
@@ -762,8 +777,8 @@ body.formal .card .corner{display:none}
       <div class="row">
         <label>When to ask &middot; Когда спрашивать</label>
         <div class="seg two" id="aiseg">
-          <button data-v="miss" aria-pressed="true">Only if marked wrong</button>
-          <button data-v="all" aria-pressed="false">Every answer</button>
+          <button data-v="miss" aria-pressed="false">Only if marked wrong</button>
+          <button data-v="all" aria-pressed="true">Every answer</button>
         </div>
       </div>
       <p class="warn"><strong>Ключ хранится только на этом телефоне.</strong> Он никогда не
@@ -869,6 +884,8 @@ body.formal .card .corner{display:none}
 </div>
 
 <canvas id="fx" aria-hidden="true"></canvas>
+
+<div class="frame" aria-hidden="true"><div class="ring"></div><div class="band"></div></div>
 
 <div class="modal off" id="modal" role="dialog" aria-modal="true">
   <div class="sheet">
@@ -2400,9 +2417,25 @@ function pickVoice(){
 }
 if(window.speechSynthesis){ pickVoice(); speechSynthesis.onvoiceschanged=pickVoice; }
 
-function hushSpeech(){
+/* Speech guards against three failures:
+   1. the recogniser still owns the audio session when the next question starts (iOS);
+   2. an utterance gets garbage-collected, so its start/end events never arrive;
+   3. a callback from an earlier, cancelled reading fires during the next question
+      and opens the microphone on top of it.
+   Every speak() takes a generation number; anything stale checks it and stands down. */
+let speakGen=0, lastCancelAt=0;
+const liveUtt=[];                       /* strong references keep utterances alive */
+
+function cancelSynth(){
   const s=window.speechSynthesis; if(!s) return;
-  try{ if(s.speaking||s.pending) s.cancel(); }catch(e){}
+  try{ s.cancel(); }catch(e){}
+  lastCancelAt=Date.now();
+}
+function hushSpeech(){
+  speakGen++;                           /* any reading in flight is now stale */
+  const s=window.speechSynthesis; if(!s) return;
+  let busy=false; try{ busy=s.speaking||s.pending; }catch(e){}
+  if(busy) cancelSynth();
 }
 let actx=null, unlocked=false;
 function unlockAudio(){
@@ -2424,19 +2457,34 @@ function reclaimAudio(){
   unlockAudio();
 }
 
+const TTS_RETRY_MS=1000;      /* no onstart by then: the utterance was dropped, try again */
+
 function speak(text,done){
   const synth=window.speechSynthesis;
+  const gen=++speakGen;
   if(!synth){ ttsNote("В этом браузере нет синтеза речи.","no-api"); if(done)done(); return; }
 
-  /* the recogniser holds the audio session until it is fully aborted */
-  if(rec){ try{ rec.abort(); }catch(e){ try{ rec.stop(); }catch(_){} } }
-  recRunning=false;
-  reclaimAudio();
+  /* the recogniser holds the audio session until it has fully ended */
+  stopRec();
+  let busy=false; try{ busy=synth.speaking||synth.pending; }catch(e){}
+  if(busy) cancelSynth();
 
-  try{ if(synth.speaking||synth.pending) synth.cancel(); }catch(e){}
+  /* Until speech has worked once, stay inside the tap: iOS needs the user gesture.
+     After that, wait for the microphone to let go and for any cancel to settle,
+     because speaking straight after either is what gets silently swallowed. */
+  const gentle=S.ttsOK, maxTries=gentle?3:2, t0=Date.now();
+  const ready=now=>{
+    if(!gentle) return true;
+    if(recBusy() && now-t0<900) return false;
+    if(now<recEndedAt+300 && now-t0<1200) return false;
+    if(now<lastCancelAt+200) return false;
+    return true;
+  };
 
-  let fired=false, started=false, keep=0, retried=false;
-  const fin=()=>{ if(fired) return; fired=true; clearInterval(keep); if(done) done(); };
+  let fired=false, started=false, tries=0, triedAt=0, startedAt=0, idle=0,
+      cur=null, retrying=false, poll=0;
+  const fin=()=>{ if(fired) return; fired=true; clearInterval(poll);
+    if(gen===speakGen && done) done(); };
 
   const make=()=>{
     const u=new SpeechSynthesisUtterance(text);
@@ -2446,38 +2494,54 @@ function speak(text,done){
       const vs=synth.getVoices()||[];
       if(voice&&vs.indexOf(voice)>=0) u.voice=voice;
     }catch(e){}
-    u.onstart=()=>{ started=true; S.ttsOK=true; ttsNote("","ok"); };
-    u.onend=fin;
-    u.onerror=e=>{
+    const mine=()=>gen===speakGen && u===cur && !fired;
+    u.onstart=()=>{ if(!mine()) return;
+      started=true; startedAt=Date.now(); S.ttsOK=true; ttsNote("","ok"); };
+    u.onend=()=>{ if(!mine()) return;
+      /* ending at once without ever starting means it was dropped: retry now */
+      if(started || Date.now()-triedAt>1200) fin(); else triedAt=0; };
+    u.onerror=e=>{ if(!mine()) return;
       const err=(e&&e.error)||"error";
       if(err==="interrupted"||err==="canceled") return;
-      if(err==="not-allowed") ttsNote("Звук заблокирован браузером.","blocked");
-      else ttsNote("Синтез речи дал сбой ("+err+").","err");
-      fin();
+      if(err==="not-allowed"){ ttsNote("Звук заблокирован браузером.","blocked"); fin(); return; }
+      if(started){ fin(); return; }
+      triedAt=0;                         /* failed before starting: retry now */
     };
     return u;
   };
 
-  keep=setInterval(()=>{ try{ if(synth.speaking&&!synth.paused) synth.resume(); }catch(e){} },3500);
-
-  /* SYNCHRONOUS: a setTimeout here breaks the iOS user-gesture chain */
-  try{ synth.speak(make()); }
-  catch(e){ ttsNote("Не удалось запустить речь.","err"); fin(); return; }
-
-  /* One retry: covers the case where the audio session had not yet flipped back. */
-  setTimeout(()=>{
-    if(started||fired||retried) return;
-    retried=true;
+  const attempt=()=>{
+    retrying=false;
+    if(fired||gen!==speakGen) return;
+    tries++; triedAt=Date.now();
     reclaimAudio();
-    try{ synth.cancel(); synth.resume(); }catch(e){}
-    try{ synth.speak(make()); }catch(e){}
-  },700);
+    const u=make(); cur=u;
+    liveUtt.push(u); if(liveUtt.length>8) liveUtt.shift();
+    try{ synth.speak(u); }catch(e){ triedAt=0; return; }
+    try{ if(synth.paused) synth.resume(); }catch(e){}
+  };
 
-  setTimeout(()=>{
-    if(!started&&!fired) ttsNote(SILENT_MSG,"silent");
-  },1900);
+  const tick=()=>{
+    if(gen!==speakGen){ clearInterval(poll); fired=true; return; }
+    if(fired||retrying) return;
+    const now=Date.now();
+    if(!tries){ if(ready(now)) attempt(); return; }
+    if(!started){
+      if(now-triedAt<TTS_RETRY_MS) return;
+      if(tries<maxTries){ retrying=true; cancelSynth(); setTimeout(attempt,180); }
+      else { ttsNote(SILENT_MSG,"silent"); fin(); }
+      return;
+    }
+    /* finished but the end event was lost: notice the engine has gone quiet */
+    let speaking=false, pending=false;
+    try{ speaking=synth.speaking; pending=synth.pending; if(synth.paused) synth.resume(); }catch(e){}
+    if(!speaking && !pending){ if(++idle>=6) fin(); } else idle=0;
+    if(now-startedAt > 4000+text.length*140/S.rate) fin();
+  };
 
-  setTimeout(fin, 2800+text.length*95);
+  /* SYNCHRONOUS when possible: a setTimeout breaks the iOS user-gesture chain */
+  if(ready(t0)) attempt();
+  poll=setInterval(tick,100);
 }
 
 const SILENT_MSG="Вопрос не прозвучал. Самая частая причина — боковой переключатель "+
@@ -2492,59 +2556,78 @@ function ttsNote(msg,kind){
 
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 let rec=null, recRunning=false, sawFinal=false;
-/* Safari closes the microphone after a short silence. Reopening it a couple of
-   times gives a slower speaker room to think, and to finish a long answer. */
-const TRIES_SILENT=3, TRIES_AFTER_SPEECH=2;
-let listenTries=0, stopRequested=false;
+/* A fresh recogniser for every answer. Reusing one across questions lets late
+   events from the last answer leak into the next, and iOS degrades over time. */
+const liveRecs=new Set();               /* started and not yet reported ended */
+let recEndedAt=0;
+function recBusy(){ return liveRecs.size>0; }
+function stopRec(){
+  const r=rec; rec=null; recRunning=false;
+  if(!r) return;
+  try{ r.abort(); }catch(e){ try{ r.stop(); }catch(_){} }
+  /* some engines never send onend after abort; do not wait on them forever */
+  setTimeout(()=>{ if(liveRecs.delete(r)) recEndedAt=Date.now(); },1500);
+}
+/* End an answer after a short quiet period, including browsers that only provide interim text. */
+const ANSWER_PAUSE_MS=1700;
+let silenceTimer=0, interimText="", stopRequested=false, recError=false;
+function clearSilence(){ if(silenceTimer){clearTimeout(silenceTimer);silenceTimer=0;} }
+function spokenText(){return (S.finalText+" "+interimText).trim();}
+function finishAnswer(){
+  if(S.phase!=="listening") return;
+  clearSilence();
+  const said=spokenText();
+  S.phase="processing"; // Prevent late recognition events from reopening or grading twice.
+  stopRec();
+  $("seal").classList.remove("live");
+  if(said){$("heardtxt").textContent=said;grade(said);}
+  else {S.phase="ready";setState("Tap to answer","Нажмите на микрофон и говорите");}
+}
+function armSilence(){
+  clearSilence();
+  if(!spokenText()||S.phase!=="listening") return;
+  silenceTimer=setTimeout(finishAnswer,ANSWER_PAUSE_MS);
+}
 function buildRec(){
   if(!SR) return null;
   const r=new SR();
-  r.lang="en-US"; r.continuous=false; r.interimResults=true; r.maxAlternatives=3;
-  r.onstart=()=>{ recRunning=true; };
+  r.lang="en-US";r.continuous=false;r.interimResults=true;r.maxAlternatives=3;
+  r.onstart=()=>{ if(r===rec) recRunning=true; };
   r.onresult=e=>{
-    let interim="", final="";
-    for(let i=e.resultIndex;i<e.results.length;i++){
+    if(r!==rec||S.phase!=="listening") return;
+    let finals=[], interim=[];
+    // Results are cumulative in this recognition session; do not append them repeatedly.
+    for(let i=0;i<e.results.length;i++){
       const res=e.results[i];
-      if(res.isFinal){ for(let j=0;j<res.length;j++) final+=" "+res[j].transcript; }
-      else interim+=res[0].transcript;
+      if(res.isFinal) finals.push(res[0].transcript.trim());
+      else interim.push(res[0].transcript.trim());
     }
-    if(final.trim()){ sawFinal=true; S.finalText=(S.finalText+" "+final).trim();
-      $("heardtxt").textContent=e.results[e.resultIndex][0].transcript.trim(); }
-    else $("heardtxt").textContent=interim.trim();
+    S.finalText=finals.join(" ").trim();interimText=interim.join(" ").trim();
+    $("heardtxt").textContent=spokenText();
+    armSilence();
   };
+  r.onspeechend=()=>{if(r===rec&&S.phase==="listening") armSilence();};
   r.onerror=ev=>{
+    if(r!==rec) return;
     recRunning=false;
-    if(ev.error==="not-allowed"||ev.error==="service-not-allowed"){ micBlocked(); }
-    else if(ev.error==="no-speech"){ setState("No speech heard","Нажмите и говорите"); }
+    if(S.phase!=="listening") return;
+    if(ev.error==="not-allowed"||ev.error==="service-not-allowed"){
+      recError=true;clearSilence();micBlocked();
+    }else if(ev.error==="no-speech"&&!spokenText()){
+      recError=true;clearSilence();S.phase="ready";
+      $("seal").classList.remove("live");setState("No speech heard","Нажмите и говорите");
+    }else if(spokenText()) finishAnswer();
+    else {recError=true;clearSilence();S.phase="ready";$("seal").classList.remove("live");
+      showNotice("Speech recognition stopped. Try again or type your answer.");}
   };
   r.onend=()=>{
+    if(liveRecs.delete(r)) recEndedAt=Date.now();
+    if(r!==rec) return;
     recRunning=false;
-    if(S.phase!=="listening"){ $("seal").classList.remove("live"); return; }
-
-    const said=(S.finalText||"").trim();
-    const limit = said ? TRIES_AFTER_SPEECH : TRIES_SILENT;
-    listenTries++;
-
-    /* the speaker tapped the mic to finish, so take what we have */
-    if(stopRequested || listenTries>=limit){
-      $("seal").classList.remove("live");
-      if(said) grade(S.finalText);
-      else { S.phase="ready"; setState("Tap to answer","Нажмите на микрофон и говорите"); }
-      return;
-    }
-
-    /* otherwise give them another window */
-    setState(said?"Still listening":"Listening",
-             said?"Говорите дальше или нажмите микрофон":"Говорите…");
-    setTimeout(()=>{
-      if(S.phase!=="listening"||recRunning) return;
-      try{ rec.start(); }
-      catch(e){
-        $("seal").classList.remove("live");
-        if(said) grade(S.finalText);
-        else { S.phase="ready"; setState("Tap to answer","Нажмите на микрофон и говорите"); }
-      }
-    },140);
+    if(S.phase!=="listening") return;
+    if(spokenText()) finishAnswer();
+    else if(!recError){S.phase="ready";$("seal").classList.remove("live");
+      setState("Tap to answer","Нажмите на микрофон и говорите");}
   };
   return r;
 }
@@ -2558,26 +2641,20 @@ function micBlocked(){
 function showNotice(html){ $("notice").innerHTML=html; $("notice").classList.remove("off"); }
 
 function stopListening(){
-  stopRequested=true;
-  if(rec){ try{ rec.abort(); }catch(e){ try{ rec.stop(); }catch(_){} } }
-  recRunning=false;
+  stopRequested=true;clearSilence();interimText="";
+  stopRec();
 }
 function listen(){
-  if(!SR){ micBlocked(); return; }
-  if(!rec) rec=buildRec();
-  if(recRunning){ try{rec.stop();}catch(e){} return; }
-  sawFinal=false; S.finalText="";
-  listenTries=0; stopRequested=false;
-  S.phase="listening";
-  $("seal").classList.add("live");
-  setState("Listening","Говорите — нажмите ещё раз, когда закончите");
-  try{ rec.start(); }
-  catch(e){
-    try{ rec.stop(); }catch(_){}
-    S.phase="ready";
-    $("seal").classList.remove("live");
-    setState("Tap to answer","Нажмите на микрофон и говорите");
-  }
+  if(!SR){micBlocked();return;}
+  if(S.phase==="listening"){finishAnswer();return;}
+  stopRec();
+  clearSilence();interimText="";S.finalText="";recError=false;stopRequested=false;
+  S.phase="listening";$("seal").classList.add("live");
+  setState("Listening","Говорите — пауза завершит ответ");
+  const r=buildRec(); rec=r;
+  try{ liveRecs.add(r); r.start(); }catch(e){ liveRecs.delete(r); rec=null;
+    S.phase="ready";$("seal").classList.remove("live");
+    showNotice("Microphone could not start. Try again or type your answer.");}
 }
 function setState(en,ru){ $("state").textContent=en; $("staten").textContent=ru; }
 
@@ -2933,6 +3010,7 @@ function render(){
   const cardEl=$("qcard");
   cardEl.className="card g-"+groupOf(q);
   $("verdict").className="verdict off";
+  $("next").disabled=false;
   $("ctxline").classList.add("off");
   $("cheer").classList.add("off");
   $("hintbtn").classList.toggle("hide",S.mode==="exam");
@@ -2943,6 +3021,7 @@ function render(){
   $("markbtn").classList.add("hide");
   $("next").textContent="Skip";
   $("typein").value="";
+  clearSilence(); interimText="";
   S.finalText=""; S.currentCorrect=null; S.manual=false;
   S.aiToken++; setAiLine("","");
   applyCaps();
@@ -2970,11 +3049,12 @@ function grade(transcript,force){
   const ref=ev.ref;
   const unsure=!!ev.unsure;
   let ok = (force===false) ? false : ev.ok;
+  if(ok===false && !aiReady() && transcript.trim()) ok=null;
   S.phase="graded"; S.manual=(ok===null); S.currentCorrect=ok;
 
   const st=$("stamp");
   st.className="stamp "+(ok===true?"ok":ok===false?"no":"self");
-  st.textContent = ok===true?"Correct" : ok===false?"Try again" : (unsure?"Almost":"Your call");
+  st.textContent = ok===true?"Correct" : ok===false?"Checking" : (unsure?"Almost":"Your call");
   st.style.animation="none"; void st.offsetWidth; st.style.animation="";
 
   if(ref.manual && force!==false){
@@ -3003,6 +3083,7 @@ function grade(transcript,force){
   $("markbtn").classList.remove("hide");
   $("markbtn").textContent = ok===true?"Mark missed":"Mark correct";
   $("next").textContent = (S.idx+1<S.queue.length)?"Next":"Finish";
+  $("next").disabled=false;
   if(unsure) $("cheer").classList.add("off");
   setState(ok===true?"Correct":ok===false?"Missed":(unsure?"Almost — your call":"Mark it yourself"),
            ok===true?"Верно":ok===false?"Неверно":(unsure?"Почти — решите сами":"Отметьте сами"));
@@ -3010,7 +3091,7 @@ function grade(transcript,force){
   setAiLine("","");
 
   if(S.mode==="practice"){
-    if(ok===true){
+    if(ok===true && !(aiReady() && S.aimode==="all")){
       S.run=(S.run||0)+1;
       const st=statOf(q.n);
       const willMaster = !S.hinted && st.streak+1>=MASTER_AT && st.streak<MASTER_AT;
@@ -3037,7 +3118,11 @@ function grade(transcript,force){
      "Show answer" (force===false) and unanswered questions never call out. */
   const worth = aiReady() && force!==false && transcript.trim() && !ref.manual
              && (S.aimode==="all" || ok===false);
-  if(worth) askClaude(q,transcript,ref,ok);
+  if(worth){
+    S.currentCorrect=null;S.manual=true;$("next").disabled=true;
+    $("markbtn").classList.add("hide");
+    askClaude(q,transcript,ref,ok);
+  }
 
   /* a correct answer moves on by itself; a wrong one waits to be read */
   if(ok===true && !worth) scheduleAuto((CELEB_MS[S.celeb]||0)+HOLD_MS);
@@ -3050,10 +3135,14 @@ async function askClaude(q,transcript,ref,wordVerdict){
   const res=await aiGrade(q,transcript,ref);
   /* a late reply must not stamp a question the user already moved past */
   if(token!==S.aiToken || S.phase!=="graded") return;
-  if(res.err){ setAiLine("bad",res.err); return; }
+  $("next").disabled=false;$("markbtn").classList.remove("hide");
+  if(res.err){ setAiLine("bad",res.err+" Please review and mark this answer yourself.");
+    S.currentCorrect=null;S.manual=true;$("stamp").textContent="Your call";
+    $("stamp").className="stamp self";$("markbtn").textContent="Mark correct";
+    setState("Review answer","Отметьте сами");return; }
 
-  if(res.pass!==wordVerdict){
-    S.currentCorrect=res.pass;
+  {
+    S.currentCorrect=res.pass;S.manual=false;
     const st=$("stamp");
     st.className="stamp "+(res.pass?"ok":"no");
     st.textContent=res.pass?"Correct":"Try again";
@@ -3062,7 +3151,10 @@ async function askClaude(q,transcript,ref,wordVerdict){
     setState(res.pass?"Correct":"Missed",res.pass?"Верно":"Неверно");
   }
   setAiLine("", "Claude: "+(res.why||(res.pass?"accepted":"not accepted")));
-  if(res.pass===true) scheduleAuto((CELEB_MS[S.celeb]||CELEB_MS.small)+HOLD_MS);
+  if(res.pass===true){
+    if(S.mode==="practice" && wordVerdict!==true) celebrate("small");
+    scheduleAuto((CELEB_MS[S.celeb]||CELEB_MS.small)+HOLD_MS);
+  }
 }
 /* A hint shows the shape of the answer and its Russian meaning, never the answer. */
 function maskAnswer(s){
@@ -3166,16 +3258,18 @@ function record(){
   saveStats();
 }
 function advance(){
-  cancelAuto();
-  if(S.phase==="graded") record();
-  hushSpeech();
-  if(recRunning){try{rec.stop();}catch(e){}}
+  cancelAuto(); clearSilence();
+  if(S.phase==="graded" && S.currentCorrect!==null) record();
+  else if(S.phase!=="graded" && S.queue[S.idx]){S.currentCorrect=false;record();}
+  S.phase="advancing";hushSpeech();
+  stopRec();
   if(S.idx+1<S.queue.length){ S.idx++; ask(); }
   else finish();
 }
 function finish(){
-  try{speechSynthesis.cancel();}catch(e){}
-  if(rec){ try{ rec.abort(); }catch(e){} recRunning=false; }
+  clearSilence();
+  hushSpeech();
+  stopRec();
   const scored=S.results.length, ok=S.results.filter(r=>r.ok).length;
   const pct=scored?Math.round(ok/scored*100):0;
   const exam=S.mode==="exam";
@@ -3186,7 +3280,7 @@ function finish(){
 
   const rw=$("ribbonwrap");
   if(exam && scored){
-    const passed=ok>=12 && scored>=20 ? true : (ok/scored)>=0.6;
+    const passed=scored>=20 && ok>=12;
     rw.innerHTML='<span class="ribbon '+(passed?"pass":"fail")+'">'+
       (passed?"Pass":"Not yet")+'</span>';
     $("passline").textContent = passed
@@ -3219,10 +3313,15 @@ function finish(){
   }
   document.body.classList.remove("formal");
   show("scr-done");
-  if(scored && (exam ? (ok>=12&&scored>=20)||(ok/scored)>=0.6 : (S.gained.length>0||ok===scored)))
+  if(scored && (exam ? (ok>=12&&scored>=20) : (S.gained.length>0||ok===scored)))
     setTimeout(()=>celebrate("big"),220);
 }
 
+function syncActs(){
+  const a=$("acts"); if(!a||a.style.display==="none") return;
+  const h=a.offsetHeight;
+  if(h) document.documentElement.style.setProperty("--actsH",h+"px");
+}
 function show(id){
   document.querySelectorAll(".screen").forEach(s=>s.classList.toggle("on",s.id===id));
   const exam=(id==="scr-exam");
@@ -3230,10 +3329,12 @@ function show(id){
   if(!exam){
     cancelAuto();
     $("verdict").className="verdict off";
+  $("next").disabled=false;
     $("typebox").classList.remove("on");
   }
   const el=document.getElementById(id);
   if(el) el.scrollTop=0;
+  if(exam) syncActs();
 }
 
 /* ═══ wiring ═══════════════════════════════════════════════ */
@@ -3363,15 +3464,16 @@ function init(){
 
   $("testsound").addEventListener("click",()=>{
     unlockAudio();
-    if(rec){ try{ rec.abort(); }catch(e){} recRunning=false; }
+    stopRec();
     const el=$("soundhint");
     el.textContent="Говорю…"; el.style.color="var(--live)";
     let heard=false;
     const synth=window.speechSynthesis;
     if(!synth){ el.textContent="В этом браузере нет синтеза речи."; el.style.color="var(--deny)"; return; }
-    try{ if(synth.speaking||synth.pending) synth.cancel(); }catch(e){}
+    hushSpeech();
     const u=new SpeechSynthesisUtterance(
       "Sound is working. You should hear each question read aloud like this.");
+    liveUtt.push(u); if(liveUtt.length>8) liveUtt.shift();
     u.lang="en-US"; u.rate=S.rate; u.volume=1;
     if(voice) u.voice=voice;
     u.onstart=()=>{ heard=true; S.ttsOK=true;
@@ -3398,23 +3500,14 @@ function init(){
     cancelAuto();
     if(S.phase==="asking"){ hushSpeech(); $("seal").classList.remove("busy"); listen(); }
     else if(S.phase==="ready") listen();
-    else if(S.phase==="listening"){
-      stopRequested=true;
-      if(recRunning){ try{rec.stop();}catch(e){} }
-      else {
-        const said=(S.finalText||"").trim();
-        if(said) grade(S.finalText);
-        else { S.phase="ready"; $("seal").classList.remove("live");
-               setState("Tap to answer","Нажмите на микрофон и говорите"); }
-      }
-    }
+    else if(S.phase==="listening") finishAnswer();
     else if(S.phase==="graded") advance();
   });
   $("repeat").addEventListener("click",()=>{
     const q=S.queue[S.idx]; if(!q) return;
     cancelAuto();
     unlockAudio();
-    if(rec){ try{ rec.abort(); }catch(e){} recRunning=false; }
+    stopRec();
 
     /* Already graded: re-read the question only. Keep the verdict on screen
        and do not reopen the microphone — the answer is already in. */
@@ -3453,6 +3546,9 @@ function init(){
     if(confirm("Стереть всю статистику? / Erase all progress?")){
       S.stats={}; saveStats(); paintProgress(); paintReady(); renderMap(); }
   });
+
+  if(window.ResizeObserver) new ResizeObserver(syncActs).observe($("acts"));
+  window.addEventListener("resize",syncActs);
 
   loadGlobals();
   loadPlayers();
@@ -3516,11 +3612,15 @@ function renderMap(){
   QUESTIONS.forEach(q=>{
     const b=document.createElement("button");
     b.type="button";
-    b.className = isMastered(q.n)?"mast":(isSeen(q.n)?"seen":"");
-    b.setAttribute("aria-label","Question "+q.n);
+    const m=isMastered(q.n), sn=isSeen(q.n);
+    b.className = (m?"mast":(sn?"seen":"")) + (mapSel===q.n?" sel":"");
+    b.textContent=String(q.n);
+    b.setAttribute("aria-label","Question "+q.n+(m?", learned":sn?", learning":", not seen"));
     b.dataset.n=String(q.n);
     g.appendChild(b);
   });
+
+  if(mapSel) peekAt(mapSel);
 
   const left=QUESTIONS.filter(q=>!isMastered(q.n)).length;
   const btn=$("mapstart");
@@ -3612,7 +3712,7 @@ function loadPlayerData(){
   S.stats=curId?statsFor(curId):{};
   const p=(curId&&store.get(pKey(curId)))||{};
   S.caps=p.caps||"both"; S.order=p.order||"smart"; S.rate=p.rate||0.78;
-  S.len=p.len||20; S.aimode=p.aimode||"miss"; S.mode=p.mode||"practice"; S.fx=p.fx||"full";
+  S.len=p.len||20; S.aimode=p.aimode||"all"; S.mode=p.mode||"practice"; S.fx=p.fx||"full";
 
   const mark=(id,val)=>$(id).querySelectorAll("button").forEach(b=>
     b.setAttribute("aria-pressed",String(b.dataset.v===String(val))));
